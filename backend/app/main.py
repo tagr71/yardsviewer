@@ -185,10 +185,10 @@ def _flatten_results(payload: dict[str, Any]) -> list[dict[str, object]]:
             return
         name = _NAME_BIB_RE.sub("", cell(raw, name_i)).strip()
         place_raw = cell(raw, place_i)
+        place: int | None
         try:
-            place: int | None = int(place_raw)
-            if place < 0:
-                place = None
+            parsed_place = int(place_raw)
+            place = parsed_place if parsed_place >= 0 else None
         except ValueError:
             place = None
         rows.append(
