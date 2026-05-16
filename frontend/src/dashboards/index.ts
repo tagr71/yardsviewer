@@ -4,7 +4,7 @@ import { LeaderboardDashboard } from "./LeaderboardDashboard";
 import { TimerDashboard } from "./TimerDashboard";
 import { TimerSetupDashboard } from "./TimerSetupDashboard";
 
-export type DashboardProps = { eventId: string; eventName?: string };
+export type DashboardProps = { eventId: string; eventName?: string; eventLocation?: string };
 
 export type Dashboard = {
   id: string;

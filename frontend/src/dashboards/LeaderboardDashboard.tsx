@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { BACKYARD_LOOP_KM, FRONTYARD_LOOP_KM, modeKey, type Mode } from "./timerCore";
 
 type ResultRow = {
   place: number | null;
@@ -7,8 +8,29 @@ type ResultRow = {
   club: string;
   country: string;
   sex: string;
+  totalRank: number | null;
+  lapsCompleted: number | null;
+  lastLap: string;
+  fastestLap: string;
+  slowestLap: string;
+  averageLap: string;
+  status: string;
+  gap: string;
+  lapsBehind: number | null;
+  total: string;
 };
 type ResultsResponse = { eventName?: string; rows: ResultRow[] };
+
+/** Parse "H:mm:ss", "mm:ss" or "ss" into seconds; null when unparseable. */
+function parseHms(s: string): number | null {
+  if (!s) return null;
+  const m = /^(?:(\d+):)?(\d{1,2}):(\d{2})(?:[.,]\d+)?$/.exec(s.trim());
+  if (!m) return null;
+  const h = m[1] ? parseInt(m[1], 10) : 0;
+  return h * 3600 + parseInt(m[2], 10) * 60 + parseInt(m[3], 10);
+}
+
+type DerivedRow = ResultRow & { laps: number | null; distanceKm: number | null };
 
 const REFRESH_MS = 30_000;
 
@@ -55,19 +77,28 @@ function countryAlpha2(code: string): string {
   return alpha2.toLowerCase();
 }
 
-type SortKey = keyof ResultRow;
+type SortKey = keyof DerivedRow;
 type SortDir = "asc" | "desc";
 
 const columns: { key: SortKey; label: string; numeric?: boolean }[] = [
-  { key: "place", label: "Place", numeric: true },
+  { key: "totalRank", label: "Total Rank", numeric: true },
   { key: "bib", label: "Bib", numeric: true },
   { key: "name", label: "Full Name" },
   { key: "club", label: "Club" },
   { key: "country", label: "Country" },
   { key: "sex", label: "Gender" },
+  { key: "laps", label: "Laps", numeric: true },
+  { key: "gap", label: "Gap" },
+  { key: "lastLap", label: "Last" },
+  { key: "fastestLap", label: "Fastest" },
+  { key: "slowestLap", label: "Slowest" },
+  { key: "averageLap", label: "Average" },
+  { key: "total", label: "Total Time" },
+  { key: "distanceKm", label: "Total Distance", numeric: true },
+  { key: "status", label: "Status" },
 ];
 
-function compare(a: ResultRow, b: ResultRow, key: SortKey, dir: SortDir): number {
+function compare(a: DerivedRow, b: DerivedRow, key: SortKey, dir: SortDir): number {
   const av = a[key];
   const bv = b[key];
 
@@ -95,7 +126,7 @@ export function LeaderboardDashboard({ eventId }: { eventId: string }) {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const [sortKey, setSortKey] = useState<SortKey>("place");
+  const [sortKey, setSortKey] = useState<SortKey>("totalRank");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
 
   useEffect(() => {
@@ -133,10 +164,42 @@ export function LeaderboardDashboard({ eventId }: { eventId: string }) {
     };
   }, [eventId]);
 
-  const sortedRows = useMemo(
-    () => [...rows].sort((a, b) => compare(a, b, sortKey, sortDir)),
-    [rows, sortKey, sortDir],
-  );
+  const sortedRows = useMemo(() => {
+    // Backyard: each loop starts on the hour, so a runner's `total` (wall
+    // clock time from race start) directly yields completed loops:
+    //   lapsCompleted = floor(total / 3600)
+    // Prefer the API's own `lapsCompleted` when present, then fall back to
+    // the per-runner total, and finally to leader-minus-lapsBehind.
+    const leader = rows.find((r) => r.totalRank === 1);
+    const leaderTotalSec = leader ? parseHms(leader.total) : null;
+    const leaderLapsFromTotal =
+      leaderTotalSec !== null ? Math.floor(leaderTotalSec / 3600) : null;
+    const mode: Mode =
+      (localStorage.getItem(modeKey(eventId)) as Mode | null) ?? "backyard";
+    const loopKm = mode === "frontyard" ? FRONTYARD_LOOP_KM : BACKYARD_LOOP_KM;
+
+    const derived: DerivedRow[] = rows.map((r) => {
+      let laps: number | null;
+      if (r.lapsCompleted !== null) {
+        laps = r.lapsCompleted;
+      } else {
+        const t = parseHms(r.total);
+        if (t !== null) {
+          laps = Math.max(0, Math.floor(t / 3600));
+        } else if (leaderLapsFromTotal !== null) {
+          laps = Math.max(0, leaderLapsFromTotal - (r.lapsBehind ?? 0));
+        } else {
+          laps = null;
+        }
+      }
+      return {
+        ...r,
+        laps,
+        distanceKm: laps === null ? null : laps * loopKm,
+      };
+    });
+    return derived.sort((a, b) => compare(a, b, sortKey, sortDir));
+  }, [rows, sortKey, sortDir, eventId]);
 
   function toggleSort(key: SortKey) {
     if (key === sortKey) {
@@ -206,7 +269,7 @@ export function LeaderboardDashboard({ eventId }: { eventId: string }) {
                 key={`${r.bib}-${i}`}
                 style={i % 2 ? { background: "#fafafa" } : undefined}
               >
-                <td style={tdNum}>{r.place ?? "—"}</td>
+                <td style={tdNum}>{r.totalRank ?? "—"}</td>
                 <td style={tdNum}>{r.bib}</td>
                 <td style={td}>{r.name}</td>
                 <td style={td}>{r.club}</td>
@@ -226,6 +289,17 @@ export function LeaderboardDashboard({ eventId }: { eventId: string }) {
                   )}
                 </td>
                 <td style={td}>{r.sex}</td>
+                <td style={tdNum}>{r.laps ?? "—"}</td>
+                <td style={td}>{r.gap || "—"}</td>
+                <td style={td}>{r.lastLap || "—"}</td>
+                <td style={td}>{r.fastestLap || "—"}</td>
+                <td style={td}>{r.slowestLap || "—"}</td>
+                <td style={td}>{r.averageLap || "—"}</td>
+                <td style={td}>{r.total || "—"}</td>
+                <td style={td}>
+                  {r.distanceKm === null ? "—" : `${r.distanceKm.toFixed(2)} km`}
+                </td>
+                <td style={td}>{r.status || "—"}</td>
               </tr>
             ))}
           </tbody>

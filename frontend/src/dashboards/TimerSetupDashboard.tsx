@@ -6,7 +6,11 @@ import {
   FRONTYARD_START_MIN,
   NowOsloRow,
   beepKey,
+  jerseyGreenKey,
+  jerseyPinkKey,
+  jerseyYellowKey,
   lockKey,
+  locationKey,
   maxLoopsKey,
   modeKey,
   playBeep,
@@ -41,10 +45,11 @@ function displayToIso(text: string): string | null {
   return `${y}-${mm}-${dd}T${hh}:${mi}:${(s ?? "00").padStart(2, "0")}`;
 }
 
-export function TimerSetupDashboard({ eventId, eventName }: { eventId: string; eventName?: string }) {
+export function TimerSetupDashboard({ eventId, eventName, eventLocation }: { eventId: string; eventName?: string; eventLocation?: string }) {
   const now = useNowTick();
   const { startTime, setStartTime, mode, setMode, fyLock, setFyLock, fyMax, setFyMax,
-    beepEnabled, setBeepEnabled } =
+    beepEnabled, setBeepEnabled, location, setLocation,
+    jerseyPink, setJerseyPink, jerseyGreen, setJerseyGreen, jerseyYellow, setJerseyYellow } =
     useTimerSettings(eventId);
 
   const [startDisplay, setStartDisplay] = useState(() => isoToDisplay(startTime));
@@ -54,6 +59,13 @@ export function TimerSetupDashboard({ eventId, eventName }: { eventId: string; e
     setStartDisplay(isoToDisplay(startTime));
     setStartInvalid(false);
   }, [startTime]);
+
+  function onLocationChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value;
+    setLocation(value);
+    if (value.trim()) localStorage.setItem(locationKey(eventId), value);
+    else localStorage.removeItem(locationKey(eventId));
+  }
 
   function onBeepToggle(next: boolean) {
     setBeepEnabled(next);
@@ -97,6 +109,23 @@ export function TimerSetupDashboard({ eventId, eventName }: { eventId: string; e
     localStorage.setItem(maxLoopsKey(eventId), String(clamped));
   }
 
+  function onJerseyChange(
+    which: "pink" | "green" | "yellow",
+    next: number,
+  ) {
+    const clamped = Math.max(1, Math.min(FRONTYARD_MAX_CAP, next));
+    if (which === "pink") {
+      setJerseyPink(clamped);
+      localStorage.setItem(jerseyPinkKey(eventId), String(clamped));
+    } else if (which === "green") {
+      setJerseyGreen(clamped);
+      localStorage.setItem(jerseyGreenKey(eventId), String(clamped));
+    } else {
+      setJerseyYellow(clamped);
+      localStorage.setItem(jerseyYellowKey(eventId), String(clamped));
+    }
+  }
+
   const lockOptions: number[] = [];
   for (let i = FRONTYARD_LOCK_MIN; i <= FRONTYARD_LOCK_MAX; i += 1) lockOptions.push(i);
   const maxOptions: number[] = [];
@@ -117,7 +146,25 @@ export function TimerSetupDashboard({ eventId, eventName }: { eventId: string; e
         Timer set-up{eventName ? ` — ${eventName}` : ""}
       </h1>
 
-      <NowOsloRow now={now} />
+      <NowOsloRow now={now} eventLocation={location || eventLocation} />
+
+      <label
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.25rem",
+          width: "100%",
+        }}
+      >
+        <span>Race location</span>
+        <input
+          type="text"
+          value={location}
+          placeholder={eventLocation || "e.g. Trondheim"}
+          onChange={onLocationChange}
+          style={{ padding: "0.4rem 0.6rem", fontSize: "1rem" }}
+        />
+      </label>
 
       <label
         style={{
@@ -218,6 +265,39 @@ export function TimerSetupDashboard({ eventId, eventName }: { eventId: string; e
               ))}
             </select>
           </label>
+          <label style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+            <span>Pink jersey at loop</span>
+            <input
+              type="number"
+              min={1}
+              max={FRONTYARD_MAX_CAP}
+              value={jerseyPink}
+              onChange={(e) => onJerseyChange("pink", parseInt(e.target.value, 10))}
+              style={{ padding: "0.4rem 0.6rem", fontSize: "1rem" }}
+            />
+          </label>
+          <label style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+            <span>Green jersey at loop</span>
+            <input
+              type="number"
+              min={1}
+              max={FRONTYARD_MAX_CAP}
+              value={jerseyGreen}
+              onChange={(e) => onJerseyChange("green", parseInt(e.target.value, 10))}
+              style={{ padding: "0.4rem 0.6rem", fontSize: "1rem" }}
+            />
+          </label>
+          <label style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+            <span>Yellow &amp; Winner at loop</span>
+            <input
+              type="number"
+              min={1}
+              max={FRONTYARD_MAX_CAP}
+              value={jerseyYellow}
+              onChange={(e) => onJerseyChange("yellow", parseInt(e.target.value, 10))}
+              style={{ padding: "0.4rem 0.6rem", fontSize: "1rem" }}
+            />
+          </label>
         </div>
       )}
 
@@ -238,7 +318,7 @@ export function TimerSetupDashboard({ eventId, eventName }: { eventId: string; e
           checked={beepEnabled}
           onChange={(e) => onBeepToggle(e.target.checked)}
         />
-        <span>Beep at 3, 2 and 1 minute remaining of current loop</span>
+        <span>Beep at 3, 2 and 1 minute remaining, and bell at loop end</span>
       </label>
 
       <p style={{ margin: 0, color: "#888", fontSize: "0.85rem", textAlign: "center" }}>
