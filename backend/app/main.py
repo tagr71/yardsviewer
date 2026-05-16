@@ -52,8 +52,8 @@ async def _fetch_list(
     *,
     listname_match: str | None = None,
     contest: str = "0",
-) -> tuple[dict[str, Any], str]:
-    """Fetch a published RaceResult list. Returns (list_payload, event_name).
+) -> tuple[dict[str, Any], str, str]:
+    """Fetch a published RaceResult list. Returns (list_payload, event_name, event_location).
 
     The list is selected from the page's TabConfig.Lists. If `listname_match`
     is given, the first list whose name ends with `|{listname_match}` (or
@@ -78,6 +78,23 @@ async def _fetch_list(
             or RACERESULT_BASE.removeprefix("https://").removeprefix("http://")
         )
         event_name = config.get("eventname") or ""
+        # RaceResult publishes the location under various keys depending on the
+        # event template; check the common ones.
+        event_location = ""
+        for loc_key in (
+            "eventlocation",
+            "EventLocation",
+            "eventcity",
+            "EventCity",
+            "location",
+            "Location",
+            "city",
+            "City",
+        ):
+            value = config.get(loc_key)
+            if isinstance(value, str) and value.strip():
+                event_location = value.strip()
+                break
         lists = (config.get("TabConfig") or {}).get("Lists") or []
         if not lists:
             raise HTTPException(
@@ -120,7 +137,7 @@ async def _fetch_list(
                 status_code=502, detail=f"RaceResult list request failed: {exc}"
             ) from exc
 
-    return payload, event_name
+    return payload, event_name, event_location
 
 
 def _count_rows(payload: Any) -> int:
@@ -141,7 +158,39 @@ def _count_rows(payload: Any) -> int:
 
 
 _NAME_BIB_RE = re.compile(r"\s*\[\d+\]\s*$")
-_FLAG_RE = re.compile(r"/flags/([A-Za-z]{2,3})\.svg", re.IGNORECASE)
+_FLAG_RE = re.compile(
+    r"(?:/flags/|StateFlag_)([A-Za-z]{2,3})\.(?:svg|png|jpg)",
+    re.IGNORECASE,
+)
+_RANK_RE = re.compile(r"^\s*(-?\d+)\s*\.?\s*(.*?)\s*$")
+_LAPS_BEHIND_RE = re.compile(r"^\s*(-?\d+)\s*Runde", re.IGNORECASE)
+_SEX_MAP = {
+    "mann": "M", "male": "M", "m": "M", "herre": "M",
+    "kvinne": "K", "female": "K", "f": "K", "dame": "K", "w": "K",
+}
+
+
+def _parse_hms(s: str) -> int | None:
+    """Parse a RaceResult time cell ("H:mm:ss", "mm:ss", or "ss") to seconds.
+    Returns None when the cell is empty or unparseable."""
+    if not s:
+        return None
+    s = s.strip()
+    if not s:
+        return None
+    m = re.match(r"^(?:(\d+):)?(\d{1,2}):(\d{2})(?:[.,]\d+)?$", s)
+    if not m:
+        return None
+    h = int(m.group(1)) if m.group(1) else 0
+    return h * 3600 + int(m.group(2)) * 60 + int(m.group(3))
+
+
+def _format_hms(seconds: int) -> str:
+    """Format a non-negative integer second count as "H:mm:ss" / "mm:ss"."""
+    seconds = max(0, int(seconds))
+    h, rem = divmod(seconds, 3600)
+    m, s = divmod(rem, 60)
+    return f"{h}:{m:02d}:{s:02d}" if h else f"{m}:{s:02d}"
 
 
 def _extract_country(raw_flag: str) -> str:
@@ -169,28 +218,162 @@ def _flatten_results(payload: dict[str, Any]) -> list[dict[str, object]]:
         return -1
 
     bib_i = find_index("BIB")
-    name_i = find_index("DisplayNameBib", "DisplayName", "FullName", "Name")
-    sex_i = find_index("SexMF", "SEX", "Sex")
+    name_i = find_index(
+        "DisplayNameBib",
+        "DisplayNameOrTeam",
+        "DisplayName",
+        "FullName",
+        "Name",
+    )
+    # Some lists publish a custom name formula like
+    # `[DisplayName] & " [" & [BIB] & "]"` instead of a bare column. Detect
+    # that by looking for a substring referencing [DisplayName] or [FullName].
+    if name_i == -1:
+        for i, f in enumerate(fields):
+            if isinstance(f, str) and ("[DisplayName]" in f or "[FullName]" in f):
+                name_i = i
+                break
+    sex_i = find_index("MaleFemale", "GenderMF", "SexMF", "SEX", "Sex")
+    # RaceResult often wraps the rank in a "WithSTatus([...])" formula whose
+    # value is e.g. "1." for a ranked runner or "DNF"/"DNS" for a withdrawn
+    # one. Fall back to the plain rank columns if that formula isn't present.
+    rank_i = find_index(
+        "WithSTatus([LastSplitRankp])",
+        "WithStatus([LastSplitRankp])",
+        "WithSTatus([TotalRank])",
+        "WithStatus([TotalRank])",
+        "TotalRank",
+        "Rank",
+        "Place",
+    )
+    # Some lists use a custom rank formula like
+    # `if([FinalRank]=1;[FinalRankp];"DNF")` that returns "1." or "DNF".
+    # Frontyard LIVE uses `if([STARTED]=1;AutoRank;)`, which gives a bare
+    # integer; detect via the `AutoRank` substring. The Backyard Ultra
+    # template wraps the rank in `BackyardUltra_OrStatus([...Rank.p])`.
+    if rank_i == -1:
+        for i, f in enumerate(fields):
+            if isinstance(f, str) and (
+                "[FinalRankp]" in f
+                or "[FinalRank]" in f
+                or "Rankp]" in f
+                or "Rank.p]" in f
+                or "AutoRank" in f
+                or "BackyardUltra_OrStatus" in f
+            ):
+                rank_i = i
+                break
     place_i = find_index("TotalRank", "Rank", "Place")
-    club_i = find_index("ClubOrCity", "Club", "City")
-    country_i = find_index("NATION.FLAG", "Nation", "Country")
+    if place_i == -1:
+        place_i = rank_i
+    club_i = find_index("ClubOrCity", "DisplayClubOrNames", "Club", "City")
+    country_i = find_index(
+        "NATION.FLAG", "NationOrStateFlag", "NationOrState", "Nation", "Country"
+    )
+    total_rank_i = find_index("TotalRank", "Rank")
+    if total_rank_i == -1:
+        total_rank_i = rank_i
+    laps_i = find_index(
+        "NumberOfLaps",
+        "BackyardUltra_YardCount",
+        "LapsCompleted",
+        "Laps",
+        "LapCount",
+        "RoundsCompleted",
+        "Rounds",
+    )
+    last_lap_i = find_index(
+        "LastLap",
+        "BackyardUltra_LastYard",
+        "LastLapTime",
+        "LastRound",
+        "LastRoundTime",
+        "LastSplit",
+    )
+    fastest_lap_i = find_index(
+        "FastestLap",
+        "BackyardUltra_FastestYard",
+        "BestLap",
+        "FastestRound",
+        "BestRound",
+        "MinLap",
+    )
+    slowest_lap_i = find_index(
+        "SlowestLap",
+        "BackyardUltra_SlowestYard",
+        "WorstLap",
+        "SlowestRound",
+        "WorstRound",
+        "MaxLap",
+    )
+    average_lap_i = find_index(
+        "AverageLap",
+        "BackyardUltra_AverageYard",
+        "AvgLap",
+        "AverageRound",
+        "AvgRound",
+        "MeanLap",
+    )
+    status_i = find_index("Status", "StatusText", "Statustext", "State", "RaceStatus")
+    # Gap-to-leader cell. RaceResult typically wraps the formula in a verbose
+    # "if(...)" expression; match it by suffix or by exact substring.
+    gap_i = find_index("Gap", "GapToLeader", "TimeGap")
+    if gap_i == -1:
+        for i, f in enumerate(fields):
+            if isinstance(f, str) and 'Runde(r)' in f:
+                gap_i = i
+                break
+    # Total race time cell (typically a "iif([TIMESET1]=0;...;[Total])" formula,
+    # or a "WithStatus([TIME])" wrapper on result lists; the Backyard Ultra
+    # template publishes it as `BackyardUltra_YardSum`).
+    total_i = find_index("Total", "BackyardUltra_YardSum", "TotalTime")
+    if total_i == -1:
+        for i, f in enumerate(fields):
+            if isinstance(f, str) and (
+                "[Total]" in f or "[TIME]" in f or "[Time]" in f
+            ):
+                total_i = i
+                break
 
     rows: list[dict[str, object]] = []
 
     def cell(raw: list[Any], idx: int) -> str:
         return str(raw[idx]) if 0 <= idx < len(raw) else ""
 
+    def parse_rank(s: str) -> tuple[int | None, str]:
+        """Split a "WithStatus" rank cell into (place, status). "1." → (1, "");
+        "DNF" → (None, "DNF"); "12. DNF" → (12, "DNF"); "" → (None, "")."""
+        s = s.strip()
+        if not s:
+            return None, ""
+        m = _RANK_RE.match(s)
+        if m and m.group(1):
+            try:
+                n = int(m.group(1))
+            except ValueError:
+                return None, s
+            place = n if n >= 0 else None
+            return place, m.group(2).strip()
+        return None, s
+
+    def cell_int(raw: list[Any], idx: int) -> int | None:
+        place, _ = parse_rank(cell(raw, idx))
+        return place
+
     def add(raw: Any) -> None:
         if not isinstance(raw, list):
             return
         name = _NAME_BIB_RE.sub("", cell(raw, name_i)).strip()
-        place_raw = cell(raw, place_i)
-        place: int | None
-        try:
-            parsed_place = int(place_raw)
-            place = parsed_place if parsed_place >= 0 else None
-        except ValueError:
-            place = None
+        place, status_from_rank = parse_rank(cell(raw, rank_i))
+        explicit_status = cell(raw, status_i).strip()
+        status = explicit_status or status_from_rank
+        sex_raw = cell(raw, sex_i).strip()
+        sex = _SEX_MAP.get(sex_raw.lower(), sex_raw)
+        gap = cell(raw, gap_i).strip()
+        laps_behind: int | None = 0 if gap == "-" else None
+        m = _LAPS_BEHIND_RE.match(gap)
+        if m:
+            laps_behind = abs(int(m.group(1)))
         rows.append(
             {
                 "place": place,
@@ -198,7 +381,17 @@ def _flatten_results(payload: dict[str, Any]) -> list[dict[str, object]]:
                 "name": name,
                 "club": cell(raw, club_i),
                 "country": _extract_country(cell(raw, country_i)),
-                "sex": cell(raw, sex_i),
+                "sex": sex,
+                "totalRank": cell_int(raw, total_rank_i),
+                "lapsCompleted": cell_int(raw, laps_i),
+                "lastLap": cell(raw, last_lap_i),
+                "fastestLap": cell(raw, fastest_lap_i),
+                "slowestLap": cell(raw, slowest_lap_i),
+                "averageLap": cell(raw, average_lap_i),
+                "status": status,
+                "gap": gap,
+                "lapsBehind": laps_behind,
+                "total": cell(raw, total_i),
             }
         )
 
@@ -211,18 +404,62 @@ def _flatten_results(payload: dict[str, Any]) -> list[dict[str, object]]:
             if isinstance(value, list):
                 for r in value:
                     add(r)
+
+    # RaceResult delivers rows in the list's natural sort order. If `totalRank`
+    # wasn't populated (e.g. backyard "Resultatliste" only assigns a numeric
+    # rank to the winner and "DNF" to the rest), fall back to row index so
+    # the leaderboard can still sort sensibly.
+    for idx, row in enumerate(rows, start=1):
+        if row.get("totalRank") is None:
+            row["totalRank"] = idx
+
+    # Some lists (notably the frontyard LIVE template) don't publish
+    # `NumberOfLaps`. Derive laps from `Total / AverageLap` when both are
+    # present — here `Total` is the sum of completed lap times.
+    laps_missing = laps_i == -1 or all(r.get("lapsCompleted") is None for r in rows)
+    if laps_missing:
+        for row in rows:
+            total_sec = _parse_hms(str(row.get("total") or ""))
+            avg_sec = _parse_hms(str(row.get("averageLap") or ""))
+            if total_sec is not None and avg_sec and avg_sec > 0:
+                row["lapsCompleted"] = round(total_sec / avg_sec)
+
+    # Some lists don't publish `Gap`. Derive it from the leader's total when
+    # both runner and leader have a usable `total` time.
+    if gap_i == -1 or all(not r.get("gap") for r in rows):
+        leader_total: int | None = None
+        for row in rows:
+            if row.get("totalRank") == 1:
+                leader_total = _parse_hms(str(row.get("total") or ""))
+                break
+        if leader_total is not None:
+            for row in rows:
+                if row.get("totalRank") == 1:
+                    row["gap"] = "-"
+                    continue
+                t = _parse_hms(str(row.get("total") or ""))
+                if t is None:
+                    continue
+                diff = t - leader_total
+                row["gap"] = ("+" if diff >= 0 else "-") + _format_hms(abs(diff))
+
     return rows
 
 
 @app.get("/api/participants/count")
 async def participants_count(event_id: str | None = None) -> dict[str, object]:
     resolved = event_id or RACERESULT_EVENT_ID
-    payload, event_name = await _fetch_list(resolved, "participants")
+    payload, event_name, event_location = await _fetch_list(resolved, "participants")
     try:
         count = _count_rows(payload)
     except ValueError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
-    return {"count": count, "eventName": event_name, "eventId": resolved}
+    return {
+        "count": count,
+        "eventName": event_name,
+        "eventLocation": event_location,
+        "eventId": resolved,
+    }
 
 
 @app.get("/api/results")
@@ -232,23 +469,146 @@ async def results(
 ) -> dict[str, object]:
     """Return the leaderboard for the event.
 
-    `listname` selects which result list to fetch (suffix match, e.g. "LIVE",
-    "Final"). Defaults to "LIVE", falling back to the first available list.
+    `listname` selects which result list to fetch (suffix match, e.g.
+    "Resultatliste", "LIVE", "Final"). Defaults to "Resultatliste", which
+    publishes NumberOfLaps/MinLap/AvgLap/MaxLap. When the default is used
+    we additionally fetch the "LIVE" list and merge in each runner's
+    `lastLap` (LIVE is the only list that carries it), keyed by BIB.
     """
     resolved = event_id or RACERESULT_EVENT_ID
-    payload, event_name = await _fetch_list(
-        resolved, "results", listname_match=listname or "LIVE"
+    effective = listname or "Resultatliste"
+    payload, event_name, event_location = await _fetch_list(
+        resolved, "results", listname_match=effective
     )
+    rows = _flatten_results(payload)
+
+    # Enrich with lastLap from the LIVE list when caller didn't override.
+    if listname is None:
+        try:
+            live_payload, _, _ = await _fetch_list(
+                resolved, "results", listname_match="LIVE"
+            )
+            live_rows = _flatten_results(live_payload)
+            last_by_bib: dict[str, str] = {}
+            for lr in live_rows:
+                bib = str(lr.get("bib") or "")
+                last = str(lr.get("lastLap") or "")
+                if bib and last:
+                    last_by_bib[bib] = last
+            for row in rows:
+                if not row.get("lastLap"):
+                    bib = str(row.get("bib") or "")
+                    if bib in last_by_bib:
+                        row["lastLap"] = last_by_bib[bib]
+        except HTTPException:
+            # LIVE list optional; ignore if it's not published for this event.
+            pass
+
     return {
         "eventName": event_name,
+        "eventLocation": event_location,
         "eventId": resolved,
-        "rows": _flatten_results(payload),
+        "rows": rows,
     }
 
 
 @app.get("/api/health")
 async def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@app.get("/api/results/fields")
+async def results_fields(
+    event_id: str | None = None,
+    listname: str | None = None,
+) -> dict[str, object]:
+    """Debug: returns DataFields + the first row of the LIVE (or named) result
+    list so we can see exactly which RaceResult column names this event uses."""
+    resolved = event_id or RACERESULT_EVENT_ID
+    payload, event_name, _ = await _fetch_list(
+        resolved, "results", listname_match=listname or "LIVE"
+    )
+    fields = payload.get("DataFields") or []
+    sample: Any = None
+    data = payload.get("data")
+    if isinstance(data, list) and data:
+        sample = data[0]
+    elif isinstance(data, dict):
+        for value in data.values():
+            if isinstance(value, list) and value:
+                sample = value[0]
+                break
+    return {
+        "eventName": event_name,
+        "eventId": resolved,
+        "fields": fields,
+        "sampleRow": sample,
+    }
+
+
+@app.get("/api/results/lists")
+async def results_lists(
+    event_id: str | None = None,
+    page: str = "results",
+) -> dict[str, object]:
+    """Debug: enumerate every list published on `page` (default "results")
+    along with each list's DataFields and a sample row, so we can find one
+    that exposes the lap/round count we need."""
+    resolved = event_id or RACERESULT_EVENT_ID
+    _validate_event_id(resolved)
+    config_url = f"{RACERESULT_BASE}/{resolved}/{page}/config?lang=en"
+
+    async with httpx.AsyncClient(timeout=10.0, headers=_auth_headers()) as client:
+        resp = await client.get(config_url)
+        resp.raise_for_status()
+        config = resp.json()
+        key = config.get("key")
+        server = (
+            config.get("server")
+            or RACERESULT_BASE.removeprefix("https://").removeprefix("http://")
+        )
+        lists = (config.get("TabConfig") or {}).get("Lists") or []
+        if not key:
+            raise HTTPException(status_code=502, detail="No key in config")
+
+        list_url = f"https://{server}/{resolved}/{page}/list"
+        out: list[dict[str, Any]] = []
+        for lst in lists:
+            name = lst.get("Name", "")
+            contest = str(lst.get("Contest") or "0")
+            params = {
+                "key": key,
+                "listname": name,
+                "page": page,
+                "contest": contest,
+                "r": "all",
+            }
+            try:
+                lr = await client.get(list_url, params=params)
+                lr.raise_for_status()
+                lp = lr.json()
+                fields = lp.get("DataFields") or []
+                sample: Any = None
+                data = lp.get("data")
+                if isinstance(data, list) and data:
+                    sample = data[0]
+                elif isinstance(data, dict):
+                    for value in data.values():
+                        if isinstance(value, list) and value:
+                            sample = value[0]
+                            break
+                out.append(
+                    {
+                        "name": name,
+                        "contest": contest,
+                        "fields": fields,
+                        "sampleRow": sample,
+                    }
+                )
+            except httpx.HTTPError as exc:
+                out.append({"name": name, "contest": contest, "error": str(exc)})
+
+    return {"eventId": resolved, "page": page, "lists": out}
 
 
 @app.get("/", include_in_schema=False)

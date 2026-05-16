@@ -7,8 +7,11 @@ export const FRONTYARD_START_MIN = 30; // first loop in Frontyard mode is 30 min
 export const FRONTYARD_LOCK_DEFAULT = 17;
 export const FRONTYARD_MAX_DEFAULT = 27;
 export const FRONTYARD_LOCK_MIN = 1;
-export const FRONTYARD_LOCK_MAX = 29;
-export const FRONTYARD_MAX_CAP = 60;
+export const FRONTYARD_LOCK_MAX = 26;
+export const FRONTYARD_MAX_CAP = 27;
+export const JERSEY_PINK_DEFAULT = 10;
+export const JERSEY_GREEN_DEFAULT = 15;
+export const JERSEY_YELLOW_DEFAULT = 27;
 export const BACKYARD_LOOP_KM = 6.706;
 export const FRONTYARD_LOOP_KM = 3;
 
@@ -69,6 +72,18 @@ export function maxLoopsKey(eventId: string) {
 }
 export function beepKey(eventId: string) {
   return `raceresult.timerBeep.${eventId}`;
+}
+export function locationKey(eventId: string) {
+  return `raceresult.eventLocation.${eventId}`;
+}
+export function jerseyPinkKey(eventId: string) {
+  return `raceresult.jerseyPink.${eventId}`;
+}
+export function jerseyGreenKey(eventId: string) {
+  return `raceresult.jerseyGreen.${eventId}`;
+}
+export function jerseyYellowKey(eventId: string) {
+  return `raceresult.jerseyYellow.${eventId}`;
 }
 
 function readIntSetting(key: string, fallback: number): number {
@@ -238,21 +253,47 @@ export function useTimerSettings(eventId: string) {
     () => (localStorage.getItem(modeKey(eventId)) as Mode | null) ?? "backyard",
   );
   const [fyLock, setFyLock] = useState<number>(
-    () => readIntSetting(lockKey(eventId), FRONTYARD_LOCK_DEFAULT),
+    () => Math.min(
+      FRONTYARD_LOCK_MAX,
+      Math.max(FRONTYARD_LOCK_MIN, readIntSetting(lockKey(eventId), FRONTYARD_LOCK_DEFAULT)),
+    ),
   );
   const [fyMax, setFyMax] = useState<number>(
-    () => readIntSetting(maxLoopsKey(eventId), FRONTYARD_MAX_DEFAULT),
+    () => Math.min(FRONTYARD_MAX_CAP, readIntSetting(maxLoopsKey(eventId), FRONTYARD_MAX_DEFAULT)),
   );
   const [beepEnabled, setBeepEnabled] = useState<boolean>(
     () => localStorage.getItem(beepKey(eventId)) === "1",
+  );
+  const [location, setLocation] = useState<string>(
+    () => localStorage.getItem(locationKey(eventId)) ?? "",
+  );
+  const [jerseyPink, setJerseyPink] = useState<number>(
+    () => readIntSetting(jerseyPinkKey(eventId), JERSEY_PINK_DEFAULT),
+  );
+  const [jerseyGreen, setJerseyGreen] = useState<number>(
+    () => readIntSetting(jerseyGreenKey(eventId), JERSEY_GREEN_DEFAULT),
+  );
+  const [jerseyYellow, setJerseyYellow] = useState<number>(
+    () => readIntSetting(jerseyYellowKey(eventId), JERSEY_YELLOW_DEFAULT),
   );
 
   function reload() {
     setStartTime(localStorage.getItem(startTimeKey(eventId)) ?? "");
     setMode((localStorage.getItem(modeKey(eventId)) as Mode | null) ?? "backyard");
-    setFyLock(readIntSetting(lockKey(eventId), FRONTYARD_LOCK_DEFAULT));
-    setFyMax(readIntSetting(maxLoopsKey(eventId), FRONTYARD_MAX_DEFAULT));
+    setFyLock(
+      Math.min(
+        FRONTYARD_LOCK_MAX,
+        Math.max(FRONTYARD_LOCK_MIN, readIntSetting(lockKey(eventId), FRONTYARD_LOCK_DEFAULT)),
+      ),
+    );
+    setFyMax(
+      Math.min(FRONTYARD_MAX_CAP, readIntSetting(maxLoopsKey(eventId), FRONTYARD_MAX_DEFAULT)),
+    );
     setBeepEnabled(localStorage.getItem(beepKey(eventId)) === "1");
+    setLocation(localStorage.getItem(locationKey(eventId)) ?? "");
+    setJerseyPink(readIntSetting(jerseyPinkKey(eventId), JERSEY_PINK_DEFAULT));
+    setJerseyGreen(readIntSetting(jerseyGreenKey(eventId), JERSEY_GREEN_DEFAULT));
+    setJerseyYellow(readIntSetting(jerseyYellowKey(eventId), JERSEY_YELLOW_DEFAULT));
   }
 
   useEffect(() => {
@@ -264,7 +305,11 @@ export function useTimerSettings(eventId: string) {
         e.key === modeKey(eventId) ||
         e.key === lockKey(eventId) ||
         e.key === maxLoopsKey(eventId) ||
-        e.key === beepKey(eventId)
+        e.key === beepKey(eventId) ||
+        e.key === locationKey(eventId) ||
+        e.key === jerseyPinkKey(eventId) ||
+        e.key === jerseyGreenKey(eventId) ||
+        e.key === jerseyYellowKey(eventId)
       ) {
         reload();
       }
@@ -289,12 +334,20 @@ export function useTimerSettings(eventId: string) {
     setFyMax,
     beepEnabled,
     setBeepEnabled,
+    location,
+    setLocation,
+    jerseyPink,
+    setJerseyPink,
+    jerseyGreen,
+    setJerseyGreen,
+    jerseyYellow,
+    setJerseyYellow,
   };
 }
 
 /** Play a short beep tone via Web Audio. Returns true on success. */
 let _audioCtx: AudioContext | null = null;
-export function playBeep(frequency = 880, durationMs = 250) {
+export function playBeep(frequency = 880, durationMs = 250, delayMs = 0) {
   try {
     if (!_audioCtx) {
       const Ctor =
@@ -310,15 +363,90 @@ export function playBeep(frequency = 880, durationMs = 250) {
     const gain = ctx.createGain();
     osc.type = "sine";
     osc.frequency.value = frequency;
-    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime + 0.02);
-    gain.gain.exponentialRampToValueAtTime(
-      0.0001,
-      ctx.currentTime + durationMs / 1000,
-    );
+    const startAt = ctx.currentTime + Math.max(0, delayMs) / 1000;
+    const dur = durationMs / 1000;
+    gain.gain.setValueAtTime(0.0001, startAt);
+    gain.gain.exponentialRampToValueAtTime(0.3, startAt + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, startAt + dur);
     osc.connect(gain).connect(ctx.destination);
-    osc.start();
-    osc.stop(ctx.currentTime + durationMs / 1000);
+    osc.start(startAt);
+    osc.stop(startAt + dur);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Play a bell-like tone (inharmonic partials, ~2s decay) via Web Audio. */
+export function playBell(durationMs = 2000) {
+  try {
+    if (!_audioCtx) {
+      const Ctor =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext })
+          .webkitAudioContext;
+      if (!Ctor) return false;
+      _audioCtx = new Ctor();
+    }
+    const ctx = _audioCtx;
+    if (ctx.state === "suspended") ctx.resume();
+    const dur = durationMs / 1000;
+    const start = ctx.currentTime;
+    const fundamental = 587; // D5 — bright bell pitch
+
+    // Inharmonic partials of a struck bell:
+    // hum (½ × fundamental), prime, minor-third, perfect-fifth, nominal (2×),
+    // and higher overtones. Decay shortens with frequency.
+    const partials: { ratio: number; amp: number; decay: number }[] = [
+      { ratio: 0.5, amp: 0.25, decay: 1.0 },
+      { ratio: 1.0, amp: 0.4, decay: 0.9 },
+      { ratio: 1.19, amp: 0.3, decay: 0.7 }, // minor third (inharmonic)
+      { ratio: 1.5, amp: 0.22, decay: 0.55 },
+      { ratio: 2.0, amp: 0.35, decay: 0.45 },
+      { ratio: 2.51, amp: 0.18, decay: 0.3 },
+      { ratio: 3.01, amp: 0.12, decay: 0.22 },
+      { ratio: 4.13, amp: 0.08, decay: 0.15 },
+    ];
+
+    const master = ctx.createGain();
+    master.gain.value = 0.7;
+    master.connect(ctx.destination);
+
+    for (const { ratio, amp, decay } of partials) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = fundamental * ratio;
+      const partialDur = Math.min(dur, dur * decay);
+      // Fast attack, exponential decay
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(amp, start + 0.004);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + partialDur);
+      osc.connect(gain).connect(master);
+      osc.start(start);
+      osc.stop(start + partialDur + 0.02);
+    }
+
+    // Short noise burst for the strike attack (~25 ms).
+    const noiseLen = Math.floor(ctx.sampleRate * 0.04);
+    const noiseBuf = ctx.createBuffer(1, noiseLen, ctx.sampleRate);
+    const data = noiseBuf.getChannelData(0);
+    for (let i = 0; i < noiseLen; i += 1) {
+      data[i] = (Math.random() * 2 - 1) * (1 - i / noiseLen);
+    }
+    const noise = ctx.createBufferSource();
+    noise.buffer = noiseBuf;
+    const noiseHP = ctx.createBiquadFilter();
+    noiseHP.type = "highpass";
+    noiseHP.frequency.value = 2000;
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(0.0001, start);
+    noiseGain.gain.exponentialRampToValueAtTime(0.4, start + 0.002);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, start + 0.05);
+    noise.connect(noiseHP).connect(noiseGain).connect(master);
+    noise.start(start);
+    noise.stop(start + 0.06);
+
     return true;
   } catch {
     return false;
@@ -338,7 +466,7 @@ const nowRowStyle: React.CSSProperties = {
   fontVariantNumeric: "tabular-nums",
 };
 
-export function NowOsloRow({ now }: { now: Date }) {
+export function NowOsloRow({ now, eventLocation }: { now: Date; eventLocation?: string }) {
   const parts = formatOsloParts(now);
   return (
     <div style={nowRowStyle}>
@@ -346,6 +474,14 @@ export function NowOsloRow({ now }: { now: Date }) {
       <span style={{ fontSize: "1.1rem" }}>
         {parts.date} &nbsp; {parts.time}
       </span>
+      {eventLocation && (
+        <>
+          <span style={{ color: "#888", fontSize: "0.85rem", marginLeft: "1.5rem" }}>
+            Location
+          </span>
+          <span style={{ fontSize: "1.1rem" }}>{eventLocation}</span>
+        </>
+      )}
     </div>
   );
 }

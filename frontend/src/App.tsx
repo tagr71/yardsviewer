@@ -28,21 +28,27 @@ export function App() {
     () => localStorage.getItem(DASHBOARD_KEY) ?? dashboards[0].id,
   );
   const [eventName, setEventName] = useState<string>("");
+  const [eventLocation, setEventLocation] = useState<string>("");
 
   // Fetch the event name for the footer whenever a dashboard is active.
   useEffect(() => {
     if (!selection) {
       setEventName("");
+      setEventLocation("");
       return;
     }
     let cancelled = false;
     fetch(`/api/participants/count?event_id=${encodeURIComponent(selection.eventId)}`)
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
-      .then((data: { eventName?: string }) => {
-        if (!cancelled) setEventName(data.eventName ?? "");
+      .then((data: { eventName?: string; eventLocation?: string }) => {
+        if (cancelled) return;
+        setEventName(data.eventName ?? "");
+        setEventLocation(data.eventLocation ?? "");
       })
       .catch(() => {
-        if (!cancelled) setEventName("");
+        if (cancelled) return;
+        setEventName("");
+        setEventLocation("");
       });
     return () => {
       cancelled = true;
@@ -194,7 +200,11 @@ export function App() {
         )}
 
         {selection && active && (
-          <active.component eventId={selection.eventId} eventName={eventName} />
+          <active.component
+            eventId={selection.eventId}
+            eventName={eventName}
+            eventLocation={eventLocation}
+          />
         )}
 
         {selection && !active && (

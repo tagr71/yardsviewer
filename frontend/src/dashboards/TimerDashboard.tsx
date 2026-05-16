@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   BACKYARD_LOOP_KM,
   FRONTYARD_LOOP_KM,
@@ -12,16 +12,19 @@ import {
   frontyardState,
   osloWallClockToInstant,
   pad,
+  panel,
   playBeep,
+  playBell,
   useNowTick,
   useTimerSettings,
 } from "./timerCore";
 
-export function TimerDashboard({ eventId, eventName }: { eventId: string; eventName?: string }) {
+export function TimerDashboard({ eventId, eventName, eventLocation }: { eventId: string; eventName?: string; eventLocation?: string }) {
   const now = useNowTick();
-  const { startTime, mode, fyLock, fyMax, beepEnabled } = useTimerSettings(eventId);
+  const { startTime, mode, fyLock, fyMax, beepEnabled, location,
+    jerseyPink, jerseyGreen, jerseyYellow } = useTimerSettings(eventId);
 
-  /** Background for the Remaining mins of loop card based on seconds left. */
+  /** Background for the Remaining min of loop card based on seconds left. */
   function remainingBg(secondsLeft: number): string {
     if (secondsLeft < 180) return "#fecaca"; // red
     if (secondsLeft < 360) return "#fef08a"; // yellow
@@ -66,7 +69,105 @@ export function TimerDashboard({ eventId, eventName }: { eventId: string; eventN
   const frontyardCompleted = beforeStart ? 0 : fy.loopsCompleted;
   const frontyardDistance = frontyardCompleted * FRONTYARD_LOOP_KM;
 
-  // Beep at 3 (×3), 2 (×2) and 1 (×1) minute remaining of the current loop (when enabled).
+  // Poll the leaderboard every 30 s and derive how many runners are still in
+  // the current round vs. how many made it through the previous round.
+  //   thisRound     = runners whose lapsCompleted == max (the survivors who
+  //                   are about to go out for / are currently on the next loop)
+  //   previousRound = runners whose lapsCompleted == max - 1 (those who
+  //                   completed the round before but didn't make this one)
+  const [runnersThisRound, setRunnersThisRound] = useState<number | null>(null);
+  const [runnersPrevRound, setRunnersPrevRound] = useState<number | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      try {
+        const res = await fetch(`/api/results?event_id=${encodeURIComponent(eventId)}`);
+        if (!res.ok) return;
+        const data = (await res.json()) as {
+          rows?: { lapsCompleted: number | null }[];
+        };
+        if (cancelled) return;
+        const laps = (data.rows ?? [])
+          .map((r) => r.lapsCompleted)
+          .filter((n): n is number => typeof n === "number");
+        if (laps.length === 0) {
+          setRunnersThisRound(0);
+          setRunnersPrevRound(0);
+          return;
+        }
+        const max = Math.max(...laps);
+        setRunnersThisRound(laps.filter((n) => n === max).length);
+        setRunnersPrevRound(laps.filter((n) => n === max - 1).length);
+      } catch {
+        // Leave the previous counts in place on transient errors.
+      }
+    }
+    load();
+    const t = window.setInterval(load, 30_000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(t);
+    };
+  }, [eventId]);
+  const thisRoundValue = runnersThisRound === null ? "—" : String(runnersThisRound);
+  const prevRoundValue = runnersPrevRound === null ? "—" : String(runnersPrevRound);
+
+  /** Length (min) of the loop after `currentLoopNumber` in frontyard, or null if none. */
+  function nextFrontyardLoopMin(currentLoopNumber: number): number | null {
+    const nextK = currentLoopNumber + 1;
+    if (nextK > fyMax) return null;
+    const lockedLen = Math.max(1, FRONTYARD_START_MIN + 1 - fyLock);
+    const naturalLen = Math.max(1, FRONTYARD_START_MIN + 1 - nextK);
+    return nextK <= fyLock ? naturalLen : lockedLen;
+  }
+
+  /** Image sources awarded for completing `loopNumber` (frontyard). */
+  function jerseyImagesFor(loopNumber: number): string[] {
+    const imgs: string[] = [];
+    if (loopNumber === jerseyPink) imgs.push("/rosa.png");
+    if (loopNumber === jerseyGreen) imgs.push("/gr\u00f8nn.png");
+    if (loopNumber === jerseyYellow) {
+      imgs.push("/gul.png");
+      imgs.push("/vinner.png");
+    }
+    return imgs;
+  }
+
+  function JerseyCard({ loopNumber }: { loopNumber: number | null }) {
+    const imgs = loopNumber === null ? [] : jerseyImagesFor(loopNumber);
+    return (
+      <div style={panel}>
+        <p style={{ margin: 0, color: "#555", fontWeight: 600 }}>
+          Competion this round
+        </p>
+        <div
+          style={{
+            display: "flex",
+            gap: "0.5rem",
+            alignItems: "center",
+            justifyContent: "center",
+            minHeight: "5rem",
+          }}
+        >
+          {imgs.length === 0 ? (
+            <span style={{ color: "#bbb", fontSize: "2rem" }}>—</span>
+          ) : (
+            imgs.map((src) => (
+              <img
+                key={src}
+                src={src}
+                alt=""
+                style={{ height: "5rem", width: "auto", objectFit: "contain" }}
+              />
+            ))
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Beep at 3 (×3), 2 (×2) and 1 (×1) minute remaining of the current loop,
+  // and ring a bell at each loop rollover and on race finish (frontyard).
   const activeRemainingSec: number | null =
     !startInstant || beforeStart
       ? null
@@ -76,10 +177,30 @@ export function TimerDashboard({ eventId, eventName }: { eventId: string; eventN
           ? null
           : fy.remainingSec;
   const prevRemainingRef = useRef<number | null>(null);
+  const prevFinishedRef = useRef<boolean>(false);
   useEffect(() => {
     const prev = prevRemainingRef.current;
     prevRemainingRef.current = activeRemainingSec;
-    if (!beepEnabled || activeRemainingSec === null || prev === null) return;
+    if (!beepEnabled) return;
+    // Loop boundary: remaining counted down toward 0 and then jumped up
+    // (rollover to the next loop), or the race just finished.
+    const justFinished = mode === "frontyard" && fy.finished && !prevFinishedRef.current;
+    prevFinishedRef.current = mode === "frontyard" ? fy.finished : false;
+    if (
+      prev !== null &&
+      activeRemainingSec !== null &&
+      prev > 0 &&
+      prev <= 5 &&
+      activeRemainingSec > prev
+    ) {
+      playBell(2000);
+      return;
+    }
+    if (justFinished) {
+      playBell(2000);
+      return;
+    }
+    if (activeRemainingSec === null || prev === null) return;
     const thresholds: { sec: number; beeps: number }[] = [
       { sec: 180, beeps: 3 },
       { sec: 120, beeps: 2 },
@@ -88,12 +209,12 @@ export function TimerDashboard({ eventId, eventName }: { eventId: string; eventN
     for (const { sec, beeps } of thresholds) {
       if (prev > sec && activeRemainingSec <= sec) {
         for (let i = 0; i < beeps; i += 1) {
-          setTimeout(() => playBeep(), i * 350);
+          playBeep(880, 250, i * 400);
         }
         break;
       }
     }
-  }, [activeRemainingSec, beepEnabled]);
+  }, [activeRemainingSec, beepEnabled, mode, fy.finished]);
 
   return (
     <section
@@ -110,7 +231,7 @@ export function TimerDashboard({ eventId, eventName }: { eventId: string; eventN
         Timer dashboard{eventName ? ` — ${eventName}` : ""}
       </h1>
 
-      <NowOsloRow now={now} />
+      <NowOsloRow now={now} eventLocation={location || eventLocation} />
 
       {startInstant ? (
         <>
@@ -159,7 +280,8 @@ export function TimerDashboard({ eventId, eventName }: { eventId: string; eventN
                 label="Current loop"
                 value={beforeStart ? "—" : String(backyardCompleted + 1)}
               bg="#facc15" valueColor="black" labelColor="black" />
-              <StatCard label="Loop time-limit (mins)" value="60" valueColor="black" labelColor="black" />
+              <StatCard label="Loop time-limit (min)" value="60" valueColor="black" labelColor="black" />
+              <StatCard label="Next loop time-limit (min)" value="60" valueColor="black" labelColor="black" />
               <StatCard
                 label="Distance completed"
                 value={formatKm(backyardDistance)}
@@ -178,13 +300,15 @@ export function TimerDashboard({ eventId, eventName }: { eventId: string; eventN
                 label={
                   beforeStart
                     ? "Loop starts at race start"
-                    : "Remaining mins of loop"
+                    : "Remaining min of loop"
                 }
                 value={`${pad(remMin)}:${pad(remSec)}`}
                 bg={beforeStart ? undefined : remainingBg(remainingInLoop)}
                 valueColor="black"
                 labelColor="black"
               />
+              <StatCard label="Runners this round" value={thisRoundValue} valueColor="black" labelColor="black" />
+              <StatCard label="Runners previous round" value={prevRoundValue} valueColor="black" labelColor="black" />
             </div>
           )}
 
@@ -206,9 +330,18 @@ export function TimerDashboard({ eventId, eventName }: { eventId: string; eventN
                   bg="#117a3a" valueColor="white" labelColor="white" />
                   <StatCard label="Current loop" value="1" bg="#facc15" valueColor="black" labelColor="black" />
                   <StatCard
-                    label="Loop time-limit (mins)"
+                    label="Loop time-limit (min)"
                     value={String(FRONTYARD_START_MIN)}
                   valueColor="black" labelColor="black" />
+                  {(() => {
+                    const next = nextFrontyardLoopMin(1);
+                    return (
+                      <StatCard
+                        label="Next loop time-limit (min)"
+                        value={next === null ? "—" : String(next)}
+                      valueColor="black" labelColor="black" />
+                    );
+                  })()}
                   <StatCard
                     label="Distance completed"
                     value={formatKm(0)}
@@ -227,6 +360,9 @@ export function TimerDashboard({ eventId, eventName }: { eventId: string; eventN
                     label="Loop starts at race start"
                     value="30:00"
                   />
+                  <JerseyCard loopNumber={1} />
+                  <StatCard label="Runners this round" value={thisRoundValue} valueColor="black" labelColor="black" />
+                  <StatCard label="Runners previous round" value={prevRoundValue} valueColor="black" labelColor="black" />
                 </>
               ) : fy.finished ? (
                 <>
@@ -235,7 +371,8 @@ export function TimerDashboard({ eventId, eventName }: { eventId: string; eventN
                     value={String(frontyardCompleted)}
                   bg="#117a3a" valueColor="white" labelColor="white" />
                   <StatCard label="Current loop" value="—" bg="#facc15" valueColor="black" labelColor="black" />
-                  <StatCard label="Loop time-limit (mins)" value="—" valueColor="black" labelColor="black" />
+                  <StatCard label="Loop time-limit (min)" value="—" valueColor="black" labelColor="black" />
+                  <StatCard label="Next loop time-limit (min)" value="—" valueColor="black" labelColor="black" />
                   <StatCard
                     label="Distance completed"
                     value={formatKm(frontyardDistance)}
@@ -250,6 +387,9 @@ export function TimerDashboard({ eventId, eventName }: { eventId: string; eventN
                     value="00:00"
                     valueColor="#117a3a"
                   />
+                  <JerseyCard loopNumber={null} />
+                  <StatCard label="Runners this round" value={thisRoundValue} valueColor="black" labelColor="black" />
+                  <StatCard label="Runners previous round" value={prevRoundValue} valueColor="black" labelColor="black" />
                 </>
               ) : (
                 <>
@@ -262,9 +402,18 @@ export function TimerDashboard({ eventId, eventName }: { eventId: string; eventN
                     value={String(fy.loopNumber)}
                   bg="#facc15" valueColor="black" labelColor="black" />
                   <StatCard
-                    label="Loop time-limit (mins)"
+                    label="Loop time-limit (min)"
                     value={String(fy.loopLengthMin)}
                   valueColor="black" labelColor="black" />
+                  {(() => {
+                    const next = nextFrontyardLoopMin(fy.loopNumber);
+                    return (
+                      <StatCard
+                        label="Next loop time-limit (min)"
+                        value={next === null ? "—" : String(next)}
+                      valueColor="black" labelColor="black" />
+                    );
+                  })()}
                   <StatCard
                     label="Distance completed"
                     value={formatKm(frontyardDistance)}
@@ -280,12 +429,15 @@ export function TimerDashboard({ eventId, eventName }: { eventId: string; eventN
                     );
                   })()}
                   <StatCard
-                    label="Remaining mins of loop"
+                    label="Remaining min of loop"
                     value={`${pad(fyMin)}:${pad(fySec)}`}
                     bg={remainingBg(fy.remainingSec)}
                     valueColor="black"
                     labelColor="black"
                   />
+                  <JerseyCard loopNumber={fy.loopNumber} />
+                  <StatCard label="Runners this round" value={thisRoundValue} valueColor="black" labelColor="black" />
+                  <StatCard label="Runners previous round" value={prevRoundValue} valueColor="black" labelColor="black" />
                 </>
               )}
             </div>

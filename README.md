@@ -10,23 +10,46 @@ shows it in pickable dashboards.
 ## Dashboards
 
 - **Number of participants** — live participant count with auto-refresh.
-- **Leaderboard** — sortable table (Place, Number, Full Name, Club,
-  Country, Sex) polled every 30 s.
-- **Timer** — live race clock and per-loop counter. The start time is
-  entered in the dashboard (interpreted as Europe/Oslo wall-clock time)
-  and remembered per event ID. The main clock shows the elapsed or
-  remaining time as `dd:hh:mm:ss` and ticks every second. Two modes:
+- **Leaderboard** — sortable table polled every 30 s. Columns:
+  Total Rank, Bib, Full Name, Club, Country (flag), Gender, Laps,
+  Gap, Last (lap), Fastest, Slowest, Average, Total Time,
+  Total Distance, Status. Distance uses the loop length for the
+  current Timer mode (6.706 km backyard, 3 km frontyard).
+- **Timer set-up** — configure the race start time, mode and per-event
+  options (see below). All settings are stored in `localStorage`, keyed
+  by event ID, and picked up live by the Timer dashboard (same browser,
+  via the `storage` event and a 2 s poll fallback).
+- **Timer** — live race clock and per-loop stats. The main clock shows
+  the elapsed (or remaining) time as `dd.hh.mm.ss` and ticks every
+  second. Two modes:
   - **Backyard** — fixed 60-minute loops. A `mm:ss` counter counts down
-    from `60:00` to `00:00`; when it resets, the *Loops completed*
-    counter increments by 1.
-  - **Frontyard** — first loop is 30 minutes, each subsequent loop is 1
-    minute shorter. Two dropdowns shape the schedule:
-    - *Hold loop length after loop* (1–29): from this loop onwards every
+    from `60:00`; when it resets, *Loops completed* increments.
+  - **Frontyard** — first loop is 30 minutes, each subsequent loop is
+    one minute shorter. Two settings shape the schedule:
+    - *Hold time-limit after loop* (1–26): from this loop onwards every
       loop reuses the same length (e.g. `Loop 17 (14 min)` keeps all
       following loops at 14 min).
-    - *Maximum number of loops* (must be greater than the hold loop):
-      the race ends after this many loops. The option list is filtered
-      automatically so it always exceeds the hold-loop value.
+    - *Maximum number of loops* (must be greater than the hold loop,
+      capped at 27): the race ends after this many loops.
+
+### Timer options
+
+Configured in the **Timer set-up** dashboard, persisted per event ID:
+
+- *Race location* — shown in the header next to the Oslo clock.
+- *Race start time* — `dd.mm.yyyy HH.mm.ss` (Europe/Oslo wall-clock).
+- *Mode* — Backyard or Frontyard.
+- *Hold time-limit after loop* and *Maximum number of loops*
+  (Frontyard only).
+- *Pink jersey at loop* (default 10), *Green jersey at loop*
+  (default 15), *Yellow & Winner at loop* (default 27). When the
+  current frontyard loop number matches one of these, the
+  corresponding image(s) from `frontend/public/` are shown in the
+  *Competion this round* card on the Timer dashboard
+  (`rosa.png`, `grønn.png`, and `gul.png` + `vinner.png`).
+- *Beep / bell* checkbox — when enabled, the Timer dashboard plays
+  three beeps at 3 min remaining, two at 2 min, one at 1 min, and a
+  bell at every loop rollover (and on race finish in Frontyard).
 
 The front page lets you type a RaceResult event ID, pick a dashboard
 from a dropdown, and open it. A **← Back** button returns to the front
@@ -63,11 +86,24 @@ FastAPI backend on port 8000.
 ## Endpoints
 
 - `GET /api/participants/count?event_id=<id>` →
-  `{ "count": <int>, "eventName": <str>, "eventId": <str> }`
+  `{ "count": <int>, "eventName": <str>, "eventLocation": <str>, "eventId": <str> }`
 - `GET /api/results?event_id=<id>&listname=<suffix>` →
-  `{ "eventName": <str>, "eventId": <str>, "rows": [{ "place": <int|null>, "bib": <str>, "name": <str>, "club": <str>, "country": <str>, "sex": <str> }] }`
-  (`listname` defaults to `LIVE` and falls back to the first available
-  list)
+  `{ "eventName": <str>, "eventLocation": <str>, "eventId": <str>, "rows": [...] }`.
+  Each row has: `place`, `bib`, `name`, `club`, `country`, `sex`,
+  `totalRank`, `lapsCompleted`, `lastLap`, `fastestLap`, `slowestLap`,
+  `averageLap`, `status`, `gap`, `lapsBehind`, `total`.
+
+  Without `listname` the backend fetches the `Resultatliste` list
+  (which carries `NumberOfLaps`, `MinLap`, `AvgLap`, `MaxLap`, total
+  time) and merges in `lastLap` from the `LIVE` list (the only list
+  that publishes it), keyed by BIB. Passing `listname` (suffix match,
+  e.g. `LIVE`) skips the merge and uses only that list.
+- `GET /api/results/fields?event_id=<id>&listname=<suffix>` →
+  debug helper: `DataFields` array + first raw row from the selected
+  list, useful for mapping new RaceResult templates.
+- `GET /api/results/lists?event_id=<id>&page=results` →
+  debug helper: enumerates every list published on the page along with
+  each list's `DataFields` and a sample row.
 - `GET /api/health` → `{ "status": "ok" }`
 - `GET /` redirects to `/api/participants/count`
 
