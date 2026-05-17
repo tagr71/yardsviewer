@@ -139,7 +139,7 @@ export function TimerDashboard({ eventId, eventName, eventLocation }: { eventId:
   // `viewLoop` is null while live; a number 1..maxLoop while scrubbing.
   const { viewLoop, setViewLoop } = useViewLoop(eventId);
   const maxLoop = finalLaps.length ? Math.max(1, ...finalLaps) : 0;
-  const inReplay = raceFinished && viewLoop !== null && viewLoop >= 1;
+  const inReplay = viewLoop !== null && viewLoop >= 1 && maxLoop >= 1;
   const effectiveViewLoop = inReplay
     ? Math.min(Math.max(1, viewLoop as number), Math.max(1, maxLoop))
     : null;
@@ -181,7 +181,8 @@ export function TimerDashboard({ eventId, eventName, eventLocation }: { eventId:
   const frontyardDistance = frontyardCompleted * FRONTYARD_LOOP_KM;
 
   /** Snapshot loop for the Dashboard's jersey holder cards. In live mode
-   * this follows the race clock (so the cards advance as soon as the
+   * this followsgit status
+   *  race clock (so the cards advance as soon as the
    * timer ticks over to a new loop); in replay it follows the scrubber.
    * `frontyardCompleted` already reflects both cases. */
   const holderSnapshotLoop = mode === "frontyard" ? frontyardCompleted : 0;
@@ -549,7 +550,7 @@ export function TimerDashboard({ eventId, eventName, eventLocation }: { eventId:
 
       <NowOsloRow now={now} eventLocation={location || eventLocation} />
 
-      {raceFinished && maxLoop >= 1 && (
+      {maxLoop >= 1 && (
         <div
           style={{
             display: "flex",
@@ -562,7 +563,7 @@ export function TimerDashboard({ eventId, eventName, eventLocation }: { eventId:
           }}
         >
           <span style={{ fontWeight: 600 }}>
-            {inReplay ? "Replay" : "Race finished"}
+            {inReplay ? "Replay" : raceFinished ? "Race finished" : "Live"}
           </span>
           <button
             type="button"
@@ -610,16 +611,16 @@ export function TimerDashboard({ eventId, eventName, eventLocation }: { eventId:
           <button
             type="button"
             onClick={() => setViewLoop(null)}
-            disabled
-            title="Static"
+            disabled={!inReplay}
+            title="Live"
             style={{
               ...playbackBtn,
               marginLeft: "0.5rem",
-              cursor: "default",
-              opacity: 0.5,
+              cursor: inReplay ? "pointer" : "default",
+              opacity: inReplay ? 1 : 0.5,
             }}
           >
-            Static
+            Live
           </button>
         </div>
       )}
