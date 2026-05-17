@@ -5,6 +5,15 @@ const EVENT_ID_KEY = "raceresult.eventId";
 const DASHBOARD_KEY = "raceresult.dashboard";
 const CLUB_NAME = "HELL ULTRALØPERKLUBB";
 
+/** Predefined races shown in the Event dropdown. Add entries here to
+ * extend the list — the value is the RaceResult event ID. */
+const PREDEFINED_EVENTS: { id: string; label: string }[] = [
+  { id: "337633", label: "Hell Backyard Ultra 2026" },
+  { id: "374847", label: "Rotvollfjæra Frontyard Ultra" },
+  { id: "400116", label: "Frontyard Test" },
+];
+const OTHER_OPTION = "__other__";
+
 type Selection = { eventId: string; dashboardId: string };
 
 /** Drop a replacement file at `frontend/public/logo.svg` (or `.png`) to
@@ -22,8 +31,19 @@ function Logo({ style }: { style?: React.CSSProperties }) {
 export function App() {
   const [selection, setSelection] = useState<Selection | null>(null);
   const [eventId, setEventId] = useState<string>(
-    () => localStorage.getItem(EVENT_ID_KEY) ?? "",
+    () => localStorage.getItem(EVENT_ID_KEY) ?? PREDEFINED_EVENTS[0]?.id ?? "",
   );
+  // Which dropdown option is currently selected. `OTHER_OPTION` means
+  // the user wants to type a custom event ID; any other value is one of
+  // the `PREDEFINED_EVENTS` IDs.
+  const [eventChoice, setEventChoice] = useState<string>(() => {
+    const stored = localStorage.getItem(EVENT_ID_KEY) ?? "";
+    return PREDEFINED_EVENTS.some((e) => e.id === stored)
+      ? stored
+      : stored
+        ? OTHER_OPTION
+        : PREDEFINED_EVENTS[0]?.id ?? OTHER_OPTION;
+  });
   const [dashboardId, setDashboardId] = useState<string>(
     () => localStorage.getItem(DASHBOARD_KEY) ?? dashboards[0].id,
   );
@@ -125,12 +145,14 @@ export function App() {
       <div
         style={{
           flex: 1,
+          minHeight: 0,
           padding: "1.5rem",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          justifyContent: "center",
+          justifyContent: "flex-start",
           gap: "1.25rem",
+          overflow: "auto",
         }}
       >
         {!selection && (
@@ -147,23 +169,43 @@ export function App() {
               background: "#fafafa",
             }}
           >
-            <h1 style={{ margin: 0, fontSize: "1.4rem" }}>RaceResult dashboards</h1>
+            <h1 style={{ margin: 0, fontSize: "1.4rem" }}>RaceResult Simulation</h1>
 
             <label
               htmlFor="event-id"
               style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}
             >
-              <span>Event ID</span>
-              <input
+              <span>Event</span>
+              <select
                 id="event-id"
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                value={eventId}
-                placeholder="e.g. 374847"
-                onChange={(e) => setEventId(e.target.value)}
+                value={eventChoice}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  setEventChoice(v);
+                  if (v !== OTHER_OPTION) setEventId(v);
+                  else setEventId("");
+                }}
                 style={{ padding: "0.4rem 0.6rem", fontSize: "1rem" }}
-              />
+              >
+                {PREDEFINED_EVENTS.map((ev) => (
+                  <option key={ev.id} value={ev.id}>
+                    {ev.label} ({ev.id})
+                  </option>
+                ))}
+                <option value={OTHER_OPTION}>Other…</option>
+              </select>
+              {eventChoice === OTHER_OPTION && (
+                <input
+                  id="event-id-custom"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={eventId}
+                  placeholder="e.g. 374847"
+                  onChange={(e) => setEventId(e.target.value)}
+                  style={{ padding: "0.4rem 0.6rem", fontSize: "1rem" }}
+                />
+              )}
             </label>
 
             <label
@@ -194,7 +236,7 @@ export function App() {
                 cursor: eventId.trim() ? "pointer" : "not-allowed",
               }}
             >
-              Open dashboard
+              {`Open ${dashboards.find((d) => d.id === dashboardId)?.title ?? "dashboard"}`}
             </button>
           </form>
         )}

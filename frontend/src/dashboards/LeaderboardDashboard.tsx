@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { BACKYARD_LOOP_KM, FRONTYARD_LOOP_KM, useTimerSettings } from "./timerCore";
+import { BACKYARD_LOOP_KM, FRONTYARD_LOOP_KM, useTimerSettings, useViewLoop } from "./timerCore";
 
 type ResultRow = {
   place: number | null;
@@ -19,7 +19,7 @@ type ResultRow = {
   lapsBehind: number | null;
   total: string;
 };
-type ResultsResponse = { eventName?: string; rows: ResultRow[] };
+type ResultsResponse = { eventName?: string; raceFinished?: boolean; rows: ResultRow[] };
 
 type DerivedRow = ResultRow & { laps: number | null; distanceKm: number | null };
 
@@ -85,7 +85,7 @@ const columns: { key: SortKey; label: string; numeric?: boolean }[] = [
   { key: "slowestLap", label: "Slowest" },
   { key: "averageLap", label: "Average" },
   { key: "total", label: "Total Time" },
-  { key: "distanceKm", label: "Total Distance", numeric: true },
+  { key: "distanceKm", label: "Acc. Distance" },
   { key: "status", label: "Status" },
 ];
 
@@ -113,7 +113,9 @@ function compare(a: DerivedRow, b: DerivedRow, key: SortKey, dir: SortDir): numb
 
 export function LeaderboardDashboard({ eventId }: { eventId: string }) {
   const { mode } = useTimerSettings(eventId);
+  const { viewLoop, setViewLoop } = useViewLoop(eventId);
   const [rows, setRows] = useState<ResultRow[]>([]);
+  const [raceFinished, setRaceFinished] = useState(false);
   const [eventName, setEventName] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -123,6 +125,7 @@ export function LeaderboardDashboard({ eventId }: { eventId: string }) {
 
   useEffect(() => {
     let cancelled = false;
+    let timer: number | null = null;
 
     async function load() {
       try {
@@ -136,8 +139,14 @@ export function LeaderboardDashboard({ eventId }: { eventId: string }) {
         if (cancelled) return;
         setRows(data.rows ?? []);
         setEventName(data.eventName ?? "");
+        setRaceFinished(Boolean(data.raceFinished));
         setError(null);
         setLastUpdated(new Date());
+        // No point polling a finished race — the data is static.
+        if (data.raceFinished && timer !== null) {
+          window.clearInterval(timer);
+          timer = null;
+        }
       } catch (err) {
         if (!cancelled) setError(err instanceof Error ? err.message : String(err));
       } finally {
@@ -149,26 +158,47 @@ export function LeaderboardDashboard({ eventId }: { eventId: string }) {
     setRows([]);
     setError(null);
     load();
-    const timer = window.setInterval(load, REFRESH_MS);
+    timer = window.setInterval(load, REFRESH_MS);
     return () => {
       cancelled = true;
-      window.clearInterval(timer);
+      if (timer !== null) window.clearInterval(timer);
     };
   }, [eventId]);
 
+  const maxLoop = useMemo(() => {
+    let m = 0;
+    for (const r of rows) {
+      if (typeof r.lapsCompleted === "number" && r.lapsCompleted > m) m = r.lapsCompleted;
+    }
+    return m;
+  }, [rows]);
+  const effectiveViewLoop =
+    raceFinished && viewLoop !== null && maxLoop >= 1
+      ? Math.min(Math.max(1, viewLoop), maxLoop)
+      : null;
+
   const sortedRows = useMemo(() => {
     // Lap count comes straight from RaceResult's `NumberOfLaps` field
-    // (exposed by the backend as `lapsCompleted`). We don't try to derive
-    // it from the cumulative `total` time — that depends on per-lap times
-    // which we don't have, and the schedule differs between backyard and
-    // frontyard. Last-resort fallback: leader-minus-`lapsBehind`, which
-    // only works when the API supplies `lapsBehind` (also rare in
-    // frontyard).
+    // (exposed by the backend as `lapsCompleted`). Last-resort fallback:
+    // leader-minus-`lapsBehind`, which only works when the API supplies it.
+    // When the user is replaying a finished race, we filter to runners who
+    // were still in at the start of the viewed loop and cap each runner's
+    // lap count at the viewed loop, so the distance/laps columns reflect
+    // the snapshot at that point in time.
     const loopKm = mode === "frontyard" ? FRONTYARD_LOOP_KM : BACKYARD_LOOP_KM;
     const leader = rows.find((r) => r.totalRank === 1);
     const leaderLaps = leader?.lapsCompleted ?? null;
 
-    const derived: DerivedRow[] = rows.map((r) => {
+    const visible =
+      effectiveViewLoop === null
+        ? rows
+        : rows.filter((r) =>
+            typeof r.lapsCompleted === "number"
+              ? r.lapsCompleted >= effectiveViewLoop - 1
+              : true,
+          );
+
+    const derived: DerivedRow[] = visible.map((r) => {
       let laps: number | null;
       if (r.lapsCompleted !== null) {
         laps = r.lapsCompleted;
@@ -177,6 +207,9 @@ export function LeaderboardDashboard({ eventId }: { eventId: string }) {
       } else {
         laps = null;
       }
+      if (effectiveViewLoop !== null && laps !== null) {
+        laps = Math.min(laps, effectiveViewLoop);
+      }
       return {
         ...r,
         laps,
@@ -184,7 +217,7 @@ export function LeaderboardDashboard({ eventId }: { eventId: string }) {
       };
     });
     return derived.sort((a, b) => compare(a, b, sortKey, sortDir));
-  }, [rows, sortKey, sortDir, mode]);
+  }, [rows, sortKey, sortDir, mode, effectiveViewLoop]);
 
   function toggleSort(key: SortKey) {
     if (key === sortKey) {
@@ -199,27 +232,106 @@ export function LeaderboardDashboard({ eventId }: { eventId: string }) {
     <section
       style={{
         width: "100%",
-        maxWidth: "60rem",
+        maxWidth: "1800px",
+        margin: "0 auto",
         display: "flex",
         flexDirection: "column",
+        alignItems: "center",
+        textAlign: "center",
         gap: "0.75rem",
       }}
     >
       {eventName && (
         <h2 style={{ margin: 0, fontWeight: 500, color: "#555" }}>{eventName}</h2>
       )}
-      <h1 style={{ margin: 0 }}>
-        Leaderboard{eventName ? ` — ${eventName}` : ""}
-      </h1>
+      <h1 style={{ margin: 0 }}>Leaderboard</h1>
 
       {loading && rows.length === 0 && <p>Loading…</p>}
+      {raceFinished && maxLoop >= 1 && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            padding: "0.4rem 0.6rem",
+            background: effectiveViewLoop !== null ? "#fff7ed" : "#f3f3f3",
+            border: "1px solid #ddd",
+            borderRadius: "0.3rem",
+          }}
+        >
+          <strong>Race finished:</strong>
+          <button
+            type="button"
+            onClick={() => setViewLoop(1)}
+            style={playbackBtn}
+            aria-label="Jump to first loop"
+          >
+            ⏮
+          </button>
+          <button
+            type="button"
+            onClick={() =>
+              setViewLoop(Math.max(1, (effectiveViewLoop ?? maxLoop) - 1))
+            }
+            style={playbackBtn}
+            aria-label="Previous loop"
+          >
+            ◀
+          </button>
+          <span style={{ minWidth: "9rem", textAlign: "center" }}>
+            {effectiveViewLoop !== null
+              ? `Loop ${effectiveViewLoop} / ${maxLoop} (${sortedRows.length})`
+              : `Static · max loop ${maxLoop}`}
+          </span>
+          <button
+            type="button"
+            onClick={() =>
+              setViewLoop(Math.min(maxLoop, (effectiveViewLoop ?? 0) + 1))
+            }
+            style={playbackBtn}
+            aria-label="Next loop"
+          >
+            ▶
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewLoop(maxLoop)}
+            style={playbackBtn}
+            aria-label="Jump to last loop"
+          >
+            ⏭
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewLoop(null)}
+            style={{
+              ...playbackBtn,
+              marginLeft: "auto",
+              cursor: "default",
+              opacity: 0.5,
+            }}
+            disabled
+          >
+            Static
+          </button>
+        </div>
+      )}
       {error && <p style={{ color: "crimson" }}>Error: {error}</p>}
 
       {sortedRows.length > 0 && (
+        <div
+          className="leaderboard-scroll"
+          style={{
+            width: "100%",
+            maxHeight: "calc(100vh - 20rem)",
+            overflow: "scroll",
+          }}
+        >
         <table
           style={{
             borderCollapse: "collapse",
-            width: "100%",
+            width: "max-content",
+            minWidth: "100%",
             fontSize: "1rem",
           }}
         >
@@ -261,8 +373,7 @@ export function LeaderboardDashboard({ eventId }: { eventId: string }) {
                 <td style={td}>
                   {countryAlpha2(r.country) ? (
                     <img
-                      src={`https://flagcdn.com/24x18/${countryAlpha2(r.country)}.png`}
-                      srcSet={`https://flagcdn.com/48x36/${countryAlpha2(r.country)}.png 2x, https://flagcdn.com/72x54/${countryAlpha2(r.country)}.png 3x`}
+                      src={`https://flagcdn.com/${countryAlpha2(r.country)}.svg`}
                       width={24}
                       height={18}
                       alt={r.country}
@@ -289,12 +400,14 @@ export function LeaderboardDashboard({ eventId }: { eventId: string }) {
             ))}
           </tbody>
         </table>
+        </div>
       )}
 
       {lastUpdated && (
         <p style={{ margin: 0, color: "#888", fontSize: "0.85rem" }}>
-          Updated {lastUpdated.toLocaleTimeString()} · auto-refresh every{" "}
-          {REFRESH_MS / 1000}s · {sortedRows.length} entries
+          {raceFinished
+            ? `Final results · ${sortedRows.length} entries`
+            : `Updated ${lastUpdated.toLocaleTimeString()} · auto-refresh every ${REFRESH_MS / 1000}s · ${sortedRows.length} entries`}
         </p>
       )}
     </section>
@@ -308,10 +421,20 @@ const th: React.CSSProperties = {
 const td: React.CSSProperties = {
   padding: "0.4rem 0.75rem",
   borderBottom: "1px solid #eee",
+  whiteSpace: "nowrap",
+  textAlign: "left",
 };
 const tdNum: React.CSSProperties = {
   ...td,
   fontVariantNumeric: "tabular-nums",
   textAlign: "right",
   width: "4rem",
+};
+const playbackBtn: React.CSSProperties = {
+  padding: "0.3rem 0.6rem",
+  fontSize: "1rem",
+  border: "1px solid #ccc",
+  borderRadius: "0.3rem",
+  background: "white",
+  cursor: "pointer",
 };

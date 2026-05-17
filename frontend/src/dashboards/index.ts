@@ -14,8 +14,13 @@ export type Dashboard = {
 
 export const dashboards: Dashboard[] = [
   {
+    id: "timer-setup",
+    title: "Settings",
+    component: TimerSetupDashboard,
+  },
+  {
     id: "participants",
-    title: "Number of participants",
+    title: "Overview",
     component: ParticipantsDashboard,
   },
   {
@@ -24,13 +29,8 @@ export const dashboards: Dashboard[] = [
     component: LeaderboardDashboard,
   },
   {
-    id: "timer-setup",
-    title: "Timer set-up",
-    component: TimerSetupDashboard,
-  },
-  {
     id: "timer",
-    title: "Timer dashboard",
+    title: "Dashboard",
     component: TimerDashboard,
   },
 ];

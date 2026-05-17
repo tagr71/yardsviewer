@@ -85,6 +85,59 @@ export function jerseyGreenKey(eventId: string) {
 export function jerseyYellowKey(eventId: string) {
   return `raceresult.jerseyYellow.${eventId}`;
 }
+export function viewLoopKey(eventId: string) {
+  return `raceresult.viewLoop.${eventId}`;
+}
+
+/** Cumulative seconds from race start to the START of loop `loopNumber` in
+ * frontyard mode (1-indexed). Loop 1 starts at 0 s. */
+export function frontyardElapsedAtLoopStart(
+  loopNumber: number,
+  lockAfter: number,
+): number {
+  const lockedLen = Math.max(1, FRONTYARD_START_MIN + 1 - lockAfter);
+  let total = 0;
+  for (let k = 1; k < loopNumber; k += 1) {
+    const naturalLen = Math.max(1, FRONTYARD_START_MIN + 1 - k);
+    const len = k <= lockAfter ? naturalLen : lockedLen;
+    total += len * 60;
+  }
+  return total;
+}
+
+/** Cross-tab-synced viewed-loop state. `null` means "live" (no override).
+ * Persisted in localStorage so the leaderboard tab sees the same value. */
+export function useViewLoop(eventId: string): {
+  viewLoop: number | null;
+  setViewLoop: (next: number | null) => void;
+} {
+  const read = () => {
+    const raw = localStorage.getItem(viewLoopKey(eventId));
+    if (raw === null) return null;
+    const n = parseInt(raw, 10);
+    return Number.isFinite(n) && n >= 1 ? n : null;
+  };
+  const [viewLoop, setLocal] = useState<number | null>(read);
+  useEffect(() => {
+    setLocal(read());
+    function onStorage(e: StorageEvent) {
+      if (e.key === viewLoopKey(eventId)) setLocal(read());
+    }
+    window.addEventListener("storage", onStorage);
+    const poll = window.setInterval(() => setLocal(read()), 2000);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.clearInterval(poll);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [eventId]);
+  function setViewLoop(next: number | null) {
+    if (next === null) localStorage.removeItem(viewLoopKey(eventId));
+    else localStorage.setItem(viewLoopKey(eventId), String(next));
+    setLocal(next);
+  }
+  return { viewLoop, setViewLoop };
+}
 
 function readIntSetting(key: string, fallback: number): number {
   const raw = localStorage.getItem(key);
@@ -99,7 +152,14 @@ export function pad(n: number) {
 
 export function formatDuration(totalMs: number): { signedDays: number; hms: string } {
   const sign = totalMs < 0 ? -1 : 1;
-  const totalSeconds = Math.floor(Math.abs(totalMs) / 1000);
+  // For elapsed (positive) use floor: seconds completed.
+  // For countdown (negative) use ceil: seconds remaining, so the user sees
+  // "...3, 2, 1, 0" reaching :00 exactly at the start instant rather than
+  // half a second early.
+  const absMs = Math.abs(totalMs);
+  const totalSeconds = totalMs < 0
+    ? Math.ceil(absMs / 1000)
+    : Math.floor(absMs / 1000);
   const days = Math.floor(totalSeconds / 86400);
   const hours = Math.floor((totalSeconds % 86400) / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -233,12 +293,31 @@ export function StatCard({
   );
 }
 
-/** Shared 1-second clock tick. */
+/** Shared clock tick. Uses a self-correcting `setTimeout` that fires as
+ * close as possible to each wall-clock second boundary, so a render with
+ * `Math.floor(diffMs/1000)` reliably catches the `:00` frame at the
+ * top of every second (instead of drifting and skipping it). */
 export function useNowTick(): Date {
   const [now, setNow] = useState<Date>(() => new Date());
   useEffect(() => {
-    const id = window.setInterval(() => setNow(new Date()), 1000);
-    return () => window.clearInterval(id);
+    let cancelled = false;
+    let timeoutId: number | null = null;
+    const schedule = () => {
+      if (cancelled) return;
+      // Time until the next wall-clock second boundary (with a tiny
+      // 5 ms cushion so we land *just after* the rollover, not before).
+      const ms = 1000 - (Date.now() % 1000) + 5;
+      timeoutId = window.setTimeout(() => {
+        if (cancelled) return;
+        setNow(new Date());
+        schedule();
+      }, ms);
+    };
+    schedule();
+    return () => {
+      cancelled = true;
+      if (timeoutId !== null) window.clearTimeout(timeoutId);
+    };
   }, []);
   return now;
 }

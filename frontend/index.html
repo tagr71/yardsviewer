@@ -4,6 +4,28 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Race participants</title>
+    <style>
+      .leaderboard-scroll {
+        scrollbar-gutter: stable;
+        scrollbar-width: auto;
+        scrollbar-color: #888 #f3f3f3;
+      }
+      .leaderboard-scroll::-webkit-scrollbar {
+        width: 14px;
+        height: 14px;
+      }
+      .leaderboard-scroll::-webkit-scrollbar-track {
+        background: #f3f3f3;
+      }
+      .leaderboard-scroll::-webkit-scrollbar-thumb {
+        background: #bbb;
+        border-radius: 7px;
+        border: 3px solid #f3f3f3;
+      }
+      .leaderboard-scroll::-webkit-scrollbar-thumb:hover {
+        background: #888;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

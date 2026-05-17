@@ -52,8 +52,9 @@ async def _fetch_list(
     *,
     listname_match: str | None = None,
     contest: str = "0",
-) -> tuple[dict[str, Any], str, str]:
-    """Fetch a published RaceResult list. Returns (list_payload, event_name, event_location).
+) -> tuple[dict[str, Any], str, str, str, str]:
+    """Fetch a published RaceResult list. Returns
+    (list_payload, event_name, event_location, event_date, event_time).
 
     The list is selected from the page's TabConfig.Lists. If `listname_match`
     is given, the first list whose name ends with `|{listname_match}` (or
@@ -78,6 +79,57 @@ async def _fetch_list(
             or RACERESULT_BASE.removeprefix("https://").removeprefix("http://")
         )
         event_name = config.get("eventname") or ""
+        # RaceResult publishes the date/time under various keys depending on the
+        # event template; the date is usually "yyyy-mm-dd" or "dd.mm.yyyy" and
+        # the time is usually "HH:MM" or "HH:MM:SS". Both may be missing.
+        event_date = ""
+        for date_key in ("eventdate", "EventDate", "date", "Date"):
+            value = config.get(date_key)
+            if isinstance(value, str) and value.strip():
+                event_date = value.strip()
+                break
+        event_time = ""
+        for time_key in (
+            "eventstarttime",
+            "EventStartTime",
+            "starttime",
+            "StartTime",
+            "eventtime",
+            "EventTime",
+            "time",
+            "Time",
+        ):
+            value = config.get(time_key)
+            if isinstance(value, str) and value.strip():
+                event_time = value.strip()
+                break
+        # The /{eventId}/{page}/config endpoint usually doesn't include the
+        # event date — that is published on the public landing page as a
+        # schema.org JSON-LD block. Fetch it once to recover at least the
+        # date (and, when present, the time).
+        if not event_date:
+            try:
+                landing = await client.get(
+                    f"https://{server}/{event_id}/", follow_redirects=True
+                )
+                if landing.status_code == 200:
+                    html = landing.text
+                    m_jsonld = re.search(
+                        r'"startDate"\s*:\s*"([^"]+)"', html, re.IGNORECASE
+                    )
+                    if m_jsonld:
+                        raw = m_jsonld.group(1).strip()
+                        # raw may be "YYYY-MM-DD" or full ISO
+                        m_full = re.match(
+                            r"^(\d{4}-\d{2}-\d{2})(?:[T ](\d{1,2}:\d{2}(?::\d{2})?))?",
+                            raw,
+                        )
+                        if m_full:
+                            event_date = m_full.group(1)
+                            if not event_time and m_full.group(2):
+                                event_time = m_full.group(2)
+            except httpx.HTTPError:
+                pass
         # RaceResult publishes the location under various keys depending on the
         # event template; check the common ones.
         event_location = ""
@@ -137,7 +189,7 @@ async def _fetch_list(
                 status_code=502, detail=f"RaceResult list request failed: {exc}"
             ) from exc
 
-    return payload, event_name, event_location
+    return payload, event_name, event_location, event_date, event_time
 
 
 def _count_rows(payload: Any) -> int:
@@ -449,7 +501,7 @@ def _flatten_results(payload: dict[str, Any]) -> list[dict[str, object]]:
 @app.get("/api/participants/count")
 async def participants_count(event_id: str | None = None) -> dict[str, object]:
     resolved = event_id or RACERESULT_EVENT_ID
-    payload, event_name, event_location = await _fetch_list(resolved, "participants")
+    payload, event_name, event_location, _, _ = await _fetch_list(resolved, "participants")
     try:
         count = _count_rows(payload)
     except ValueError as exc:
@@ -477,7 +529,7 @@ async def results(
     """
     resolved = event_id or RACERESULT_EVENT_ID
     effective = listname or "Resultatliste"
-    payload, event_name, event_location = await _fetch_list(
+    payload, event_name, event_location, event_date, event_time = await _fetch_list(
         resolved, "results", listname_match=effective
     )
     rows = _flatten_results(payload)
@@ -485,7 +537,7 @@ async def results(
     # Enrich with lastLap from the LIVE list when caller didn't override.
     if listname is None:
         try:
-            live_payload, _, _ = await _fetch_list(
+            live_payload, _, _, _, _ = await _fetch_list(
                 resolved, "results", listname_match="LIVE"
             )
             live_rows = _flatten_results(live_payload)
@@ -504,10 +556,60 @@ async def results(
             # LIVE list optional; ignore if it's not published for this event.
             pass
 
+    # Heuristic "race finished" detection: a backyard/frontyard race is
+    # considered finished once every row except at most one is marked DNF/
+    # DNS/DQ — i.e. there is a single survivor. Requires at least two rows
+    # so a one-runner placeholder list doesn't count.
+    race_finished = False
+    if len(rows) >= 2:
+        out_pattern = re.compile(r"dnf|dns|dq|withdrawn", re.IGNORECASE)
+        out_count = sum(
+            1 for r in rows if out_pattern.search(str(r.get("status") or ""))
+        )
+        race_finished = out_count >= len(rows) - 1
+
+    # Combine the RaceResult event date + start time into an ISO timestamp
+    # (yyyy-MM-ddTHH:MM:SS) so the frontend can auto-fill the Timer setup.
+    event_start_time = ""
+    iso_date = ""
+    m_date = re.match(r"^(\d{4})-(\d{1,2})-(\d{1,2})$", event_date)
+    if m_date:
+        y, mo, d = m_date.groups()
+        iso_date = f"{y}-{mo.zfill(2)}-{d.zfill(2)}"
+    else:
+        m_date = re.match(r"^(\d{1,2})[.\-/](\d{1,2})[.\-/](\d{4})$", event_date)
+        if m_date:
+            d, mo, y = m_date.groups()
+            iso_date = f"{y}-{mo.zfill(2)}-{d.zfill(2)}"
+    iso_time = ""
+    m_time = re.match(r"^(\d{1,2}):(\d{2})(?::(\d{2}))?$", event_time)
+    if m_time:
+        h, mi, s = m_time.groups()
+        iso_time = f"{h.zfill(2)}:{mi}:{(s or '00').zfill(2)}"
+    if iso_date and iso_time:
+        event_start_time = f"{iso_date}T{iso_time}"
+    elif iso_date:
+        # Default to 09:00 local when only a date is available — RaceResult
+        # rarely publishes the time of day on its landing pages.
+        event_start_time = f"{iso_date}T09:00:00"
+
+    # Detect backyard vs frontyard from the event name. Both formats use
+    # the same RaceResult template (splits are named "Yard N"), so the
+    # event name is the most reliable signal.
+    event_mode = ""
+    name_lc = event_name.lower()
+    if "frontyard" in name_lc:
+        event_mode = "frontyard"
+    elif "backyard" in name_lc:
+        event_mode = "backyard"
+
     return {
         "eventName": event_name,
         "eventLocation": event_location,
         "eventId": resolved,
+        "raceFinished": race_finished,
+        "eventStartTime": event_start_time,
+        "eventMode": event_mode,
         "rows": rows,
     }
 
@@ -525,7 +627,7 @@ async def results_fields(
     """Debug: returns DataFields + the first row of the LIVE (or named) result
     list so we can see exactly which RaceResult column names this event uses."""
     resolved = event_id or RACERESULT_EVENT_ID
-    payload, event_name, _ = await _fetch_list(
+    payload, event_name, _, _, _ = await _fetch_list(
         resolved, "results", listname_match=listname or "LIVE"
     )
     fields = payload.get("DataFields") or []

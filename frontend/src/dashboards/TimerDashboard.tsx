@@ -9,6 +9,7 @@ import {
   formatDuration,
   formatKm,
   formatOslo,
+  frontyardElapsedAtLoopStart,
   frontyardState,
   osloWallClockToInstant,
   pad,
@@ -17,6 +18,7 @@ import {
   playBell,
   useNowTick,
   useTimerSettings,
+  useViewLoop,
 } from "./timerCore";
 
 export function TimerDashboard({ eventId, eventName, eventLocation }: { eventId: string; eventName?: string; eventLocation?: string }) {
@@ -24,7 +26,7 @@ export function TimerDashboard({ eventId, eventName, eventLocation }: { eventId:
   const { startTime, mode, fyLock, fyMax, beepEnabled, location,
     jerseyPink, jerseyGreen, jerseyYellow } = useTimerSettings(eventId);
 
-  /** Background for the Remaining min of loop card based on seconds left. */
+  /** Background for the Remaining min:sec of loop card based on seconds left. */
   function remainingBg(secondsLeft: number): string {
     if (secondsLeft < 180) return "#fecaca"; // red
     if (secondsLeft < 360) return "#fef08a"; // yellow
@@ -45,13 +47,77 @@ export function TimerDashboard({ eventId, eventName, eventLocation }: { eventId:
   }
 
   const startInstant = osloWallClockToInstant(startTime);
-  const diffMs = startInstant ? now.getTime() - startInstant.getTime() : 0;
-  const beforeStart = diffMs < 0;
-  const label = beforeStart
-    ? "Remaining time until race starts"
-    : "Time after race was started";
+  const liveDiffMs = startInstant ? now.getTime() - startInstant.getTime() : 0;
+  const liveElapsedSec = Math.max(0, Math.floor(liveDiffMs / 1000));
 
-  const elapsedSeconds = Math.max(0, Math.floor(diffMs / 1000));
+  // Fetch leaderboard once + every 30 s. Used both for the runners-counters
+  // and for the "race finished" detection that drives playback mode.
+  const [raceFinished, setRaceFinished] = useState(false);
+  const [finalLaps, setFinalLaps] = useState<number[]>([]);
+  const [finalStatuses, setFinalStatuses] = useState<string[]>([]);
+  useEffect(() => {
+    let cancelled = false;
+    let t: number | null = null;
+    async function load() {
+      try {
+        const res = await fetch(`/api/results?event_id=${encodeURIComponent(eventId)}`);
+        if (!res.ok) return;
+        const data = (await res.json()) as {
+          raceFinished?: boolean;
+          rows?: { lapsCompleted: number | null; status?: string }[];
+        };
+        if (cancelled) return;
+        const rows = data.rows ?? [];
+        setRaceFinished(Boolean(data.raceFinished));
+        setFinalLaps(
+          rows.map((r) => (typeof r.lapsCompleted === "number" ? r.lapsCompleted : 0)),
+        );
+        setFinalStatuses(rows.map((r) => r.status ?? ""));
+        // No point polling a finished race — the data is static.
+        if (data.raceFinished && t !== null) {
+          window.clearInterval(t);
+          t = null;
+        }
+      } catch {
+        // Leave previous values in place on transient errors.
+      }
+    }
+    load();
+    t = window.setInterval(load, 30_000);
+    return () => {
+      cancelled = true;
+      if (t !== null) window.clearInterval(t);
+    };
+  }, [eventId]);
+
+  // Playback: when the race is finished, the user can step loop-by-loop.
+  // `viewLoop` is null while live; a number 1..maxLoop while scrubbing.
+  const { viewLoop, setViewLoop } = useViewLoop(eventId);
+  const maxLoop = finalLaps.length ? Math.max(1, ...finalLaps) : 0;
+  const inReplay = raceFinished && viewLoop !== null && viewLoop >= 1;
+  const effectiveViewLoop = inReplay
+    ? Math.min(Math.max(1, viewLoop as number), Math.max(1, maxLoop))
+    : null;
+
+  // Compute the elapsed seconds we render with. In replay we pin elapsed to
+  // 1 s into the start of `effectiveViewLoop` so the existing per-mode
+  // formulas (loopsCompleted / frontyardState) yield the correct loop state.
+  let elapsedSeconds = liveElapsedSec;
+  let diffMs = liveDiffMs;
+  if (effectiveViewLoop !== null) {
+    const replayElapsed =
+      mode === "backyard"
+        ? (effectiveViewLoop - 1) * LOOP_SECONDS + 1
+        : frontyardElapsedAtLoopStart(effectiveViewLoop, fyLock) + 1;
+    elapsedSeconds = replayElapsed;
+    diffMs = replayElapsed * 1000;
+  }
+  const beforeStart = effectiveViewLoop === null && liveDiffMs < 0;
+  const label = effectiveViewLoop !== null
+    ? `Replay · viewing loop ${effectiveViewLoop} of ${maxLoop}`
+    : beforeStart
+      ? "Remaining time until race starts"
+      : "Time after race was started";
 
   // Backyard
   const loopsCompleted = Math.floor(elapsedSeconds / LOOP_SECONDS);
@@ -69,48 +135,46 @@ export function TimerDashboard({ eventId, eventName, eventLocation }: { eventId:
   const frontyardCompleted = beforeStart ? 0 : fy.loopsCompleted;
   const frontyardDistance = frontyardCompleted * FRONTYARD_LOOP_KM;
 
-  // Poll the leaderboard every 30 s and derive how many runners are still in
-  // the current round vs. how many made it through the previous round.
-  //   thisRound     = runners whose lapsCompleted == max (the survivors who
-  //                   are about to go out for / are currently on the next loop)
-  //   previousRound = runners whose lapsCompleted == max - 1 (those who
-  //                   completed the round before but didn't make this one)
-  const [runnersThisRound, setRunnersThisRound] = useState<number | null>(null);
-  const [runnersPrevRound, setRunnersPrevRound] = useState<number | null>(null);
-  useEffect(() => {
-    let cancelled = false;
-    async function load() {
-      try {
-        const res = await fetch(`/api/results?event_id=${encodeURIComponent(eventId)}`);
-        if (!res.ok) return;
-        const data = (await res.json()) as {
-          rows?: { lapsCompleted: number | null }[];
-        };
-        if (cancelled) return;
-        const laps = (data.rows ?? [])
-          .map((r) => r.lapsCompleted)
-          .filter((n): n is number => typeof n === "number");
-        if (laps.length === 0) {
-          setRunnersThisRound(0);
-          setRunnersPrevRound(0);
-          return;
-        }
-        const max = Math.max(...laps);
-        setRunnersThisRound(laps.filter((n) => n === max).length);
-        setRunnersPrevRound(laps.filter((n) => n === max - 1).length);
-      } catch {
-        // Leave the previous counts in place on transient errors.
-      }
-    }
-    load();
-    const t = window.setInterval(load, 30_000);
-    return () => {
-      cancelled = true;
-      window.clearInterval(t);
-    };
-  }, [eventId]);
-  const thisRoundValue = runnersThisRound === null ? "—" : String(runnersThisRound);
-  const prevRoundValue = runnersPrevRound === null ? "—" : String(runnersPrevRound);
+  // Derive the runners-this-loop / completed-past-loop counters. The
+  // detailed semantics are documented inline below; in short:
+  //   startingThisLoop   = runners actively in loop N (subset of below)
+  //   completedPastLoop  = runners who finished loop N-1 (cumulative;
+  //                        ≥ startingThisLoop; equals 0 when N == 1).
+  const isOut = (s?: string) => /dnf|dns|dq|withdrawn/i.test(s ?? "");
+  let runnersStartingThisLoop: number | null = null;
+  let runnersCompletedPastLoop: number | null = null;
+  if (finalLaps.length > 0) {
+    // In live mode the "current loop number being run" is derived from the
+    // elapsed-time formulas, NOT from the leaderboard's max lap count: as
+    // soon as one runner finishes the loop early their `lapsCompleted`
+    // ticks up, but the loop itself is still in progress for everyone
+    // else. Using leaderboard max would make this counter collapse to 1
+    // (only the early finisher) the instant the first finish posts.
+    const liveCurrentLoop =
+      mode === "frontyard" ? fy.loopsCompleted + 1 : loopsCompleted + 1;
+    const referenceN =
+      effectiveViewLoop !== null ? effectiveViewLoop : liveCurrentLoop;
+    const threshold = referenceN - 1; // laps that must be completed
+    // "Runners starting this loop" (loop N) ⊆ "Runners completed past
+    // loop" (loop N-1). The difference is the runners who finished N-1
+    // but stopped (didn't go out for N). Both counters use the same
+    // `threshold`-laps-completed predicate; the "starting" counter
+    // additionally requires the runner to be active (still going).
+    //
+    //   * LIVE: "active" = current leaderboard status is not DNF/DQ/withdrawn.
+    //   * REPLAY: "active at loop N" ≡ final lap count reached N
+    //     (i.e. they later completed loop N). Final DNF/DQ labels can't
+    //     tell us when a runner stopped, so we use lap count instead.
+    runnersStartingThisLoop = inReplay
+      ? finalLaps.filter((n) => n >= referenceN).length
+      : finalLaps.filter(
+          (n, i) => n >= threshold && !isOut(finalStatuses[i]),
+        ).length;
+    runnersCompletedPastLoop =
+      referenceN < 2 ? 0 : finalLaps.filter((n) => n >= threshold).length;
+  }
+  const startingThisLoopValue = runnersStartingThisLoop === null ? "—" : String(runnersStartingThisLoop);
+  const completedPastLoopValue = runnersCompletedPastLoop === null ? "—" : String(runnersCompletedPastLoop);
 
   /** Length (min) of the loop after `currentLoopNumber` in frontyard, or null if none. */
   function nextFrontyardLoopMin(currentLoopNumber: number): number | null {
@@ -138,7 +202,7 @@ export function TimerDashboard({ eventId, eventName, eventLocation }: { eventId:
     return (
       <div style={panel}>
         <p style={{ margin: 0, color: "#555", fontWeight: 600 }}>
-          Competion this round
+          Competition this loop
         </p>
         <div
           style={{
@@ -168,8 +232,9 @@ export function TimerDashboard({ eventId, eventName, eventLocation }: { eventId:
 
   // Beep at 3 (×3), 2 (×2) and 1 (×1) minute remaining of the current loop,
   // and ring a bell at each loop rollover and on race finish (frontyard).
+  // Suppressed during replay (`inReplay`) so scrubbing doesn't trigger beeps.
   const activeRemainingSec: number | null =
-    !startInstant || beforeStart
+    !startInstant || beforeStart || inReplay
       ? null
       : mode === "backyard"
         ? remainingInLoop
@@ -220,7 +285,8 @@ export function TimerDashboard({ eventId, eventName, eventLocation }: { eventId:
     <section
       style={{
         width: "100%",
-        maxWidth: "72rem",
+        maxWidth: "1800px",
+        margin: "0 auto",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -228,10 +294,85 @@ export function TimerDashboard({ eventId, eventName, eventLocation }: { eventId:
       }}
     >
       <h1 style={{ margin: 0 }}>
-        Timer dashboard{eventName ? ` — ${eventName}` : ""}
+        Dashboard{eventName ? ` — ${eventName}` : ""}
       </h1>
 
       <NowOsloRow now={now} eventLocation={location || eventLocation} />
+
+      {raceFinished && maxLoop >= 1 && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            padding: "0.5rem 0.75rem",
+            border: "1px solid #ddd",
+            borderRadius: "0.4rem",
+            background: inReplay ? "#fff7ed" : "#f3f3f3",
+          }}
+        >
+          <span style={{ fontWeight: 600 }}>
+            {inReplay ? "Replay" : "Race finished"}
+          </span>
+          <button
+            type="button"
+            onClick={() => setViewLoop(1)}
+            disabled={inReplay && effectiveViewLoop === 1}
+            title="First loop"
+            style={playbackBtn}
+          >
+            ⏮
+          </button>
+          <button
+            type="button"
+            onClick={() =>
+              setViewLoop(Math.max(1, (effectiveViewLoop ?? maxLoop) - 1))
+            }
+            disabled={inReplay && effectiveViewLoop === 1}
+            title="Previous loop"
+            style={playbackBtn}
+          >
+            ◀
+          </button>
+          <span style={{ fontVariantNumeric: "tabular-nums", minWidth: "5.5rem", textAlign: "center" }}>
+            Loop {effectiveViewLoop ?? maxLoop} / {maxLoop}
+          </span>
+          <button
+            type="button"
+            onClick={() =>
+              setViewLoop(Math.min(maxLoop, (effectiveViewLoop ?? 0) + 1))
+            }
+            disabled={inReplay && effectiveViewLoop === maxLoop}
+            title="Next loop"
+            style={playbackBtn}
+          >
+            ▶
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewLoop(maxLoop)}
+            disabled={inReplay && effectiveViewLoop === maxLoop}
+            title="Last loop"
+            style={playbackBtn}
+          >
+            ⏭
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewLoop(null)}
+            disabled
+            title="Static"
+            style={{
+              ...playbackBtn,
+              marginLeft: "0.5rem",
+              cursor: "default",
+              opacity: 0.5,
+            }}
+          >
+            Static
+          </button>
+        </div>
+      )}
 
       {startInstant ? (
         <>
@@ -282,6 +423,7 @@ export function TimerDashboard({ eventId, eventName, eventLocation }: { eventId:
               bg="#facc15" valueColor="black" labelColor="black" />
               <StatCard label="Loop time-limit (min)" value="60" valueColor="black" labelColor="black" />
               <StatCard label="Next loop time-limit (min)" value="60" valueColor="black" labelColor="black" />
+              <div style={{ flexBasis: "100%", height: 0 }} />
               <StatCard
                 label="Distance completed"
                 value={formatKm(backyardDistance)}
@@ -300,15 +442,16 @@ export function TimerDashboard({ eventId, eventName, eventLocation }: { eventId:
                 label={
                   beforeStart
                     ? "Loop starts at race start"
-                    : "Remaining min of loop"
+                    : "Remaining min:sec of loop"
                 }
                 value={`${pad(remMin)}:${pad(remSec)}`}
                 bg={beforeStart ? undefined : remainingBg(remainingInLoop)}
                 valueColor="black"
                 labelColor="black"
               />
-              <StatCard label="Runners this round" value={thisRoundValue} valueColor="black" labelColor="black" />
-              <StatCard label="Runners previous round" value={prevRoundValue} valueColor="black" labelColor="black" />
+              <div style={{ flexBasis: "100%", height: 0 }} />
+              <StatCard label="Runners completed past loop" value={completedPastLoopValue} valueColor="black" labelColor="black" />
+              <StatCard label="Runners starting this loop" value={startingThisLoopValue} valueColor="black" labelColor="black" />
             </div>
           )}
 
@@ -342,6 +485,7 @@ export function TimerDashboard({ eventId, eventName, eventLocation }: { eventId:
                       valueColor="black" labelColor="black" />
                     );
                   })()}
+                  <div style={{ flexBasis: "100%", height: 0 }} />
                   <StatCard
                     label="Distance completed"
                     value={formatKm(0)}
@@ -360,9 +504,10 @@ export function TimerDashboard({ eventId, eventName, eventLocation }: { eventId:
                     label="Loop starts at race start"
                     value="30:00"
                   />
+                  <div style={{ flexBasis: "100%", height: 0 }} />
                   <JerseyCard loopNumber={1} />
-                  <StatCard label="Runners this round" value={thisRoundValue} valueColor="black" labelColor="black" />
-                  <StatCard label="Runners previous round" value={prevRoundValue} valueColor="black" labelColor="black" />
+                  <StatCard label="Runners completed past loop" value={completedPastLoopValue} valueColor="black" labelColor="black" />
+                  <StatCard label="Runners starting this loop" value={startingThisLoopValue} valueColor="black" labelColor="black" />
                 </>
               ) : fy.finished ? (
                 <>
@@ -373,6 +518,7 @@ export function TimerDashboard({ eventId, eventName, eventLocation }: { eventId:
                   <StatCard label="Current loop" value="—" bg="#facc15" valueColor="black" labelColor="black" />
                   <StatCard label="Loop time-limit (min)" value="—" valueColor="black" labelColor="black" />
                   <StatCard label="Next loop time-limit (min)" value="—" valueColor="black" labelColor="black" />
+                  <div style={{ flexBasis: "100%", height: 0 }} />
                   <StatCard
                     label="Distance completed"
                     value={formatKm(frontyardDistance)}
@@ -387,9 +533,10 @@ export function TimerDashboard({ eventId, eventName, eventLocation }: { eventId:
                     value="00:00"
                     valueColor="#117a3a"
                   />
+                  <div style={{ flexBasis: "100%", height: 0 }} />
                   <JerseyCard loopNumber={null} />
-                  <StatCard label="Runners this round" value={thisRoundValue} valueColor="black" labelColor="black" />
-                  <StatCard label="Runners previous round" value={prevRoundValue} valueColor="black" labelColor="black" />
+                  <StatCard label="Runners completed past loop" value={completedPastLoopValue} valueColor="black" labelColor="black" />
+                  <StatCard label="Runners starting this loop" value={startingThisLoopValue} valueColor="black" labelColor="black" />
                 </>
               ) : (
                 <>
@@ -414,6 +561,7 @@ export function TimerDashboard({ eventId, eventName, eventLocation }: { eventId:
                       valueColor="black" labelColor="black" />
                     );
                   })()}
+                  <div style={{ flexBasis: "100%", height: 0 }} />
                   <StatCard
                     label="Distance completed"
                     value={formatKm(frontyardDistance)}
@@ -429,15 +577,16 @@ export function TimerDashboard({ eventId, eventName, eventLocation }: { eventId:
                     );
                   })()}
                   <StatCard
-                    label="Remaining min of loop"
+                    label="Remaining min:sec of loop"
                     value={`${pad(fyMin)}:${pad(fySec)}`}
                     bg={remainingBg(fy.remainingSec)}
                     valueColor="black"
                     labelColor="black"
                   />
+                  <div style={{ flexBasis: "100%", height: 0 }} />
                   <JerseyCard loopNumber={fy.loopNumber} />
-                  <StatCard label="Runners this round" value={thisRoundValue} valueColor="black" labelColor="black" />
-                  <StatCard label="Runners previous round" value={prevRoundValue} valueColor="black" labelColor="black" />
+                  <StatCard label="Runners completed past loop" value={completedPastLoopValue} valueColor="black" labelColor="black" />
+                  <StatCard label="Runners starting this loop" value={startingThisLoopValue} valueColor="black" labelColor="black" />
                 </>
               )}
             </div>
@@ -445,9 +594,18 @@ export function TimerDashboard({ eventId, eventName, eventLocation }: { eventId:
         </>
       ) : (
         <p style={{ color: "#888" }}>
-          Set the race start time in the Timer set-up dashboard to start the clock.
+          Set the race start time in the Settings dashboard to start the clock.
         </p>
       )}
     </section>
   );
 }
+
+const playbackBtn: React.CSSProperties = {
+  padding: "0.3rem 0.6rem",
+  fontSize: "1rem",
+  border: "1px solid #ccc",
+  borderRadius: "0.3rem",
+  background: "white",
+  cursor: "pointer",
+};
