@@ -173,7 +173,7 @@ export function LeaderboardDashboard({ eventId }: { eventId: string }) {
     return m;
   }, [rows]);
   const effectiveViewLoop =
-    raceFinished && viewLoop !== null && maxLoop >= 1
+    viewLoop !== null && maxLoop >= 1
       ? Math.min(Math.max(1, viewLoop), maxLoop)
       : null;
 
@@ -247,7 +247,7 @@ export function LeaderboardDashboard({ eventId }: { eventId: string }) {
       <h1 style={{ margin: 0 }}>Leaderboard</h1>
 
       {loading && rows.length === 0 && <p>Loading…</p>}
-      {raceFinished && maxLoop >= 1 && (
+      {maxLoop >= 1 && (
         <div
           style={{
             display: "flex",
@@ -259,7 +259,7 @@ export function LeaderboardDashboard({ eventId }: { eventId: string }) {
             borderRadius: "0.3rem",
           }}
         >
-          <strong>Race finished:</strong>
+          <strong>{raceFinished ? "Race finished:" : "Replay:"}</strong>
           <button
             type="button"
             onClick={() => setViewLoop(1)}
@@ -281,7 +281,7 @@ export function LeaderboardDashboard({ eventId }: { eventId: string }) {
           <span style={{ minWidth: "9rem", textAlign: "center" }}>
             {effectiveViewLoop !== null
               ? `Loop ${effectiveViewLoop} / ${maxLoop} (${sortedRows.length})`
-              : `Static · max loop ${maxLoop}`}
+              : `Live · loop ${maxLoop}`}
           </span>
           <button
             type="button"
@@ -307,12 +307,12 @@ export function LeaderboardDashboard({ eventId }: { eventId: string }) {
             style={{
               ...playbackBtn,
               marginLeft: "auto",
-              cursor: "default",
-              opacity: 0.5,
+              cursor: effectiveViewLoop === null ? "default" : "pointer",
+              opacity: effectiveViewLoop === null ? 0.5 : 1,
             }}
-            disabled
+            disabled={effectiveViewLoop === null}
           >
-            Static
+            Live
           </button>
         </div>
       )}

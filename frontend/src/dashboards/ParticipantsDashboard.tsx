@@ -94,7 +94,7 @@ export function ParticipantsDashboard({ eventId }: { eventId: string }) {
     return max;
   }, [rows]);
   const effectiveViewLoop =
-    raceFinished && viewLoop !== null && maxLoop >= 1
+    viewLoop !== null && maxLoop >= 1
       ? Math.min(Math.max(1, viewLoop), maxLoop)
       : null;
 
@@ -140,10 +140,11 @@ export function ParticipantsDashboard({ eventId }: { eventId: string }) {
         : completedLaps(r);
     return sum + laps * loopKm;
   }, 0);
+  const currentLoop = effectiveViewLoop ?? maxLoop;
   const hasResults = rows.length > 0;
   const fmt = (n: number) => (hasResults ? n.toString() : "—");
   const fmtKm = (n: number) =>
-    hasResults ? `${n.toFixed(n >= 100 ? 0 : 1)} km` : "—";
+    hasResults ? n.toFixed(n >= 100 ? 0 : 1) : "—";
 
   return (
     <section
@@ -163,7 +164,7 @@ export function ParticipantsDashboard({ eventId }: { eventId: string }) {
         <h2 style={{ margin: 0, fontWeight: 500, color: "#555" }}>{eventName}</h2>
       )}
       <h1 style={{ margin: 0 }}>Overview</h1>
-      {raceFinished && maxLoop >= 1 && (
+      {maxLoop >= 1 && (
         <div
           style={{
             display: "flex",
@@ -175,7 +176,7 @@ export function ParticipantsDashboard({ eventId }: { eventId: string }) {
             borderRadius: "0.3rem",
           }}
         >
-          <strong>Race finished:</strong>
+          <strong>{raceFinished ? "Race finished:" : "Replay:"}</strong>
           <button
             type="button"
             onClick={() => setViewLoop(1)}
@@ -197,7 +198,7 @@ export function ParticipantsDashboard({ eventId }: { eventId: string }) {
           <span style={{ minWidth: "9rem", textAlign: "center" }}>
             {effectiveViewLoop !== null
               ? `Loop ${effectiveViewLoop} / ${maxLoop}`
-              : `Static · max loop ${maxLoop}`}
+              : `Live · loop ${maxLoop}`}
           </span>
           <button
             type="button"
@@ -223,12 +224,12 @@ export function ParticipantsDashboard({ eventId }: { eventId: string }) {
             style={{
               ...playbackBtn,
               marginLeft: "auto",
-              cursor: "default",
-              opacity: 0.5,
+              cursor: effectiveViewLoop === null ? "default" : "pointer",
+              opacity: effectiveViewLoop === null ? 0.5 : 1,
             }}
-            disabled
+            disabled={effectiveViewLoop === null}
           >
-            Static
+            Live
           </button>
         </div>
       )}
@@ -248,6 +249,7 @@ export function ParticipantsDashboard({ eventId }: { eventId: string }) {
             <StatCard label="Men still in" value={fmt(maleStillIn)} bg="#2563eb" color="white" />
           </div>
           <div style={statGridBottom}>
+            <StatCard label="Current loop" value={fmt(currentLoop)} bg="#0f766e" color="white" />
             <StatCard label="Acc. distance (km)" value={fmtKm(accKm)} bg="#117a3a" color="white" />
           </div>
         </>
@@ -350,7 +352,7 @@ const registeredCell: React.CSSProperties = {
 
 const statGridBottom: React.CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "minmax(0, 1fr)",
+  gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
   gap: "1rem",
   width: "100%",
 };
