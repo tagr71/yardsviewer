@@ -174,6 +174,29 @@ export function formatKm(km: number): string {
   return `${km.toFixed(1)} km`;
 }
 
+/** Format a non-negative seconds count as ``H:MM:SS`` (drops the hour
+ * when zero, so short laps render as ``MM:SS``). */
+export function formatHms(sec: number): string {
+  const s = Math.max(0, Math.round(sec));
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const r = s % 60;
+  const mm = pad(m);
+  const ss = pad(r);
+  return h > 0 ? `${h}:${mm}:${ss}` : `${mm}:${ss}`;
+}
+
+/** Shared button style used by the per-loop replay scrubber in every
+ * dashboard (Leaderboard, Jerseys, Dashboard). */
+export const playbackBtn: React.CSSProperties = {
+  padding: "0.3rem 0.6rem",
+  fontSize: "1rem",
+  border: "1px solid #ccc",
+  borderRadius: "0.3rem",
+  background: "white",
+  cursor: "pointer",
+};
+
 function osloOffsetMinutes(instant: Date): number {
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone: OSLO_TZ,

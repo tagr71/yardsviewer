@@ -1,9 +1,9 @@
 import type { ComponentType } from "react";
-import { ParticipantsDashboard } from "./ParticipantsDashboard";
-import { LeaderboardDashboard } from "./LeaderboardDashboard";
-import { TimerDashboard } from "./TimerDashboard";
-import { TimerSetupDashboard } from "./TimerSetupDashboard";
-import { JerseysDashboard } from "./JerseysDashboard";
+import { Overview } from "./Overview";
+import { Leaderboard } from "./Leaderboard";
+import { Dashboard as DashboardView } from "./Dashboard";
+import { Settings } from "./Settings";
+import { Jerseys } from "./Jerseys";
 
 export type DashboardProps = { eventId: string; eventName?: string; eventLocation?: string };
 
@@ -17,26 +17,26 @@ export const dashboards: Dashboard[] = [
   {
     id: "timer-setup",
     title: "Settings",
-    component: TimerSetupDashboard,
+    component: Settings,
   },
   {
     id: "participants",
     title: "Overview",
-    component: ParticipantsDashboard,
+    component: Overview,
   },
   {
     id: "leaderboard",
     title: "Leaderboard",
-    component: LeaderboardDashboard,
+    component: Leaderboard,
   },
   {
     id: "timer",
     title: "Dashboard",
-    component: TimerDashboard,
+    component: DashboardView,
   },
   {
     id: "jerseys",
     title: "Jerseys",
-    component: JerseysDashboard,
+    component: Jerseys,
   },
 ];

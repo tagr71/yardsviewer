@@ -4,14 +4,21 @@ from __future__ import annotations
 
 import os
 import re
+import ssl
 from pathlib import Path
 from typing import Any
 
 import httpx
+import truststore
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
+
+# Use the operating system's certificate store so corporate / Windows CAs work
+# out of the box. certifi (httpx's default bundle) doesn't see locally
+# installed/proxy roots and fails with CERTIFICATE_VERIFY_FAILED.
+_SSL_CONTEXT = truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
 
 # Load backend/.env regardless of the current working directory.
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
@@ -66,7 +73,9 @@ async def _fetch_list(
     _validate_event_id(event_id)
     config_url = f"{RACERESULT_BASE}/{event_id}/{page}/config?lang=en"
 
-    async with httpx.AsyncClient(timeout=10.0, headers=_auth_headers()) as client:
+    async with httpx.AsyncClient(
+        timeout=10.0, headers=_auth_headers(), verify=_SSL_CONTEXT
+    ) as client:
         try:
             resp = await client.get(config_url)
             resp.raise_for_status()
@@ -219,7 +228,7 @@ async def _fetch_details_list(
     _validate_event_id(event_id)
     base = "https://my2.raceresult.com"
     config_url = f"{base}/{event_id}/RRPublish/data/config"
-    async with httpx.AsyncClient(timeout=10.0) as client:
+    async with httpx.AsyncClient(timeout=10.0, verify=_SSL_CONTEXT) as client:
         try:
             resp = await client.get(config_url)
             resp.raise_for_status()
@@ -617,6 +626,17 @@ async def results(
             # LIVE list optional; ignore if it's not published for this event.
             pass
 
+    # Enrich each row with `perLoop` = list of `{loop, time, lapSec, totalSec}`
+    # from the hidden Details list, so the frontend can show the lap time
+    # for a specific historical loop when the user replays the race.
+    details_payload = await _fetch_details_list(resolved, "results")
+    lap_times_by_bib = _parse_lap_times(details_payload)
+    if lap_times_by_bib:
+        for row in rows:
+            laps = lap_times_by_bib.get(str(row.get("bib") or ""))
+            if laps:
+                row["perLoop"] = laps
+
     # Heuristic "race finished" detection: a backyard/frontyard race is
     # considered finished once every row except at most one is marked DNF/
     # DNS/DQ — i.e. there is a single survivor. Requires at least two rows
@@ -682,6 +702,76 @@ async def health() -> dict[str, str]:
 
 _GREEN_LOOP_RE = re.compile(r"^PoengRunde\s*0*(\d+)$", re.IGNORECASE)
 _PINK_LOOP_RE = re.compile(r"^MellomtidPoengRunde\s*0*(\d+)$", re.IGNORECASE)
+
+
+def _parse_lap_times(
+    payload: dict[str, Any] | None,
+) -> dict[str, list[dict[str, Any]]]:
+    """Per-lap split times keyed by bib, parsed from the Details list.
+
+    Each entry is ``{loop, time, lapSec, totalSec}`` where ``time`` is the
+    elapsed lap time (e.g. ``"47:30"``) and ``totalSec`` is the cumulative
+    race time at the end of that lap, in seconds.
+    """
+    if payload is None:
+        return {}
+    fields = payload.get("DataFields") or []
+    bib_i = -1
+    lap_i = -1
+    total_i = -1
+    # The Details list uses formula expressions like `[Lap{n}]` and
+    # `[Total{n}]` where `{n}` is the lap index. We identify the columns
+    # by substring match against those tokens.
+    for i, f in enumerate(fields):
+        if not isinstance(f, str):
+            continue
+        s = f.strip()
+        if s == "BIB":
+            bib_i = i
+        elif s == "[Lap{n}]":
+            lap_i = i
+        elif s == "[Total{n}]":
+            total_i = i
+    if bib_i < 0 or lap_i < 0:
+        return {}
+    out: dict[str, list[dict[str, Any]]] = {}
+    data = payload.get("data")
+    # Data is a dict of group -> list-of-rows; each row is one lap.
+    groups: list[list[Any]] = []
+    if isinstance(data, dict):
+        for v in data.values():
+            if isinstance(v, list):
+                groups.append(v)
+    elif isinstance(data, list):
+        groups.append(data)
+    for rows in groups:
+        for raw in rows:
+            if not isinstance(raw, list):
+                continue
+            bib = str(raw[bib_i]).strip() if bib_i < len(raw) else ""
+            if not bib:
+                continue
+            lap_time = str(raw[lap_i]).strip() if lap_i < len(raw) else ""
+            if not lap_time:
+                continue
+            lst = out.setdefault(bib, [])
+            loop_n = len(lst) + 1
+            total_text = (
+                str(raw[total_i]).strip()
+                if 0 <= total_i < len(raw)
+                else ""
+            )
+            total_sec = _parse_hms(total_text) or 0
+            lap_sec = _parse_hms(lap_time)
+            lst.append(
+                {
+                    "loop": loop_n,
+                    "time": lap_time,
+                    "lapSec": lap_sec if lap_sec is not None else 0,
+                    "totalSec": total_sec,
+                }
+            )
+    return out
 
 
 def _identity_indices(fields: list[Any]) -> dict[str, int]:
@@ -920,74 +1010,7 @@ async def jerseys(event_id: str | None = None) -> dict[str, object]:
     if not yellow and live_payload is not None:
         yellow = parse_yellow(live_payload)
 
-    # Per-lap split times keyed by bib, parsed from the Details list.
-    # Each entry is `{loop, time, totalSec}` where `time` is the elapsed
-    # lap time (e.g. "47:30") and `totalSec` is the cumulative race time
-    # at the end of that lap, in seconds. Used by the Yellow detail view.
-    def parse_lap_times(
-        payload: dict[str, Any] | None,
-    ) -> dict[str, list[dict[str, Any]]]:
-        if payload is None:
-            return {}
-        fields = payload.get("DataFields") or []
-        bib_i = -1
-        lap_i = -1
-        total_i = -1
-        # The Details list uses formula expressions like `[Lap{n}]` and
-        # `[Total{n}]` where `{n}` is the lap index. We identify the
-        # columns by substring match against those tokens.
-        for i, f in enumerate(fields):
-            if not isinstance(f, str):
-                continue
-            s = f.strip()
-            if s == "BIB":
-                bib_i = i
-            elif s == "[Lap{n}]":
-                lap_i = i
-            elif s == "[Total{n}]":
-                total_i = i
-        if bib_i < 0 or lap_i < 0:
-            return {}
-        out: dict[str, list[dict[str, Any]]] = {}
-        data = payload.get("data")
-        # Data is a dict of group -> list-of-rows; each row is one lap.
-        groups: list[list[Any]] = []
-        if isinstance(data, dict):
-            for v in data.values():
-                if isinstance(v, list):
-                    groups.append(v)
-        elif isinstance(data, list):
-            groups.append(data)
-        for rows in groups:
-            for raw in rows:
-                if not isinstance(raw, list):
-                    continue
-                bib = str(raw[bib_i]).strip() if bib_i < len(raw) else ""
-                if not bib:
-                    continue
-                lap_time = str(raw[lap_i]).strip() if lap_i < len(raw) else ""
-                if not lap_time:
-                    continue
-                lst = out.setdefault(bib, [])
-                loop_n = len(lst) + 1
-                total_text = (
-                    str(raw[total_i]).strip()
-                    if 0 <= total_i < len(raw)
-                    else ""
-                )
-                total_sec = _parse_hms(total_text) or 0
-                lap_sec = _parse_hms(lap_time)
-                lst.append(
-                    {
-                        "loop": loop_n,
-                        "time": lap_time,
-                        "lapSec": lap_sec if lap_sec is not None else 0,
-                        "totalSec": total_sec,
-                    }
-                )
-        return out
-
-    lap_times_by_bib = parse_lap_times(details_payload)
+    lap_times_by_bib = _parse_lap_times(details_payload)
     if lap_times_by_bib:
         for e in yellow:
             laps = lap_times_by_bib.get(str(e.get("bib", "")))
