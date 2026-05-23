@@ -210,3 +210,79 @@ FastAPI backend on port 8000.
 
 `event_id` falls back to `RACERESULT_EVENT_ID` from `backend/.env` when
 omitted.
+
+## Testing
+
+The jersey ranking pipeline ships with a deterministic end-to-end unit
+test plus a CLI script that replays the same simulated race
+loop-by-loop. Both consume the shared
+[frontend/src/dashboards/simulateRace.ts](frontend/src/dashboards/simulateRace.ts)
+module, so any seed reproduces identical fixtures in both places.
+
+### Prerequisites
+
+- Node 18+.
+- Install frontend deps once: `cd frontend; npm install`.
+
+### Unit tests
+
+```powershell
+cd frontend
+npm test           # one-shot run
+npm run test:watch # re-run on change
+```
+
+What the suite asserts (file:
+[frontend/src/dashboards/__tests__/jerseyRanking.test.ts](frontend/src/dashboards/__tests__/jerseyRanking.test.ts)):
+
+- A fictive 20-runner / 10-loop / 30-minute-mass-start race is
+  generated from a fixed seed (`12345`) via the shared simulator.
+- For every loop `k = 1..10` and every (jersey, sex) combination
+  (pink/green/yellow × K/M), the test compares the **rank-1 holder
+  plus the full top-3 ordering** computed two ways:
+  - **(A)** Direct sort of raw simulated times into 3/2/1 (pink, by
+    800 m split) and 10/8/6/4/2/1 (green, by lap finish) ladders, with
+    yellow ranked by accumulated lap time.
+  - **(B)** The same data fed through `rankByPoints` / `rankYellow`
+    from `frontend/src/dashboards/jerseyRanking.ts` (the module the
+    real dashboards use).
+- Two extra cases exercise the tie-break paths explicitly: pink/green
+  ties resolve to the runner with most points on the snapshot loop;
+  yellow ties resolve to the fastest lap on the snapshot loop.
+
+A green run prints `64 passed`.
+
+### Loop-by-loop simulation script
+
+Replay the same race interactively and watch jersey ownership evolve:
+
+```powershell
+cd frontend
+npm run simulate:jerseys
+```
+
+Defaults: 20 runners, 10 loops, seed 42, prints all three jerseys for
+both sexes (top 5 each). All flags are optional; pass them after `--`
+so npm forwards them to the script:
+
+| Flag           | Values                            | Default | Purpose                                                        |
+| -------------- | --------------------------------- | ------- | -------------------------------------------------------------- |
+| `--runners=N`  | integer ≥ 2                       | `20`    | Total runners (split half K, half M).                          |
+| `--loops=N`    | integer ≥ 1                       | `10`    | Number of mass-start loops to simulate.                        |
+| `--seed=N`     | any integer                       | `42`    | RNG seed — same seed produces the same race.                   |
+| `--jersey=...` | `pink` \| `green` \| `yellow` \| `all` | `all`   | Which jersey(s) to display.                                    |
+| `--sex=...`    | `K` \| `M` \| `both`              | `both`  | Which gender(s) to display.                                    |
+| `--top=N`      | integer ≥ 1                       | `5`     | Rows shown per (jersey, sex) table.                            |
+
+Example — focus on the pink jersey for Women over a short race:
+
+```powershell
+npm run simulate:jerseys -- --runners=20 --loops=4 --seed=42 --jersey=pink --sex=K --top=3
+```
+
+Each loop section ends with a `→ JERSEY SEX holder change: bib X → bib Y`
+line whenever the rank-1 runner changes from the previous loop, so the
+shifting jersey ownership is easy to spot. The script does not touch
+the backend — it computes everything locally from the seeded
+simulation.
+

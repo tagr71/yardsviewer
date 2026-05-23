@@ -11,81 +11,19 @@ import {
   useTimerSettings,
   useViewLoop,
 } from "./timerCore";
-
-type JerseyEntry = {
-  bib: string;
-  name: string;
-  club: string;
-  sex: string;
-  points?: number;
-  perLoop?: { loop: number; points?: number; time?: string; lapSec?: number; totalSec?: number }[];
-  totalSec?: number;
-  lapsCompleted?: number;
-};
-
-type JerseysPayload = {
-  eventName?: string;
-  raceFinished?: boolean;
-  green: JerseyEntry[];
-  pink: JerseyEntry[];
-  yellow: JerseyEntry[];
-};
-
-type Sex = "M" | "K";
-
-/** Sum the runner's perLoop points up to (and including) `maxLoop`.
- * Falls back to the backend-reported total if no perLoop data exists. */
-function sumUpto(entry: JerseyEntry, maxLoop: number): number {
-  if (entry.perLoop && entry.perLoop.length > 0) {
-    return entry.perLoop
-      .filter((p) => p.loop <= maxLoop)
-      .reduce((acc, p) => acc + (p.points ?? 0), 0);
-  }
-  return entry.points ?? 0;
-}
-
-/** Points the runner scored in exactly `loop`, or 0 if none. Used as the
- * tie-breaker for the pink/green jerseys when totals are equal. */
-function pointsAtLoop(entry: JerseyEntry, loop: number): number {
-  const p = (entry.perLoop ?? []).find((x) => x.loop === loop);
-  return p?.points ?? 0;
-}
-
-/** Lap time (seconds) the runner ran in exactly `loop`, or 0 if missing.
- * Used as the tie-breaker for the yellow jersey when total times tie. */
-function lapSecAtLoop(entry: JerseyEntry, loop: number): number {
-  const p = (entry.perLoop ?? []).find((x) => x.loop === loop);
-  return p?.lapSec ?? 0;
-}
-
-/** Accumulated race time (seconds) from loop 1 through `maxLoop`. Prefers
- * the per-loop cumulative `totalSec` at the cap; falls back to summing
- * `lapSec` values; and finally to the entry-level `totalSec` when no
- * per-loop data is available. */
-function accTimeUpto(entry: JerseyEntry, maxLoop: number): number {
-  const capped = (entry.perLoop ?? []).filter((p) => p.loop <= maxLoop);
-  if (capped.length > 0) {
-    const last = capped[capped.length - 1];
-    if (typeof last.totalSec === "number" && last.totalSec > 0) {
-      return last.totalSec;
-    }
-    const sum = capped.reduce(
-      (acc, p) => acc + (typeof p.lapSec === "number" ? p.lapSec : 0),
-      0,
-    );
-    if (sum > 0) return sum;
-  }
-  return entry.totalSec ?? 0;
-}
-
-/** Highest loop number with any recorded data on the runner. */
-function lastCompletedLoop(entry: JerseyEntry): number {
-  let max = 0;
-  for (const p of entry.perLoop ?? []) {
-    if (p.loop > max) max = p.loop;
-  }
-  return max;
-}
+import {
+  buildSexLookup,
+  lapSecAtLoop,
+  pointsAtLoop,
+  rankByPoints,
+  rankYellow,
+  resolveSex,
+  sumUpto,
+  type DisplayRow,
+  type JerseyEntry,
+  type JerseysPayload,
+  type Sex,
+} from "./jerseyRanking";
 
 const TABLE_BG: Record<"pink" | "green" | "yellow", string> = {
   pink: "#fce7f3",
@@ -144,16 +82,6 @@ function JerseyBadges({ jerseys }: { jerseys?: ("pink" | "green" | "yellow")[] }
     </span>
   );
 }
-
-type DisplayRow = {
-  rank: number;
-  bib: string;
-  name: string;
-  club: string;
-  value: string;
-  sub?: string;
-  jerseys?: ("pink" | "green" | "yellow")[];
-};
 
 function JerseyTable({
   jersey,
@@ -270,44 +198,6 @@ function JerseyTable({
       </div>
     </div>
   );
-}
-
-/** Resolve a runner's sex from supplementary lookup maps. The yellow
- * (and most green) lists publish a sex column, but the pink list does
- * not, so we cross-reference the other lists by bib. */
-function resolveSex(entry: JerseyEntry, lookup: Map<string, string>): string {
-  if (entry.sex === "M" || entry.sex === "K") return entry.sex;
-  return lookup.get(entry.bib) ?? entry.sex ?? "";
-}
-
-/** Rank entries by accumulated points (descending) up to `cap`, split by
- * sex, capped at the top 10. Shared between the pink and green jersey
- * standings — both use the same per-loop points model. Ties on total
- * points are broken by the points scored on the snapshot loop itself. */
-function rankByPoints(
-  entries: JerseyEntry[],
-  sexLookup: Map<string, string>,
-  cap: number,
-): Record<Sex, DisplayRow[]> {
-  const out: Record<Sex, DisplayRow[]> = { M: [], K: [] };
-  for (const sex of ["K", "M"] as Sex[]) {
-    const ranked = entries
-      .filter((e) => resolveSex(e, sexLookup) === sex)
-      .map((e) => ({ e, pts: sumUpto(e, cap) }))
-      .filter((x) => x.pts > 0)
-      .sort((a, b) => {
-        if (b.pts !== a.pts) return b.pts - a.pts;
-        return pointsAtLoop(b.e, cap) - pointsAtLoop(a.e, cap);
-      });
-    out[sex] = ranked.map(({ e, pts }, i) => ({
-      rank: i + 1,
-      bib: e.bib,
-      name: e.name,
-      club: e.club,
-      value: `${pts} p`,
-    }));
-  }
-  return out;
 }
 
 export function Jerseys({ eventId, eventName }: { eventId: string; eventName?: string }) {
@@ -477,16 +367,13 @@ export function Jerseys({ eventId, eventName }: { eventId: string; eventName?: s
 
   // Sex lookup combines whatever sex info the green and yellow lists
   // provide, so the pink list (which omits sex) can still be classified.
-  const sexLookup = useMemo(() => {
-    const map = new Map<string, string>();
-    for (const e of data?.green ?? []) {
-      if (e.sex === "M" || e.sex === "K") map.set(e.bib, e.sex);
-    }
-    for (const e of data?.yellow ?? []) {
-      if (e.sex === "M" || e.sex === "K") map.set(e.bib, e.sex);
-    }
-    return map;
-  }, [data]);
+  const sexLookup = useMemo(
+    () =>
+      buildSexLookup(
+        data ?? { green: [], pink: [], yellow: [] },
+      ),
+    [data],
+  );
 
   // Effective cut-off loops: the displayed standings always reflect the
   // current `snapshotLoop` (either the replay scrubber value or, in live
@@ -498,60 +385,16 @@ export function Jerseys({ eventId, eventName }: { eventId: string; eventName?: s
     snapshotLoop !== null ? Math.min(jerseyPink, snapshotLoop) : jerseyPink;
 
   // Yellow: ranked by accumulated total time (ascending — fastest first).
-  // The ranking always uses cumulative time up to the *effective* yellow
-  // snapshot loop, which is `snapshotLoop` capped at `jerseyYellow` — so
-  // once the yellow competition's last loop is in the books, the holder
-  // is frozen for the remainder of the race / for any later replay loop.
-  // Ties on the ranking time are broken by the lap time on that loop.
-  // We filter to runners who had completed at least the effective loop.
+  // The ranking uses cumulative time up to the *effective* yellow snapshot
+  // loop, which is `snapshotLoop` capped at `jerseyYellow` — so once the
+  // yellow competition's last loop is in the books, the holder is frozen
+  // for the remainder of the race / for any later replay loop.
   const yellowEffectiveLoop: number | null =
     snapshotLoop !== null ? Math.min(snapshotLoop, jerseyYellow) : null;
-  const yellowBySex = useMemo(() => {
-    const out: Record<Sex, DisplayRow[]> = { M: [], K: [] };
-    for (const sex of ["K", "M"] as Sex[]) {
-      const filtered = (data?.yellow ?? []).filter((e) => {
-        if (resolveSex(e, sexLookup) !== sex || (e.totalSec ?? 0) <= 0) return false;
-        if (yellowEffectiveLoop !== null) {
-          const lapsCompleted =
-            typeof e.lapsCompleted === "number" ? e.lapsCompleted : 0;
-          if (lapsCompleted < yellowEffectiveLoop) return false;
-        }
-        return true;
-      });
-      const rankingTime = (e: JerseyEntry): number =>
-        yellowEffectiveLoop !== null
-          ? accTimeUpto(e, yellowEffectiveLoop)
-          : e.totalSec ?? 0;
-      const sorted = [...filtered].sort((a, b) => {
-        const ta = rankingTime(a);
-        const tb = rankingTime(b);
-        if (ta !== tb) return ta - tb;
-        // Tie: faster lap on the effective loop (or the most recent shared
-        // loop in the rare pre-snapshot case) wins.
-        const tieLoop =
-          yellowEffectiveLoop !== null
-            ? yellowEffectiveLoop
-            : Math.max(lastCompletedLoop(a), lastCompletedLoop(b), 1);
-        return lapSecAtLoop(a, tieLoop) - lapSecAtLoop(b, tieLoop);
-      });
-      out[sex] = sorted.map((e, i) => ({
-        rank: i + 1,
-        bib: e.bib,
-        name: e.name,
-        club: e.club,
-        value: formatHms(rankingTime(e)),
-        sub:
-          typeof e.lapsCompleted === "number"
-            ? `(${
-                yellowEffectiveLoop !== null
-                  ? Math.min(e.lapsCompleted, yellowEffectiveLoop)
-                  : e.lapsCompleted
-              } loops)`
-            : undefined,
-      }));
-    }
-    return out;
-  }, [data, sexLookup, yellowEffectiveLoop]);
+  const yellowBySex = useMemo(
+    () => rankYellow(data?.yellow ?? [], sexLookup, yellowEffectiveLoop),
+    [data, sexLookup, yellowEffectiveLoop],
+  );
 
   // Green: backend supplies per-loop points + total. Cap at greenCap.
   // Tie-break: most points on the snapshot loop.
