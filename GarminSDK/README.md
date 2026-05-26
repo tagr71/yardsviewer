@@ -1,44 +1,55 @@
 # Rotvollfjæra Frontyard Ultra — Connect IQ Data Field
 
 A full-screen Connect IQ data field for Garmin watches (Fenix 7 family,
-Epix 2 family, FR955/965) that helps you pace a Frontyard Ultra (Backyard
-with shrinking loop times) when the watch firmware does not expose Workout
-Step Name, Workout Notes, or "Time to Next Repeat" to data fields.
+Epix 2 family, FR955/965) that helps you pace a Frontyard Ultra (a
+Backyard-style event with shrinking loop times) when the watch firmware
+does not expose Workout Step Name, Workout Notes, or "Time to Next
+Repeat" to data fields.
 
 It uses only the activity's **elapsed time** and **elapsed distance** to
 compute everything.
 
 ## What it shows
 
-Full screen, around an outer red countdown ring with a green runner dot:
+A green countdown donut around the bezel and, inside it, top to bottom:
 
-- **Outer red ring** — sweeps clockwise as time in the current loop elapses;
+- **Green donut** — sweeps clockwise as time in the current loop elapses;
   fully closed at 0:00.
-- **Green unfilled circle on the ring** — the "runner" dot. One full lap of
-  the dot equals one configured loop distance (`loopMeters`). If it leads
-  the red sweep, you are ahead of pace; if it trails, you are behind.
-- **`n/max`** (top) — current loop / total loops. Colored **pink** at loop 10,
+- **Three blue markers on the donut** — placed at the 3 / 2 / 1 minute
+  remaining positions of the current loop (skipped if a threshold is
+  longer than the loop itself).
+- **White runner dot** (black contour) — rides clockwise along the donut.
+  One full lap of the dot equals one configured loop distance
+  (`loopMeters`). If it leads the green sweep, you're ahead of pace;
+  if it trails, you're behind.
+- **`n/max`** — current loop / total loops. Coloured **pink** at loop 10,
   **green** at loop 15, **blue** otherwise.
-- **3 / 2 / 1 dots** — three blue filled circles labeled `3`, `2`, `1` from
-  left to right. All three are filled at loop start; one empties (left to
-  right) as remaining time crosses 3:00, 2:00, and 1:00.
-- **`MM:SS`** (red, left) — time remaining in the current loop, with
-  `min to next` label.
-- **`min/km`** (green, right) — required pace for the loop.
+- **`MM:SS`** (red, left) — time remaining in the current loop,
+  with a tiny `min to next` label.
+- **`min/km`** (blue, right) — required pace for the loop,
+  with a tiny `min/km` label.
 - **`HH:MM:SS`** — current clock time (24h).
-- **Tiny row** — running average pace `min/km` (left) and distance covered
-  in the current loop `km` (right).
-- **`Next HH:MM:SS`** — predicted clock time when the next loop starts
-  (hidden until the activity timer is running).
+- **`bpm` + `km`** (red, small) — current heart rate and distance
+  covered in the current loop.
+- **`min/km`** (red) — running average pace.
+- **`HH:MM:SS` + `next loop`** — predicted clock time when the next loop
+  starts (hidden until the activity timer is running).
 
-When the elapsed time passes the final loop's end the field reads
+When elapsed time passes the final loop's end the field reads
 `DONE <max>` and the dynamic values become dashes.
 
 ## Audio + vibration alerts
 
-When 3, 2, and 1 minute remain in the current loop the field plays
-`TONE_LOUD_BEEP` and a short vibrate pulse (where supported by the device
-and enabled in the user's profile).
+When 3, 2 and 1 minute remain in the current loop the field plays
+escalating bell + vibrate patterns:
+
+- **3 min** — 3 beeps + 3 buzzes
+- **2 min** — 2 beeps + 2 buzzes
+- **1 min** — 1 beep  + 1 buzz
+
+Tones only sound on watches with a speaker (e.g. fenix 7 Pro, fenix 8,
+FR165/265/955/965, Venu series). Watches without a speaker (e.g. plain
+fenix 7) will still vibrate.
 
 ## Schedule logic
 
@@ -64,14 +75,14 @@ In Garmin Connect → Connect IQ Apps → Frontyard Loop Timer → Settings:
 
 ## Build
 
-Requires the [Connect IQ SDK](https://developer.garmin.com/connect-iq/) (tested
-with 9.1) and a developer key.
+Requires the [Connect IQ SDK](https://developer.garmin.com/connect-iq/)
+(tested with 9.1) and a developer key.
 
 ```powershell
 # from this folder
 $sdk = "$env:APPDATA\Garmin\ConnectIQ\Sdks\connectiq-sdk-win-9.1.0-2026-03-09-6a872a80b"
 & "$sdk\bin\monkeyc.bat" `
-    -d fenix7x `
+    -d fenix7 `
     -f monkey.jungle `
     -o bin\FrontyardLoopTimer.prg `
     -y $env:APPDATA\Garmin\ConnectIQ\developer_key.der
@@ -82,17 +93,23 @@ $sdk = "$env:APPDATA\Garmin\ConnectIQ\Sdks\connectiq-sdk-win-9.1.0-2026-03-09-6a
 1. Connect the watch over USB.
 2. Copy `bin/FrontyardLoopTimer.prg` to `GARMIN\APPS\` on the watch.
 3. Safely eject.
-4. On the watch: **START** → activity (e.g. **Run**) → **MENU** → **Settings →
-   Data Screens** → pick a screen → **Layout → Single field (Connect IQ)** →
+4. On the watch: **START** → activity (e.g. **Run**) → **MENU** →
+   **Settings → Data Screens** → pick a screen →
+   **Layout → Single field (Connect IQ)** →
    **Edit Fields → Connect IQ → Frontyard Loop Timer**.
 
 ## Simulator
 
 ```powershell
-& "$sdk\bin\simulator.exe"
-& "$sdk\bin\monkeydo.bat" bin\FrontyardLoopTimer.prg fenix7x
+& "$sdk\bin\connectiq.bat"
+& "$sdk\bin\monkeydo.bat" bin\FrontyardLoopTimer.prg fenix7
 ```
 
+To hear/feel the alerts in the simulator, enable
+**Settings → Audible Alerts** and **Settings → Vibration**
+in the simulator's menu bar.
+
 The simulator caches app properties in
-`%LOCALAPPDATA%\Temp\com.garmin.connectiq\GARMIN\APPS\SETTINGS\`. Delete that
-folder to reset to the defaults compiled from `resources/settings/properties.xml`.
+`%LOCALAPPDATA%\Temp\com.garmin.connectiq\GARMIN\APPS\SETTINGS\`. Delete
+that folder to reset to the defaults compiled from
+`resources/settings/properties.xml`.

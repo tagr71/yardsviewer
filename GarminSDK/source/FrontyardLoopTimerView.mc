@@ -7,12 +7,21 @@ using Toybox.System;
 using Toybox.WatchUi;
 
 // Full-screen Connect IQ data field for Rotvollfjæra Frontyard Ultra.
-// Layout (top to bottom):
-//   L n/max                           (PINK at loop 10, GREEN at loop 15)
-//   countdown MM:SS  |  target pace min/km
-//   clock HH:MM:SS
-//   Next HH:MM                        (predicted start of next loop)
-// Plays a bell + short vibrate when 3, 2, and 1 minute remain in each loop.
+//
+// Layout (top to bottom, all inside a green countdown donut):
+//   n/max                       (loop counter; PINK at 10, GREEN at 15, else BLUE)
+//   MM:SS  |  min/km            (countdown in RED, target pace in BLUE)
+//   HH:MM:SS                    (real-time clock)
+//   bpm  |  km                  (current HR + current-loop distance, RED, XTINY)
+//   min/km                      (running-average pace, RED, TINY)
+//   HH:MM:SS                    (predicted start of next loop, hidden until start)
+//   next loop
+//
+// The donut's outer half is clipped by the bezel. Three blue markers on
+// the band mark the 3/2/1-minute-remaining positions. A white runner dot
+// rides the band, advancing one full lap per configured loop distance.
+// Plays escalating bell+vibrate alerts (3 beeps at 3 min, 2 at 2 min,
+// 1 at 1 min remaining).
 class FrontyardLoopTimerView extends WatchUi.DataField {
 
     // --- schedule ---
@@ -36,6 +45,7 @@ class FrontyardLoopTimerView extends WatchUi.DataField {
     private var _loopDurSec;           // seconds; duration of current loop
     private var _loopDistanceM;        // meters covered in the current loop
     private var _started;              // true once the activity timer has run
+    private var _currentHr;            // current heart rate, bpm; 0 = n/a
 
     function initialize() {
         DataField.initialize();
@@ -50,6 +60,7 @@ class FrontyardLoopTimerView extends WatchUi.DataField {
         _loopDurSec           = 0;
         _loopDistanceM        = 0.0;
         _started              = false;
+        _currentHr            = 0;
         rebuildSchedule();
     }
 
@@ -139,7 +150,7 @@ class FrontyardLoopTimerView extends WatchUi.DataField {
         for (var t = 0; t < thresholds.size(); t += 1) {
             var thr = thresholds[t];
             if (_prevTimeToNext > thr && _timeToNext <= thr) {
-                ringBell();
+                ringBell(3 - t); // 3 beeps @3min, 2 @2min, 1 @1min
                 break;
             }
         }
@@ -163,6 +174,10 @@ class FrontyardLoopTimerView extends WatchUi.DataField {
         } else {
             _avgPaceMinPerKm = 0.0;
         }
+
+        // Current heart rate (bpm).
+        var hr = info.currentHeartRate;
+        _currentHr = (hr != null && hr > 0) ? hr : 0;
     }
 
     function onUpdate(dc) {
@@ -180,7 +195,7 @@ class FrontyardLoopTimerView extends WatchUi.DataField {
         // fully red when _timeToNext reaches 0. The stroke is drawn so that
         // its outer half extends past the screen edge (and is clipped),
         // leaving roughly 5 visible pixels flush with the bezel.
-        var ringPen = 12;
+        var ringPen = 20;
         // For an even screen width like 260px, the geometric center sits at
         // 129.5, not 130. Using a Float center keeps the ring perfectly
         // concentric with the bezel and equally thick on every side.
@@ -194,33 +209,60 @@ class FrontyardLoopTimerView extends WatchUi.DataField {
             var sweep = (elapsedInLoop.toFloat() / _loopDurSec.toFloat()) * 360.0;
             if (sweep > 360.0) { sweep = 360.0; }
             if (sweep >= 359.5) {
-                dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
+                dc.setColor(Graphics.COLOR_GREEN, Graphics.COLOR_TRANSPARENT);
                 dc.drawCircle(ringCx, ringCy, ringR);
             } else if (sweep > 0.5) {
-                dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
+                dc.setColor(Graphics.COLOR_GREEN, Graphics.COLOR_TRANSPARENT);
                 var startDeg = 90;
                 var endDeg   = 90 - sweep;
                 dc.drawArc(ringCx, ringCy, ringR, Graphics.ARC_CLOCKWISE, startDeg, endDeg);
             }
         }
         dc.setPenWidth(1);
+
+        // Three warning markers on the donut at the positions corresponding
+        // to 3 / 2 / 1 minute remaining in the current loop. Each is a small
+        // blue filled circle with a 2 px black contour. Skipped when the loop
+        // is shorter than the threshold.
+        if (_loopDurSec > 0) {
+            var markerBandR = (w < h ? w : h) / 2 - ringPen / 4;
+            var thresholds  = [180, 120, 60];
+            var mrkR        = 5;
+            for (var mi = 0; mi < 3; mi += 1) {
+                var rem = thresholds[mi];
+                if (rem >= _loopDurSec) { continue; }
+                var elapsedAt = _loopDurSec - rem;
+                var frac      = elapsedAt.toFloat() / _loopDurSec.toFloat();
+                var mtheta    = (90.0 - 360.0 * frac) * Math.PI / 180.0;
+                var mx        = ringCx + (markerBandR * Math.cos(mtheta)).toNumber();
+                var my        = ringCy - (markerBandR * Math.sin(mtheta)).toNumber();
+                dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+                dc.fillCircle(mx, my, mrkR + 2);
+                dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
+                dc.fillCircle(mx, my, mrkR);
+            }
+            dc.setColor(fg, Graphics.COLOR_TRANSPARENT);
+        }
         dc.setColor(fg, Graphics.COLOR_TRANSPARENT);
 
-        // Green runner dot: rides clockwise around the donut, starting at the
+        // White runner dot: rides clockwise around the donut, starting at the
         // top (North). One full lap of the dot == one full loop distance
-        // (_loopMeters). If the dot is ahead of the red fill, the runner is
-        // on pace / safe.
+        // (_loopMeters). It is a filled circle whose diameter matches the
+        // donut thickness, positioned so it sits in the middle of the
+        // visible blue band (the outer half of the donut is clipped by the
+        // bezel, so the visible mid-radius is roughly screenRadius - pen/4).
         if (!_done && _loopMeters > 0) {
             var lapFrac = _loopDistanceM / _loopMeters.toFloat();
             lapFrac = lapFrac - Math.floor(lapFrac);
             var theta = (90.0 - 360.0 * lapFrac) * Math.PI / 180.0;
-            var runnerR = (w < h ? w : h) / 2 - 3;
+            var dotRad = ringPen / 2;
+            var runnerR = (w < h ? w : h) / 2 - ringPen / 4;
             var gx    = ringCx + (runnerR * Math.cos(theta)).toNumber();
             var gy    = ringCy - (runnerR * Math.sin(theta)).toNumber();
-            dc.setColor(Graphics.COLOR_GREEN, Graphics.COLOR_TRANSPARENT);
-            dc.setPenWidth(2);
-            dc.drawCircle(gx, gy, 8);
-            dc.setPenWidth(1);
+            dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+            dc.fillCircle(gx, gy, dotRad + 2);
+            dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+            dc.fillCircle(gx, gy, dotRad);
             dc.setColor(fg, Graphics.COLOR_TRANSPARENT);
         }
 
@@ -258,7 +300,7 @@ class FrontyardLoopTimerView extends WatchUi.DataField {
 
         // Use system fonts that scale per-device; pick conservative sizes.
         var fTiny    = Graphics.FONT_XTINY;
-        var fSmall   = Graphics.FONT_MEDIUM;        // Next time
+        var fSmall   = Graphics.FONT_SMALL;         // Next time
         var fBig     = Graphics.FONT_LARGE;         // loop counter (n/max)
         var fClock   = Graphics.FONT_NUMBER_MILD;   // clock
         var fHero    = Graphics.FONT_LARGE;         // countdown + pace
@@ -268,15 +310,18 @@ class FrontyardLoopTimerView extends WatchUi.DataField {
         var hBig    = Graphics.getFontHeight(fBig);
         var hClock  = Graphics.getFontHeight(fClock);
         var hHero   = Graphics.getFontHeight(fHero);
+        var hAvgRow = Graphics.getFontHeight(Graphics.FONT_TINY);
+        var hHrRow  = Graphics.getFontHeight(Graphics.FONT_XTINY);
 
         // Vertical stack: loop / countdown+clock / pace / Next.
-        var gapLoop  = 22; // gap below loop row (room for PINK/GREEN + 3-dot indicator)
-        var gapHero  = 16; // gap below countdown/clock row
-        var gapNext  = 4;  // gap above Next row
+        var gapLoop  = 10; // gap below loop row
+        var gapHero  = 4;  // gap below countdown/clock row
+        var gapNext  = 0;  // gap above Next row
+        var loopOffsetY = 14;  // nudge loop counter below donut crown
         var contentH =
-              hBig                         // loop row
+              loopOffsetY + hBig           // loop row (with offset)
             + gapLoop + hHero              // countdown + pace (with unit overlap)
-            + gapHero + hClock + hTiny     // clock + tiny avg pace
+            + gapHero + hClock + hHrRow + hAvgRow   // clock + hr + avg pace / distance
             + gapNext + hSmall + hTiny;    // next time + "next loop" label
 
         var yTop = (h - contentH) / 2;
@@ -293,99 +338,81 @@ class FrontyardLoopTimerView extends WatchUi.DataField {
             }
         }
         dc.setColor(loopColor, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(cx, yTop, fBig, loopStr, Graphics.TEXT_JUSTIFY_CENTER);
+        // Nudge the loop counter slightly below the top crown of the donut
+        // so the green ring doesn't crowd the digits.
+        dc.drawText(cx, yTop + loopOffsetY, fBig, loopStr, Graphics.TEXT_JUSTIFY_CENTER);
         dc.setColor(fg, Graphics.COLOR_TRANSPARENT);
 
         // Row: countdown (left) and target pace (right), below loop row.
-        var yTime    = yTop + hBig + gapLoop;
+        var yTime    = yTop + loopOffsetY + hBig + gapLoop;
 
-        // Three-dot warning indicator centered between loop row and countdown.
-        // All three dots are filled at loop start; one dot empties (left to
-        // right) as remaining time crosses 3:00, 2:00, 1:00. Each dot is
-        // labeled with the remaining-minutes threshold (3 / 2 / 1).
-        var filled = 0;
-        if (!_done && _timeToNext > 0) {
-            if (_timeToNext > 180)      { filled = 3; }
-            else if (_timeToNext > 120) { filled = 2; }
-            else if (_timeToNext > 60)  { filled = 1; }
-            else                         { filled = 0; }
-        }
-        var dotR     = 8;
-        var dotGap   = 10;
-        var dotsY    = yTop + hBig + (gapLoop / 2);
-        var labels   = ["3", "2", "1"];
-        var labelGap = 4;
-        // Measure label width using the smallest available font so the
-        // 3-dot indicator stays compact.
-        var wLbl     = dc.getTextWidthInPixels("3", fTiny);
-        var groupW   = 2 * dotR + labelGap + wLbl;
-        var dotsTotW = 3 * groupW + 2 * dotGap;
-        var startGX  = (w - dotsTotW) / 2;
-        for (var di = 0; di < 3; di += 1) {
-            var groupX = startGX + di * (groupW + dotGap);
-            var lblX   = groupX + wLbl / 2;
-            var cxd    = groupX + wLbl + labelGap + dotR;
-            dc.setColor(fg, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(lblX, dotsY - Graphics.getFontHeight(fTiny) / 2,
-                        fTiny, labels[di], Graphics.TEXT_JUSTIFY_CENTER);
-            if (di >= 3 - filled) {
-                dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
-                dc.fillCircle(cxd, dotsY, dotR);
-                dc.setColor(fg, Graphics.COLOR_TRANSPARENT);
-            } else {
-                dc.setPenWidth(2);
-                dc.drawCircle(cxd, dotsY, dotR);
-                dc.setPenWidth(1);
-            }
-        }
         var col1X = w * 0.30;  // countdown
         var col2X = w * 0.70;  // pace
         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
         dc.drawText(col1X, yTime,             fHero, timeStr,       Graphics.TEXT_JUSTIFY_CENTER);
-        dc.drawText(col1X, yTime + hHero - 3, fTiny, "min to next", Graphics.TEXT_JUSTIFY_CENTER);
-        dc.setColor(Graphics.COLOR_GREEN, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(col1X, yTime + hHero - 9, fTiny, "min to next", Graphics.TEXT_JUSTIFY_CENTER);
+        dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
         dc.drawText(col2X, yTime,             fHero, paceStr,       Graphics.TEXT_JUSTIFY_CENTER);
-        dc.drawText(col2X, yTime + hHero - 3, fTiny, "min/km",      Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawText(col2X, yTime + hHero - 9, fTiny, "min/km",      Graphics.TEXT_JUSTIFY_CENTER);
         dc.setColor(fg, Graphics.COLOR_TRANSPARENT);
 
         // Real-time clock (centered) below.
         var yClock = yTime + hHero + gapHero;
         dc.drawText(cx, yClock, fClock, clockStr, Graphics.TEXT_JUSTIFY_CENTER);
 
-        // Tiny line below the clock: running-average pace on the left,
-        // distance covered in the current loop on the right. The two values
-        // are centered as a group so the left/right whitespace is equal.
+        // Bottom block: HR + current-loop distance share one XTINY row,
+        // running-average pace sits centered just below.
+        var fAvg        = Graphics.FONT_TINY;
+        var hAvg        = hAvgRow;
         var avgValueStr = _avgPaceMinPerKm > 0.0 ? formatPace(_avgPaceMinPerKm) : "--:--";
         var avgFullStr  = avgValueStr + " min/km";
         var distFullStr = distStr + " km";
-        var gapMid      = 12;
-        var wAvg        = dc.getTextWidthInPixels(avgFullStr,  fTiny);
-        var wDist       = dc.getTextWidthInPixels(distFullStr, fTiny);
-        var totalW      = wAvg + gapMid + wDist;
-        var startX      = (w - totalW) / 2;
-        var yTinyLine   = yClock + hClock;
-        dc.setColor(Graphics.COLOR_GREEN, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(startX,             yTinyLine, fTiny, avgFullStr,  Graphics.TEXT_JUSTIFY_LEFT);
-        dc.drawText(startX + wAvg + gapMid, yTinyLine, fTiny, distFullStr, Graphics.TEXT_JUSTIFY_LEFT);
+
+        var fHr        = Graphics.FONT_XTINY;
+        var hHr        = Graphics.getFontHeight(fHr);
+        var hrStr      = (_currentHr > 0 ? _currentHr.toString() : "--") + " bpm";
+        var bottomShiftUp = 8;
+        var yHrLine    = yClock + hClock - bottomShiftUp;
+        var gapHrDist  = 12;
+        var wHrTxt     = dc.getTextWidthInPixels(hrStr,       fHr);
+        var wDistTxt   = dc.getTextWidthInPixels(distFullStr, fHr);
+        var hrStartX   = (w - (wHrTxt + gapHrDist + wDistTxt)) / 2;
+        dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(hrStartX,                      yHrLine, fHr, hrStr,       Graphics.TEXT_JUSTIFY_LEFT);
+        dc.drawText(hrStartX + wHrTxt + gapHrDist, yHrLine, fHr, distFullStr, Graphics.TEXT_JUSTIFY_LEFT);
+
+        var yTinyLine  = yHrLine + hHr;
+        dc.drawText(cx, yTinyLine, fAvg, avgFullStr, Graphics.TEXT_JUSTIFY_CENTER);
         dc.setColor(fg, Graphics.COLOR_TRANSPARENT);
 
         // Predicted start time of next loop (hidden until the activity has
         // actually been started).
         if (_started) {
-            var yNext = yClock + hClock + hTiny + gapNext;
+            var yNext = yClock + hClock + hHr + hAvg + gapNext - bottomShiftUp;
             dc.drawText(cx, yNext, fSmall, nextStr, Graphics.TEXT_JUSTIFY_CENTER);
             dc.drawText(cx, yNext + hSmall - 3, fTiny, "next loop", Graphics.TEXT_JUSTIFY_CENTER);
         }
     }
 
-    private function ringBell() {
+    private function ringBell(count) {
+        if (count < 1) { count = 1; }
         if (Toybox has :Attention) {
             if (Attention has :playTone) {
-                try { Attention.playTone(Attention.TONE_LOUD_BEEP); } catch (e) {}
+                try {
+                    for (var i = 0; i < count; i += 1) {
+                        Attention.playTone(Attention.TONE_LOUD_BEEP);
+                    }
+                } catch (e) {}
             }
             if (Attention has :vibrate) {
                 try {
-                    var pattern = [ new Attention.VibeProfile(75, 400) ];
+                    var pattern = new [count * 2 - 1];
+                    for (var j = 0; j < count; j += 1) {
+                        pattern[j * 2] = new Attention.VibeProfile(100, 400);
+                        if (j * 2 + 1 < pattern.size()) {
+                            pattern[j * 2 + 1] = new Attention.VibeProfile(0, 200);
+                        }
+                    }
                     Attention.vibrate(pattern);
                 } catch (e) {}
             }
