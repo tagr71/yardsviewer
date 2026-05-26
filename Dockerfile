@@ -25,7 +25,8 @@ WORKDIR /web
 # Install deps with the lockfile only first so this layer caches when
 # package.json/package-lock.json haven't changed.
 COPY frontend/package.json frontend/package-lock.json ./
-RUN npm ci --no-audit --no-fund
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --no-audit --no-fund
 
 # Copy the rest of the frontend and build.
 COPY frontend/ ./
@@ -40,6 +41,7 @@ FROM python:3.12-slim AS runtime
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PORT=8000
 
 WORKDIR /app
@@ -47,12 +49,14 @@ WORKDIR /app
 # Install only the runtime Python deps (kept in sync with pyproject.toml's
 # [project].dependencies). Pinning here keeps the image reproducible and
 # avoids needing a build backend at install time.
-RUN pip install --no-cache-dir \
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install \
         "fastapi==0.115.0" \
         "uvicorn[standard]==0.30.6" \
         "httpx==0.27.2" \
         "python-dotenv==1.0.1" \
-        "truststore>=0.9.2"
+        "truststore>=0.9.2" \
+        "fit-tool>=0.9.15"
 
 # Backend source.
 COPY backend/ ./backend/
@@ -66,6 +70,11 @@ RUN useradd --create-home --shell /bin/sh app \
 USER app
 
 EXPOSE 8000
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD python -c "import urllib.request,sys,os; \
+url='http://127.0.0.1:'+os.environ.get('PORT','8000')+'/'; \
+sys.exit(0 if urllib.request.urlopen(url, timeout=3).status < 500 else 1)"
 
 # Single-origin deployment: FastAPI serves /api/* AND the SPA bundle.
 # Host 0.0.0.0 so the container is reachable; honour $PORT so PaaS

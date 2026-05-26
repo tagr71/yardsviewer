@@ -1,0 +1,31 @@
+# docker-compose.yml — local single-origin stack for
+# rotvollfjaerafrontyardultra.
+#
+# Usage:
+#   docker compose up --build           # build + run, attached
+#   docker compose up -d                # background
+#   docker compose logs -f web          # tail logs
+#   docker compose down                 # stop + remove
+#
+# Reads RaceResult credentials etc. from backend/.env (see README).
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rotvoll:latest
+    container_name: rotvoll-web
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - backend/.env
+    environment:
+      PORT: "8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,os,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:'+os.environ.get('PORT','8000')+'/', timeout=3).status < 500 else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s

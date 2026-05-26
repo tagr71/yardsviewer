@@ -248,7 +248,6 @@ FastAPI backend on port 8000.
   `{ bib, name, club, country, sex, total, totalSec, lapsCompleted?,
   perLoop?: [{ loop, time, lapSec, totalSec }] }`. Per-lap times are
   pulled from the public RRPublish *Details* list when available.
-- `GET /api/health` → `{ "status": "ok" }`.
 
   `raceFinished` is `true` when at least `len(rows) − 1` rows have a
   status matching `dnf|dns|dq|withdrawn` (i.e. a single survivor).
@@ -316,6 +315,18 @@ docker run --rm -p 8000:8000 `
 docker run --rm -p 8000:8000 --env-file backend/.env rotvoll:latest
 ```
 
+### Run with Docker Compose
+
+A [docker-compose.yml](docker-compose.yml) at the repo root wraps the
+same image with a healthcheck and `backend/.env`:
+
+```powershell
+docker compose up --build       # build + run, attached
+docker compose up -d            # background
+docker compose logs -f web      # tail logs
+docker compose down             # stop + remove
+```
+
 ### Push to a registry (e.g. GitHub Container Registry)
 
 ```powershell
@@ -325,6 +336,32 @@ docker login ghcr.io -u <github-username>
 docker tag rotvoll:latest ghcr.io/<github-username>/rotvoll:latest
 docker push ghcr.io/<github-username>/rotvoll:latest
 ```
+
+### Automatic image builds (CI)
+
+The workflow at
+[.github/workflows/docker-publish.yml](.github/workflows/docker-publish.yml)
+builds and pushes the image to GHCR on every push to `main`, on any
+`v*` tag, or when triggered manually from the **Actions** tab. It
+publishes:
+
+- `ghcr.io/<owner>/<repo>:latest` (default branch)
+- `ghcr.io/<owner>/<repo>:<branch>` and `:sha-<short>`
+- `ghcr.io/<owner>/<repo>:1.2.3` / `:1.2` (on `v*` tags)
+
+It authenticates with the built-in `GITHUB_TOKEN` (no secrets to
+configure). To allow unauthenticated `docker pull`, open the package
+on GitHub → ⚙ → Change visibility → Public.
+
+Trigger a build by pushing the workflow (or any change to `main`):
+
+```powershell
+git add .github/workflows/docker-publish.yml; `
+git commit -m "ci: publish docker image to ghcr"; `
+git push
+```
+
+Follow progress in the repo's **Actions** tab.
 
 ### Deploy to a container PaaS
 
