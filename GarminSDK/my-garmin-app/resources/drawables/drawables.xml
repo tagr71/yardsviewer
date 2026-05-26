@@ -1,0 +1,7 @@
+<resources>
+    <drawable name="example_image">example_image.png</drawable>
+    <shape name="example_shape">
+        <solid android:color="#FF0000"/>
+        <corners android:radius="4dp"/>
+    </shape>
+</resources>

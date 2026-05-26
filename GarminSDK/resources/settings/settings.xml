@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+    <setting propertyKey="@Properties.firstLoopMin" title="@Strings.FirstLoopMinTitle" prompt="@Strings.FirstLoopMinPrompt">
+        <settingConfig type="numeric" min="1" max="600"/>
+    </setting>
+    <setting propertyKey="@Properties.holdLoop" title="@Strings.HoldLoopTitle" prompt="@Strings.HoldLoopPrompt">
+        <settingConfig type="numeric" min="1" max="600"/>
+    </setting>
+    <setting propertyKey="@Properties.maxLoops" title="@Strings.MaxLoopsTitle" prompt="@Strings.MaxLoopsPrompt">
+        <settingConfig type="numeric" min="1" max="600"/>
+    </setting>
+    <setting propertyKey="@Properties.loopMeters" title="@Strings.LoopMetersTitle" prompt="@Strings.LoopMetersPrompt">
+        <settingConfig type="numeric" min="1" max="100000"/>
+    </setting>
+</settings>

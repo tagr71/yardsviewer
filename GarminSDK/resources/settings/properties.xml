@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+    <property id="firstLoopMin" type="number">30</property>
+    <property id="holdLoop"     type="number">17</property>
+    <property id="maxLoops"     type="number">27</property>
+    <property id="loopMeters"   type="number">3000</property>
+</properties>
