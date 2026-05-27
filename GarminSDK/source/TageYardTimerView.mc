@@ -49,6 +49,7 @@ class TageYardTimerView extends WatchUi.DataField {
     private var _targetPaceMinPerKm; // decimal minutes / km, 0 when n/a
     private var _avgPaceMinPerKm;    // running average pace, min/km; 0 when n/a
     private var _avgMps;             // running average speed, m/s; 0 when n/a
+    private var _hr;                 // current heart rate, bpm; 0 when n/a
     private var _done;
     private var _prevTimeToNext;       // seconds; used to detect threshold crossings
     private var _loopDurSec;           // seconds; duration of current loop
@@ -64,6 +65,7 @@ class TageYardTimerView extends WatchUi.DataField {
         _targetPaceMinPerKm   = 0.0;
         _avgPaceMinPerKm      = 0.0;
         _avgMps               = 0.0;
+        _hr                   = 0;
         _done                 = false;
         _prevTimeToNext       = -1;
         _loopDurSec           = 0;
@@ -197,6 +199,10 @@ class TageYardTimerView extends WatchUi.DataField {
             _avgMps          = 0.0;
             _avgPaceMinPerKm = 0.0;
         }
+
+        // Current heart rate (bpm). 0 when unavailable.
+        var hr = info.currentHeartRate;
+        _hr = (hr != null && hr instanceof Lang.Number && hr > 0) ? hr : 0;
     }
 
     function onUpdate(dc) {
@@ -311,11 +317,22 @@ class TageYardTimerView extends WatchUi.DataField {
         var col1X = w * 0.30;  // countdown
         var col2X = w * 0.70;  // pace
         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(col1X, yTime,             fHero, timeStr,       Graphics.TEXT_JUSTIFY_CENTER);
-        dc.drawText(col1X, yTime + hHero - 9, fTiny, "min to next", Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawText(col1X, yTime,             fHero, timeStr,         Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawText(col1X, yTime + hHero - 9, fTiny, "mm:ss to next", Graphics.TEXT_JUSTIFY_CENTER);
         dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
         dc.drawText(col2X, yTime,             fHero, paceStr,       Graphics.TEXT_JUSTIFY_CENTER);
-        dc.drawText(col2X, yTime + hHero - 9, fTiny, "min/km",      Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawText(col2X, yTime + hHero - 9, fTiny, "req pa min/km", Graphics.TEXT_JUSTIFY_CENTER);
+        dc.setColor(fg, Graphics.COLOR_TRANSPARENT);
+
+        // Heart symbol with current bpm overlaid in red, centered between
+        // the countdown column and the pace column.
+        var heartR  = 6;
+        var heartCx = cx;
+        var heartCy = yTime + hHero / 2 - heartR / 2;
+        drawHeart(dc, heartCx, heartCy, heartR, Graphics.COLOR_PINK);
+        var bpmStr = _hr > 0 ? _hr.toString() : "--";
+        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(heartCx, heartCy + heartR / 2 - hTiny / 2, fTiny, bpmStr, Graphics.TEXT_JUSTIFY_CENTER);
         dc.setColor(fg, Graphics.COLOR_TRANSPARENT);
 
         // Real-time clock (centered) below.
@@ -448,19 +465,36 @@ class TageYardTimerView extends WatchUi.DataField {
         dc.setColor(fg, Graphics.COLOR_TRANSPARENT);
     }
 
+    // Small filled heart shape centered at (cx, cy). Two lobes of radius r
+    // sit slightly closer than r apart so the V notch on top stays shallow,
+    // and a downward-pointing triangle whose top edge runs through the lobe
+    // centers forms the bottom point below.
+    function drawHeart(dc, cx, cy, r, color) {
+        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
+        var off = (r * 3) / 4;
+        dc.fillCircle(cx - off, cy, r);
+        dc.fillCircle(cx + off, cy, r);
+        var pts = [
+            [cx - off - r, cy],
+            [cx + off + r, cy],
+            [cx,           cy + (r * 5) / 2]
+        ];
+        dc.fillPolygon(pts);
+    }
+
     // "Break" is the time you would rest between finishing the current loop
     // and the next loop starting, assuming you cover the remaining distance
     // at your running-average pace:
     //   break = timeToNext - (loopMeters - loopDistanceM) / avgMps
-    // Shown as MM:SS in BLUE, "--:--" otherwise.
+    // Returned as "br MM:SS" (label first), "br --:--" otherwise.
     function buildBreakStr() {
-        if (_done || _avgMps <= 0.0 || _loopMeters <= 0) { return "--:-- br"; }
+        if (_done || _avgMps <= 0.0 || _loopMeters <= 0) { return "br --:--"; }
         var remainM   = _loopMeters.toFloat() - _loopDistanceM;
         if (remainM < 0) { remainM = 0; }
         var finishSec = remainM / _avgMps;
         var breakSec  = _timeToNext - finishSec.toNumber();
-        if (breakSec <= 0) { return "--:-- br"; }
-        return fmtMmSs(breakSec) + " br";
+        if (breakSec <= 0) { return "br --:--"; }
+        return "br " + fmtMmSs(breakSec);
     }
 
     // Signed distance (m) between white runner dot and yellow pacer dot.
@@ -484,25 +518,22 @@ class TageYardTimerView extends WatchUi.DataField {
     // grouped on one XTINY row, horizontally centered as a single unit.
     function drawBottomRow(dc, w, yHrLine, fHr, fg) {
         var avgValueStr = _avgPaceMinPerKm > 0.0 ? formatPace(_avgPaceMinPerKm) : "--:--";
-        var avgFullStr  = avgValueStr + " min/km";
+        var avgFullStr  = "pa " + avgValueStr;
         var breakStr    = buildBreakStr();
         var gapInfo     = computeGapMeters();
         var haveGap     = gapInfo[0];
         var gapMeters   = gapInfo[1];
+        // Convert meters gap to a signed MM:SS using the pacer's speed
+        // (loopMeters / loopDurSec). Positive = ahead, negative = behind.
         var gapStr;
-        var gapColor;
-        if (!haveGap) {
-            gapStr = "--m";
-            gapColor = fg;
-        } else if (gapMeters > 0) {
-            gapStr = "+" + gapMeters.toString() + "m";
-            gapColor = Graphics.COLOR_GREEN;
-        } else if (gapMeters < 0) {
-            gapStr = gapMeters.toString() + "m";
-            gapColor = Graphics.COLOR_RED;
+        if (!haveGap || _loopDurSec <= 0 || _loopMeters <= 0) {
+            gapStr = "gap --:--";
         } else {
-            gapStr = "0m";
-            gapColor = fg;
+            var pacerMps = _loopMeters.toFloat() / _loopDurSec.toFloat();
+            var gapSec   = pacerMps > 0 ? (gapMeters / pacerMps).toNumber() : 0;
+            var sign     = gapSec > 0 ? "+" : (gapSec < 0 ? "-" : "");
+            var absSec   = gapSec < 0 ? -gapSec : gapSec;
+            gapStr = "gap " + sign + fmtMmSs(absSec);
         }
         var gapHrAvg  = 10;
         var wHrTxt    = dc.getTextWidthInPixels(breakStr,   fHr);
@@ -512,11 +543,9 @@ class TageYardTimerView extends WatchUi.DataField {
         var hrStartX  = (w - totalW) / 2;
         var gapStartX = hrStartX + wHrTxt + gapHrAvg;
         var avgStartX = gapStartX + wGapTxt + gapHrAvg;
-        dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(hrStartX,  yHrLine, fHr, breakStr,   Graphics.TEXT_JUSTIFY_LEFT);
-        dc.setColor(gapColor,  Graphics.COLOR_TRANSPARENT);
-        dc.drawText(gapStartX, yHrLine, fHr, gapStr,     Graphics.TEXT_JUSTIFY_LEFT);
         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(hrStartX,  yHrLine, fHr, breakStr,   Graphics.TEXT_JUSTIFY_LEFT);
+        dc.drawText(gapStartX, yHrLine, fHr, gapStr,     Graphics.TEXT_JUSTIFY_LEFT);
         dc.drawText(avgStartX, yHrLine, fHr, avgFullStr, Graphics.TEXT_JUSTIFY_LEFT);
         dc.setColor(fg, Graphics.COLOR_TRANSPARENT);
     }
