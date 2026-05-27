@@ -15,12 +15,12 @@ export type Dashboard = {
 
 export const dashboards: Dashboard[] = [
   {
-    id: "timer-setup",
+    id: "settings",
     title: "Settings",
     component: Settings,
   },
   {
-    id: "participants",
+    id: "overview",
     title: "Overview",
     component: Overview,
   },
@@ -30,7 +30,7 @@ export const dashboards: Dashboard[] = [
     component: Leaderboard,
   },
   {
-    id: "timer",
+    id: "dashboard",
     title: "Dashboard",
     component: DashboardView,
   },

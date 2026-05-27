@@ -12,6 +12,7 @@ import {
   useTimerSettings,
   useViewLoop,
 } from "./timerCore";
+import { friendlyFetchError } from "../utils/fetchError";
 import {
   buildSexLookup,
   computeWinner,
@@ -56,7 +57,7 @@ type DerivedRow = ResultRow & {
 
 type JerseyPointsByBib = Map<string, Map<number, number>>;
 
-const REFRESH_MS = 30_000;
+const REFRESH_MS = 10_000;
 
 /** Common IOC / ISO alpha-3 → ISO alpha-2 country codes used in running events. */
 const ALPHA3_TO_ALPHA2: Record<string, string> = {
@@ -226,7 +227,7 @@ export function Leaderboard({ eventId }: { eventId: string }) {
     const POST_LOOP_DELAY_MS = 5_000;
     /** Fallback cadence used when no loop boundary is scheduled
      * (backyard mode, race not yet started, race already finished). */
-    const FALLBACK_MS = 30_000;
+    const FALLBACK_MS = 10_000;
 
     function nextLoopBoundaryAfter(nowMs: number): number | null {
       if (raceStartMs === null) return null;
@@ -259,7 +260,7 @@ export function Leaderboard({ eventId }: { eventId: string }) {
           `/api/results?event_id=${encodeURIComponent(eventId)}`,
         );
         if (!res.ok) {
-          throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+          throw await friendlyFetchError(res);
         }
         const data: ResultsResponse = await res.json();
         if (cancelled) return;
@@ -292,7 +293,7 @@ export function Leaderboard({ eventId }: { eventId: string }) {
   useEffect(() => {
     let cancelled = false;
     let timer: number | null = null;
-    const REFRESH = 30_000;
+    const REFRESH = 10_000;
 
     function buildMap(
       entries: {

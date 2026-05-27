@@ -6,6 +6,11 @@ const EVENT_ID_KEY = "raceresult.eventId";
 const DASHBOARD_KEY = "raceresult.dashboard";
 const CLUB_NAME = "HELL ULTRALØPERKLUBB";
 
+function normalizeDashboardId(id: string | null | undefined): string | null {
+  if (!id) return null;
+  return dashboards.some((d) => d.id === id) ? id : null;
+}
+
 /** Predefined races shown in the Event dropdown. Add entries here to
  * extend the list — the value is the RaceResult event ID. */
 const PREDEFINED_EVENTS: { id: string; label: string }[] = [
@@ -16,8 +21,8 @@ const PREDEFINED_EVENTS: { id: string; label: string }[] = [
 const OTHER_OPTION = "__other__";
 
 /** Decide whether the given event is a "backyard" race. Resolution order:
- * 1. Stored Timer-setup mode for this event (set in Settings or auto-
- *    detected from `/api/results` eventMode).
+ * 1. Stored race mode for this event (set in Settings or auto-detected
+ *    from `/api/results` eventMode).
  * 2. Heuristic on the predefined-event label (contains "backyard" /
  *    "frontyard").
  * 3. Default: false — leaves the Jerseys dashboard visible until the
@@ -34,6 +39,24 @@ function isBackyardEvent(id: string, label: string): boolean {
 
 type Selection = { eventId: string; dashboardId: string };
 
+/** Parse `location.pathname` into an optional dashboard id (matching one
+ * of `dashboards[].id`) and an optional numeric event id. Examples:
+ *   "/"               -> { dashboardId: null, eventId: null }
+ *   "/jerseys"        -> { dashboardId: "jerseys", eventId: null }
+ *   "/jerseys/374847" -> { dashboardId: "jerseys", eventId: "374847" }
+ */
+function parsePath(): { dashboardId: string | null; eventId: string | null } {
+  const segs = window.location.pathname.split("/").filter(Boolean);
+  const dashId = normalizeDashboardId(segs[0]);
+  const evId = segs[1] && /^\d+$/.test(segs[1]) ? segs[1] : null;
+  return { dashboardId: dashId, eventId: evId };
+}
+
+function pathFor(sel: Selection | null): string {
+  if (!sel) return "/";
+  return `/${sel.dashboardId}/${sel.eventId}`;
+}
+
 /** Drop a replacement file at `frontend/public/logo.svg` (or `.png`) to
  * change the logo without touching this component. */
 function Logo({ style }: { style?: React.CSSProperties }) {
@@ -47,9 +70,23 @@ function Logo({ style }: { style?: React.CSSProperties }) {
 }
 
 export function App() {
-  const [selection, setSelection] = useState<Selection | null>(null);
+  const initialPath = useMemo(() => parsePath(), []);
+  const [selection, setSelection] = useState<Selection | null>(() => {
+    if (!initialPath.dashboardId) return null;
+    const evId =
+      initialPath.eventId ??
+      localStorage.getItem(EVENT_ID_KEY) ??
+      PREDEFINED_EVENTS[0]?.id ??
+      "";
+    if (!evId) return null;
+    return { eventId: evId, dashboardId: initialPath.dashboardId };
+  });
   const [eventId, setEventId] = useState<string>(
-    () => localStorage.getItem(EVENT_ID_KEY) ?? PREDEFINED_EVENTS[0]?.id ?? "",
+    () =>
+      initialPath.eventId ??
+      localStorage.getItem(EVENT_ID_KEY) ??
+      PREDEFINED_EVENTS[0]?.id ??
+      "",
   );
   // Which dropdown option is currently selected. `OTHER_OPTION` means
   // the user wants to type a custom event ID; any other value is one of
@@ -63,7 +100,10 @@ export function App() {
         : PREDEFINED_EVENTS[0]?.id ?? OTHER_OPTION;
   });
   const [dashboardId, setDashboardId] = useState<string>(
-    () => localStorage.getItem(DASHBOARD_KEY) ?? dashboards[0].id,
+    () =>
+      initialPath.dashboardId ??
+      normalizeDashboardId(localStorage.getItem(DASHBOARD_KEY)) ??
+      dashboards[0].id,
   );
   const [eventName, setEventName] = useState<string>("");
   const [eventLocation, setEventLocation] = useState<string>("");
@@ -99,12 +139,38 @@ export function App() {
     if (!trimmed) return;
     localStorage.setItem(EVENT_ID_KEY, trimmed);
     localStorage.setItem(DASHBOARD_KEY, dashboardId);
-    setSelection({ eventId: trimmed, dashboardId });
+    const next = { eventId: trimmed, dashboardId };
+    window.history.pushState({}, "", pathFor(next));
+    setSelection(next);
   }
 
   function onBack() {
+    window.history.pushState({}, "", "/");
     setSelection(null);
   }
+
+  // Browser back/forward: re-sync selection from the URL.
+  useEffect(() => {
+    function onPop() {
+      const parsed = parsePath();
+      if (!parsed.dashboardId) {
+        setSelection(null);
+        return;
+      }
+      const evId =
+        parsed.eventId ??
+        localStorage.getItem(EVENT_ID_KEY) ??
+        PREDEFINED_EVENTS[0]?.id ??
+        "";
+      if (!evId) {
+        setSelection(null);
+        return;
+      }
+      setSelection({ eventId: evId, dashboardId: parsed.dashboardId });
+    }
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
 
   // Filter the Dashboard dropdown: Jerseys is frontyard-only.
   const currentLabel =

@@ -1,7 +1,7 @@
 # Rotvollfjæra Frontyard Ultra — Connect IQ Data Field
 
-A full-screen Connect IQ data field for Garmin watches (Fenix 7 family,
-Epix 2 family, FR955/965) that helps you pace a Frontyard Ultra (a
+A full-screen Connect IQ data field for Garmin watches (Fenix 7 / 7X,
+Epix 2, FR265, FR955, FR965) that helps you pace a Frontyard Ultra (a
 Backyard-style event with shrinking loop times) when the watch firmware
 does not expose Workout Step Name, Workout Notes, or "Time to Next
 Repeat" to data fields.
@@ -25,18 +25,20 @@ A green countdown donut around the bezel and, inside it, top to bottom:
 - **`n/max`** — current loop / total loops. Coloured **pink** at loop 10,
   **green** at loop 15, **blue** otherwise.
 - **`MM:SS`** (red, left) — time remaining in the current loop,
-  with a tiny `min to next` label.
+  with a tiny `mm:ss to next` label.
 - **`min/km`** (blue, right) — required pace for the loop,
-  with a tiny `min/km` label.
+  with a tiny `req pa min/km` label.
+- **♥ + BPM** (between the hero columns) — a small pink heart with the
+  current heart rate overlaid in black; shows `--` until a sensor
+  value is available.
 - **`HH:MM:SS`** — current clock time (24h).
-- **`MM:SS br`** (blue, small) — projected **break** time you would
-  rest before the next loop starts if you run the remaining loop
-  distance at your current running-average pace. Shows `--:-- br`
-  before there is enough data or when projected to miss the cutoff.
-- **`±Nm`** (small) — signed metres between the white runner dot and
-  the yellow pacer dot. **Green** when ahead, **red** when behind,
-  forced to `0m` at the start and final second of every loop.
-- **`min/km`** (red) — running average pace.
+- **Bottom row** (red, all on one line):
+  - **`br MM:SS`** — projected **break** time you would rest before the
+    next loop starts if you run the remaining loop distance at your
+    current running-average pace (`br --:--` before there is enough
+    data or when projected to miss the cutoff).
+  - **`gap ±MM:SS`** — signed time gap to the yellow pacer dot.
+  - **`pa MM:SS`** — running average pace in min/km.
 - **`HH:MM:SS` + `next loop`** — predicted clock time when the next loop
   starts (hidden until the activity timer is running).
 
@@ -69,7 +71,7 @@ So loop 1 = 30 min, loop 2 = 29 min, …, loop 16 = 15 min, loops 17–27 = 14 m
 
 ## Settings
 
-In Garmin Connect → Connect IQ Apps → Frontyard Loop Timer → Settings:
+In Garmin Connect → Connect IQ Apps → Tage Yard Timer → Settings:
 
 | Key | Default | Meaning |
 |-----|---------|---------|
@@ -89,25 +91,28 @@ $sdk = "$env:APPDATA\Garmin\ConnectIQ\Sdks\connectiq-sdk-win-9.1.0-2026-03-09-6a
 & "$sdk\bin\monkeyc.bat" `
     -d fenix7 `
     -f monkey.jungle `
-    -o bin\FrontyardLoopTimer.prg `
+    -o bin\TageYardTimer.prg `
     -y $env:APPDATA\Garmin\ConnectIQ\developer_key.der
 ```
+
+Replace `fenix7` with the target device id to build for another watch
+(`fenix7x`, `epix2`, `fr265`, `fr955`, `fr965`).
 
 ## Sideload
 
 1. Connect the watch over USB.
-2. Copy `bin/FrontyardLoopTimer.prg` to `GARMIN\APPS\` on the watch.
+2. Copy `bin/TageYardTimer.prg` to `GARMIN\APPS\` on the watch.
 3. Safely eject.
 4. On the watch: **START** → activity (e.g. **Run**) → **MENU** →
    **Settings → Data Screens** → pick a screen →
    **Layout → Single field (Connect IQ)** →
-   **Edit Fields → Connect IQ → Frontyard Loop Timer**.
+   **Edit Fields → Connect IQ → Tage Yard Timer**.
 
 ## Simulator
 
 ```powershell
 & "$sdk\bin\connectiq.bat"
-& "$sdk\bin\monkeydo.bat" bin\FrontyardLoopTimer.prg fenix7
+& "$sdk\bin\monkeydo.bat" bin\TageYardTimer.prg fenix7
 ```
 
 To hear/feel the alerts in the simulator, enable

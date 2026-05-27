@@ -59,7 +59,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
   const liveDiffMs = startInstant ? now.getTime() - startInstant.getTime() : 0;
   const liveElapsedSec = Math.max(0, Math.floor(liveDiffMs / 1000));
 
-  // Fetch leaderboard once + every 30 s. Used both for the runners-counters
+  // Fetch leaderboard once + every 10 s. Used both for the runners-counters
   // and for the "race finished" detection that drives playback mode.
   const [raceFinished, setRaceFinished] = useState(false);
   const [finalLaps, setFinalLaps] = useState<number[]>([]);
@@ -92,14 +92,14 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
       }
     }
     load();
-    t = window.setInterval(load, 30_000);
+    t = window.setInterval(load, 10_000);
     return () => {
       cancelled = true;
       if (t !== null) window.clearInterval(t);
     };
   }, [eventId]);
 
-  // Fetch jersey standings once + every 30 s, used to display the current
+  // Fetch jersey standings once + every 10 s, used to display the current
   // pink/green/yellow holders (Women + Men) after the last completed loop.
   // Only frontyard events publish jersey lists, so backyard returns empty.
   type HolderEntry = {
@@ -144,7 +144,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
       }
     }
     load();
-    t = window.setInterval(load, 30_000);
+    t = window.setInterval(load, 10_000);
     return () => {
       cancelled = true;
       if (t !== null) window.clearInterval(t);
@@ -1169,7 +1169,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                 const r = requiredPace(60, BACKYARD_LOOP_KM);
                 return (
                   <StatCard
-                    label="Speed min:sek per km"
+                    label="Speed min:sec per km"
                     value={`${r.pace}`}
                     sub={`(${r.kmh} km/t)`}
                   bg="#111111" valueColor="white" labelColor="white" />
@@ -1233,7 +1233,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                     const r = requiredPace(FRONTYARD_START_MIN, FRONTYARD_LOOP_KM);
                     return (
                       <StatCard
-                        label="Speed min:sek per km"
+                        label="Speed min:sec per km"
                         value={`${r.pace}`}
                         sub={`(${r.kmh} km/t)`}
                       bg="#111111" valueColor="white" labelColor="white" />
@@ -1263,7 +1263,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                     value={formatKm(frontyardDistance)}
                   valueColor="black" labelColor="black" />
                   <StatCard
-                    label="Speed min:sek per km"
+                    label="Speed min:sec per km"
                     value="—"
                     sub="(—)"
                   bg="#111111" valueColor="white" labelColor="white" />
@@ -1309,7 +1309,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                     const r = requiredPace(fy.loopLengthMin, FRONTYARD_LOOP_KM);
                     return (
                       <StatCard
-                        label="Speed min:sek per km"
+                        label="Speed min:sec per km"
                         value={`${r.pace}`}
                         sub={`(${r.kmh} km/t)`}
                       bg="#111111" valueColor="white" labelColor="white" />

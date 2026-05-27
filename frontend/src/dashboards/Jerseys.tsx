@@ -396,7 +396,7 @@ export function Jerseys({ eventId, eventName }: { eventId: string; eventName?: s
     const POST_LOOP_DELAY_MS = 5_000;
     /** Fallback cadence used when no loop boundary is scheduled (backyard
      * mode, race not yet started, race already finished). */
-    const FALLBACK_MS = 30_000;
+    const FALLBACK_MS = 10_000;
 
     /** Find the wall-clock time of the next loop boundary strictly after
      * `nowMs`, or null if all configured loops have already elapsed (or

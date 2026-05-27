@@ -14,15 +14,16 @@ The dashboard dropdown lists, in order: **Settings** (Timer set-up),
 **Dashboard** (race timer), **Jerseys**.
 
 - **Overview** — live participant counters with auto-refresh, color
-  coded for at-a-glance reading. Top row: *Registered participants*
-  (neutral), *Starting runners* (yellow), *Starting Females (K)*
-  (red) and *Starting Males (M)* (blue). Middle row mirrors the
+  coded for at-a-glance reading. Top row: *Starting runners*
+  (yellow), *Starting Females (K)* (red) and *Starting Males (M)*
+  (blue). Middle row mirrors the
   three coloured cells for runners *still in competition* per
-  gender. The bottom row shows *Acc. distance (km)* (green) summed
-  across every completed loop. When the race is finished the same
+  gender. The bottom row shows *Current loop* (teal), *Acc.
+  distance (km)* (green) summed across every completed loop, and
+  *Registered participants* (neutral). When the race is finished the same
   `⏮ ◀ Loop N / max ▶ ⏭ Live` playback bar appears and the still-in
   counters / acc. distance follow the selected loop.
-- **Leaderboard** — sortable table polled every 30 s. Columns:
+- **Leaderboard** — sortable table polled every 10 s. Columns:
   Total Rank, Bib, Full Name, Club, Country (flag), Gender, Laps,
   Gap, Last (lap), Fastest, Slowest, Average, Total Time,
   Total Distance, Status. Distance uses the loop length for the
@@ -62,7 +63,7 @@ The dashboard dropdown lists, in order: **Settings** (Timer set-up),
   to the second boundary, so `:00` rollovers stay in lockstep with the
   system clock). Stat cards are colour-coded: *Loops completed*
   (green), *Current loop* (yellow), *Loop time-limit* (red), *Next
-  loop time-limit* (purple), *Speed min:sek per km* (black). In
+  loop time-limit* (purple), *Speed min:sec per km* (black). In
   Frontyard mode the top of the view also shows three **jersey holder**
   cards — one per colour, with the matching jersey image, top 3
   Women + top 3 Men after the last completed loop (name and total
@@ -174,7 +175,7 @@ Configured in the **Timer set-up** dashboard, persisted per event ID:
   race clock: the snapshot loop is the timer's `Loops completed`,
   so the tables flip to the new loop the moment the timer crosses a
   boundary. `/api/jerseys` is polled 5 seconds after every loop
-  boundary (with a 30 s fallback cadence) so the underlying data
+  boundary (with a 10 s fallback cadence) so the underlying data
   catches up just after the snapshot advances.
 
   The Yellow detail view also displays an **🏆 Overall winner**
@@ -201,6 +202,29 @@ The front page lets you type a RaceResult event ID, pick a dashboard
 from a dropdown, and open it. A **← Back** button returns to the front
 page. The chosen event ID and dashboard are remembered in
 `localStorage`.
+
+### URL routing
+
+Each dashboard has a URL slug that matches its menu label, so you can
+deep-link or bookmark a specific view:
+
+| Menu         | URL slug       |
+| ------------ | -------------- |
+| Settings     | `/settings`    |
+| Overview     | `/overview`    |
+| Leaderboard  | `/leaderboard` |
+| Dashboard    | `/dashboard`   |
+| Jerseys      | `/jerseys`     |
+
+Visiting `/<slug>` opens that dashboard using the last event ID stored
+in `localStorage` (falling back to the first predefined event).
+Appending an event ID — `/<slug>/<eventId>`, e.g. `/jerseys/374847` —
+overrides the stored value for that visit. Submitting the front-page
+form and pressing **← Back** update the URL via `history.pushState`,
+and the browser back/forward buttons re-sync the dashboard via a
+`popstate` listener. The FastAPI backend serves `index.html` for any
+unknown path so client-side routing works in the Docker / production
+build too.
 
 ## Run
 

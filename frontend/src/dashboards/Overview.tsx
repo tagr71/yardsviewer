@@ -6,6 +6,7 @@ import {
   useTimerSettings,
   useViewLoop,
 } from "./timerCore";
+import { friendlyFetchError } from "../utils/fetchError";
 
 type CountResponse = { count: number; eventName?: string };
 type ResultRow = {
@@ -18,7 +19,7 @@ type ResultsResponse = { raceFinished?: boolean; rows?: ResultRow[] };
 const OUT_PATTERN = /dnf|dns|dq|withdrawn/i;
 const DNS_PATTERN = /dns/i;
 
-const REFRESH_MS = 30_000;
+const REFRESH_MS = 10_000;
 
 export function Overview({ eventId }: { eventId: string }) {
   const { mode } = useTimerSettings(eventId);
@@ -45,7 +46,7 @@ export function Overview({ eventId }: { eventId: string }) {
           fetch(`/api/results?event_id=${encodeURIComponent(id)}`),
         ]);
         if (!countRes.ok) {
-          throw new Error(`HTTP ${countRes.status}: ${await countRes.text()}`);
+          throw await friendlyFetchError(countRes);
         }
         const countData: CountResponse = await countRes.json();
         const resultsData: ResultsResponse = resultsRes.ok
@@ -260,7 +261,6 @@ export function Overview({ eventId }: { eventId: string }) {
       {count !== null && (
         <>
           <div style={registeredRow}>
-            <RegisteredCell label="Registered participants" value={count} />
             <RegisteredCell label="Starting runners" value={fmt(starting)} bg="#facc15" color="black" />
             <RegisteredCell label="Starting Females (K)" value={fmt(female)} bg="#dc2626" color="white" />
             <RegisteredCell label="Starting Males (M)" value={fmt(male)} bg="#2563eb" color="white" />
@@ -273,6 +273,7 @@ export function Overview({ eventId }: { eventId: string }) {
           <div style={statGridBottom}>
             <StatCard label="Current loop" value={fmt(currentLoop)} bg="#0f766e" color="white" />
             <StatCard label="Acc. distance (km)" value={fmtKm(accKm)} bg="#117a3a" color="white" />
+            <StatCard label="Registered participants" value={fmt(count)} />
           </div>
         </>
       )}
@@ -359,7 +360,7 @@ const statGridFour: React.CSSProperties = {
 
 const registeredRow: React.CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+  gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
   gap: "1rem",
   width: "100%",
   alignItems: "end",
@@ -374,7 +375,7 @@ const registeredCell: React.CSSProperties = {
 
 const statGridBottom: React.CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+  gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
   gap: "1rem",
   width: "100%",
 };
