@@ -9,110 +9,92 @@ shows it in pickable dashboards.
 
 ## Dashboards
 
-The dashboard dropdown lists, in order: **Settings** (Timer set-up),
-**Overview** (number of participants), **Leaderboard**,
-**Dashboard** (race timer), **Jerseys**.
+The dashboard dropdown lists, in order: **Settings**, **Overview**,
+**Leaderboard**, **Dashboard** (race timer), **Jerseys**.
 
-- **Overview** — live participant counters with auto-refresh, color
-  coded for at-a-glance reading. Top row: *Starting runners*
-  (yellow), *Starting Females (K)* (red) and *Starting Males (M)*
-  (blue). Middle row mirrors the
-  three coloured cells for runners *still in competition* per
-  gender. The bottom row shows *Current loop* (teal), *Acc.
-  distance (km)* (green) summed across every completed loop, and
-  *Registered participants* (neutral). When the race is finished the same
-  `⏮ ◀ Loop N / max ▶ ⏭ Live` playback bar appears and the still-in
-  counters / acc. distance follow the selected loop.
-- **Leaderboard** — sortable table polled every 10 s. Columns:
+- **Overview** — live participant counters with auto-refresh.
+  Colour-coded cells for starting runners (yellow), starting females
+  (red) and males (blue); a second row mirrors the three cells for
+  runners still in competition per gender; the bottom row shows the
+  current loop (teal), accumulated distance summed across completed
+  loops (green) and registered participants (neutral). When the race
+  is finished a `⏮ ◀ Loop N / max ▶ ⏭ Live` playback bar appears and
+  the still-in counters / accumulated distance follow the selected
+  loop.
+- **Leaderboard** — sortable, 10 s-polled table:
   Total Rank, Bib, Full Name, Club, Country (flag), Gender, Laps,
   Gap, Last (lap), Fastest, Slowest, Average, Total Time,
   Total Distance, Status. Distance uses the loop length for the
-  current Timer mode (6.706 km backyard, 3 km frontyard). In frontyard
-  mode, the current Pink/Green/Yellow jersey holder for each gender
-  is tagged next to their name with a jersey-coloured pill showing
-  the **number of loops** they have held that jersey. A trailing `~`
-  means the leader is **LIKELY** (lead > half of the runner-up's max
-  catch-up); `✓` means the jersey is **DECIDED** (mathematically
-  uncatchable); `★` means **FINISHED** (the jersey's last loop has
-  been completed). A short legend above the gender tables explains
-  the symbols. When the backend flags the race as finished, a
-  playback bar appears with `⏮ ◀ Loop N / max ▶ ⏭ Live` controls so
-  you can step through loop-by-loop snapshots: rows where the
-  runner's final lap count is below N − 1 are hidden, and remaining
-  rows have their laps/distance clamped to N. The selected loop is
-  shared (via `localStorage`) with the Race dashboard, so both views
-  stay in sync. In Frontyard mode the **overall winner** row for each
-  gender (the runner with the fastest lap on the highest loop that
-  any runner finished within the loop's time limit, up to the Yellow
-  jersey end-loop) gets a `🏆` prefix in front of their name. The
-  marker only appears once the race is over (the snapshot has reached
-  the Yellow end-loop, or the backend has flagged the race as
-  finished).
-- **Settings (Timer set-up)** — configure the race start time, mode and per-event
-  options (see below). All settings are stored in `localStorage`, keyed
-  by event ID, and picked up live by the Race dashboard (same browser,
-  via the `storage` event and a 2 s poll fallback). For a *finished*
-  race the start date and mode are auto-populated from the RaceResult
-  metadata when the corresponding field is unset: the date comes from
-  the landing page's schema.org JSON-LD `startDate` (time of day
-  defaults to 09:00), and the mode is inferred from the event name
+  current Timer mode (6.706 km backyard, 3 km frontyard). In
+  frontyard mode the current Pink/Green/Yellow jersey holder for
+  each gender is tagged next to their name with a jersey-coloured
+  pill showing the number of loops they have held that jersey. A
+  trailing `~` means **LIKELY**, `✓` **DECIDED**, `★` **FINISHED**
+  (see [Jerseys](#jerseys) for the exact rules). A short legend
+  above the gender tables explains the symbols. When the race is
+  finished a playback bar appears with `⏮ ◀ Loop N / max ▶ ⏭ Live`
+  controls: rows where the runner's final lap count is below N − 1
+  are hidden, remaining rows have laps/distance clamped to N, and
+  the selected loop is shared with the Race dashboard via
+  `localStorage`. In frontyard mode the **overall winner** — the
+  single runner (sex-independent) with the fastest lap on the
+  highest loop any runner finished within the loop's time limit, up
+  to the Yellow end-loop — gets a `🏆` prefix next to their name
+  once the race is decided.
+- **Settings (Timer set-up)** — race start time, mode and per-event
+  options (see [Timer options](#timer-options)). All settings are
+  stored in `localStorage`, keyed by event ID, and picked up live by
+  the Race dashboard via the `storage` event plus a 2 s poll
+  fallback. For a finished race the start date and mode are
+  auto-populated from RaceResult metadata when unset: the date comes
+  from the landing page's schema.org JSON-LD `startDate` (time
+  defaults to 09:00); the mode is inferred from the event name
   (`frontyard` / `backyard` substring).
-- **Dashboard (race timer)** — live race clock and per-loop stats. The main
-  clock shows the elapsed (or remaining) time as `dd.hh.mm.ss` and
-  ticks every wall-clock second (self-correcting `setTimeout` aligned
-  to the second boundary, so `:00` rollovers stay in lockstep with the
-  system clock). Stat cards are colour-coded: *Loops completed*
-  (green), *Current loop* (yellow), *Loop time-limit* (red), *Next
-  loop time-limit* (purple), *Speed min:sec per km* (black). In
-  Frontyard mode the top of the view also shows three **jersey holder**
-  cards — one per colour, with the matching jersey image, top 3
-  Women + top 3 Men after the last completed loop (name and total
-  points / overall time). The #1 row in each gender section (the
-  current jersey holder) is highlighted: the rank number is replaced
-  by the jersey image (`/rosa.png`, `/grønn.png`, `/gul.png`), text
-  is bolder and larger, and the row sits inside a jersey-coloured
-  border. Each holder's name is followed by a jersey-coloured count
-  pill showing how many loops they have worn that jersey. The gender
-  sub-header carries a status pill: amber **`~ LIKELY`** when the
-  leader's lead exceeds half of the runner-up's max remaining
-  catch-up, blue **`✓ DECIDED`** when the standings are
-  mathematically locked in, or dark **`★ FINISHED`** when the
-  jersey's final loop has been completed. The yellow-jersey
-  card also surfaces an **🏆 Overall winner** footer with the fastest
-  finisher per gender on the highest loop completed within the time
-  limit (see the Jerseys section below for the exact rule). The
-  winner footer only appears once the race is over. The standings
-  are driven by the live race clock (`Loops completed`), so the
-  cards advance the moment the timer ticks past a loop boundary —
-  independent of `/api/jerseys` poll freshness. The card heading
-  reads `(after X of Y loops)` where Y is the configured end-loop
-  for that jersey.
-  Each section also surfaces two per-loop counters:
-  - *Runners completed past loop* — cumulative count of runners who
-    finished loop N−1.
-  - *Runners starting this loop* — subset of the above who actually
-    went out for loop N. Live: requires a non-DNF/DQ status. Replay:
-    requires `finalLaps ≥ N` (they later completed it). The gap is the
-    dropouts at the end of N−1.
+- **Dashboard (race timer)** — live race clock (`dd.hh.mm.ss`,
+  ticked every wall-clock second via a self-correcting `setTimeout`)
+  plus per-loop stat cards: *Loops completed* (green), *Current
+  loop* (yellow), *Loop time-limit* (red), *Next loop time-limit*
+  (purple), *Speed min:sec per km* (black). In frontyard mode the
+  top of the view also shows three **jersey holder** cards — one per
+  colour, with the matching jersey image, top 3 Women + top 3 Men
+  after the last completed loop. The current holder row in each
+  gender section is highlighted: the rank number is replaced by the
+  jersey image (`/rosa.png`, `/grønn.png`, `/gul.png`), the text is
+  bolder, and the row sits inside a jersey-coloured border. Each
+  holder's name is followed by a count pill showing how many loops
+  they have worn that jersey. The gender sub-header carries the
+  same `~ LIKELY` / `✓ DECIDED` / `★ FINISHED` status pill used in
+  the Leaderboard. The yellow card surfaces an **🏆 Overall winner**
+  footer with the single fastest finisher (sex-independent) on the
+  highest loop completed within the time limit, shown once the race
+  is decided. The
+  standings are driven by the live race clock so the cards advance
+  the moment the timer ticks past a loop boundary — independent of
+  `/api/jerseys` poll freshness. Each section also surfaces two
+  per-loop counters: *Runners completed past loop* (cumulative count
+  who finished loop N − 1) and *Runners starting this loop* (subset
+  that actually went out for loop N; live = non-DNF/DQ, replay =
+  `finalLaps ≥ N`).
 
   Two modes:
-  - **Backyard** — fixed 60-minute loops. A `mm:ss` counter counts down
-    from `60:00`; when it resets, *Loops completed* increments.
-  - **Frontyard** — first loop is 30 minutes, each subsequent loop is
-    one minute shorter. Two settings shape the schedule:
-    - *Hold time-limit after loop* (1–26): from this loop onwards every
-      loop reuses the same length (e.g. `Loop 17 (14 min)` keeps all
-      following loops at 14 min).
-    - *Maximum number of loops* (must be greater than the hold loop,
-      capped at 27): the race ends after this many loops.
+  - **Backyard** — fixed 60-minute loops; a `mm:ss` counter counts
+    down from `60:00` and *Loops completed* increments on each
+    rollover.
+  - **Frontyard** — loop 1 is 30 minutes; each subsequent loop is
+    one minute shorter, controlled by:
+    - *Hold time-limit after loop* (1–26): from this loop onwards
+      every loop reuses the same length.
+    - *Maximum number of loops* (> hold loop, ≤ 27): the race ends
+      after this many loops.
 
   When the backend flags the race as finished, a **Race finished**
-  playback bar appears above the clock with `⏮ ◀ Loop N / max ▶ ⏭ Live`
-  controls. Stepping rewrites the displayed elapsed time to the start
-  of the chosen loop (+1 s), which in turn drives loops-completed,
-  distance, jersey card, the per-loop counters and the leaderboard
-  snapshot. Beeps are suppressed while scrubbing. The selected loop is
-  persisted in `localStorage` so other tabs follow along.
+  playback bar appears above the clock with `⏮ ◀ Loop N / max ▶ ⏭
+  Live` controls. Stepping rewrites the displayed elapsed time to
+  the start of the chosen loop + 1 s, which in turn drives
+  loops-completed, distance, the jersey cards, per-loop counters and
+  the leaderboard snapshot. Beeps are suppressed while scrubbing.
+  The selected loop is persisted in `localStorage` so other tabs
+  follow along.
 
 ### Timer options
 
@@ -126,81 +108,103 @@ Configured in the **Timer set-up** dashboard, persisted per event ID:
 - *Pink jersey at loop* (default 10), *Green jersey at loop*
   (default 15), *Yellow & Winner at loop* (default 27). When the
   current frontyard loop number matches one of these, the
-  corresponding image(s) from `frontend/public/` are shown in the
-  *Competition this loop* card on the Timer dashboard
-  (`rosa.png`, `grønn.png`, and `gul.png` + `vinner.png`).
-- *Beep / bell* checkbox — when enabled, the Timer dashboard plays
-  three beeps at 3 min remaining, two at 2 min, one at 1 min, and a
-  bell at every loop rollover (and on race finish in Frontyard).
+  corresponding image(s) from `frontend/public/` (`rosa.png`,
+  `grønn.png`, `gul.png` + `vinner.png`) are shown in the
+  *Competition this loop* card on the Timer dashboard.
+- *Beep / bell* — when enabled, the Timer dashboard plays three
+  beeps at 3 min remaining, two at 2 min, one at 1 min, and a bell
+  at every loop rollover (and on race finish in Frontyard).
 
 ### Jerseys
 
-- **Jerseys** — points-and-time standings for the three frontyard
-  jerseys: **Pink** (sprint points awarded at intermediate splits),
-  **Green** (sprint points awarded at the end of each loop), and
-  **Yellow** (fastest accumulated race time). The dashboard shows a
-  6-table overview (Women on top, Men below, top 10 each) with a
-  matching set of columns whose widths line up across the gender
-  pair. The current holder of each jersey gets a jersey-coloured
-  pill next to their name showing the **number of loops** they have
-  held that jersey (instead of a plain letter). The table heading
-  also carries a status badge:
+Points-and-time standings for the three frontyard jerseys: **Pink**
+(sprint points at intermediate splits), **Green** (sprint points at
+loop ends), and **Yellow** (fastest accumulated race time). The
+overview shows a 6-table grid (Women on top, Men below, top 10
+each). The current holder of each jersey gets a jersey-coloured pill
+next to their name showing the number of loops they have held that
+jersey. Each table heading carries a status badge:
 
-  - **`~ LIKELY`** (amber) — the leader's lead exceeds **half** of
-    the runner-up's maximum theoretical catch-up over the remaining
-    loops. Same per-jersey math as DECIDED, but with a 0.5×
-    threshold instead of 1×.
-  - **`✓ DECIDED`** (blue) — the leader is mathematically
-    uncatchable. For Pink the lead must exceed `remaining × 3` pts;
-    for Green `remaining × 10` pts; for Yellow the runner-up must
-    be more than `remaining × 10 min` behind on cumulative time
-    (10 min is the assumed minimum lap time the runner-up could
-    use to claw back).
-  - **`★ FINISHED`** (dark) — the jersey's last contested loop has
-    been completed.
+- **`~ LIKELY`** (amber) — leader's lead exceeds **half** of the
+  runner-up's maximum theoretical catch-up over the remaining loops.
+- **`✓ DECIDED`** (blue) — leader is mathematically uncatchable.
+  Pink: lead > `remaining × 3` pts. Green: lead > `remaining × 10`
+  pts. Yellow: runner-up more than `remaining × 10 min` behind on
+  cumulative time (10 min = assumed minimum lap time the chaser
+  could use to claw back).
+- **`★ FINISHED`** (dark) — the jersey's last contested loop has
+  been completed.
 
-  Blue (rather than green) is used for DECIDED so the badge never
-  visually clashes with the green-jersey card.
+Blue (not green) is used for DECIDED so the badge never clashes
+with the green-jersey card.
 
-  A **View** dropdown switches between *Overview* and the three detail
-  views. Each detail view shows one jersey for both genders with a
-  per-loop breakdown: points per loop for Pink/Green, and lap time +
-  cumulative race time per loop for Yellow. In the per-loop cells
-  the jersey-coloured count pill is rendered to the left of the
-  time/points value to make the holder loops obvious at a glance.
-  Each table heading is annotated with `(ends at loop N)` so
-  spectators can see when the competition closes.
+A **View** dropdown switches between *Overview* and three detail
+views. Each detail view shows one jersey for both genders with a
+per-loop breakdown: points per loop for Pink/Green, lap time +
+cumulative race time per loop for Yellow. The jersey-coloured count
+pill is rendered to the left of the per-loop value to make holder
+loops obvious. Each table heading is annotated with `(ends at loop
+N)`.
 
-  In live mode the standings advance loop-by-loop driven by the
-  race clock: the snapshot loop is the timer's `Loops completed`,
-  so the tables flip to the new loop the moment the timer crosses a
-  boundary. `/api/jerseys` is polled 5 seconds after every loop
-  boundary (with a 10 s fallback cadence) so the underlying data
-  catches up just after the snapshot advances.
+The active detail view is also mirrored to the URL as a `?view=`
+query parameter so individual jerseys are deep-linkable and
+shareable:
 
-  The Yellow detail view also displays an **🏆 Overall winner**
-  banner above the per-gender tables, shown only once the race is
-  over (the snapshot has reached the Yellow end-loop, or the backend
-  has flagged the race as finished). The winner rule:
+| View         | URL                            |
+| ------------ | ------------------------------ |
+| Overview     | `/jerseys/<eventId>`           |
+| Pink details | `/jerseys/<eventId>?view=pink` |
+| Green details| `/jerseys/<eventId>?view=green`|
+| Yellow details| `/jerseys/<eventId>?view=yellow`|
 
-  * Search loops `L` from `min(snapshotLoop, jerseyYellow)` downward.
-  * A runner of the requested sex counts on `L` only if their lap
-    time on `L` is `> 0` and `≤` that loop's time limit (loop 1 =
-    30 min, then −1 min per loop until *Hold time-limit after loop*,
-    after which the length stays constant).
-  * Among counting runners, the smallest `lapSec` on `L` wins.
-  * If nobody counts on the top loop (e.g. solo timeout), fall back
-    to `L−1`, and so on.
+On first load the URL wins over the per-event `localStorage`
+preference, so a shared link always opens the intended jersey.
+Switching views updates the URL via `history.replaceState`
+(`overview` is the default and is kept implicit — no `?view=` in the
+canonical URL), and the browser back/forward buttons re-sync the
+view through a `popstate` listener.
 
-  Tie-breaking on equal-points jerseys uses the most recent
-  contributing loop (Pink/Green); Yellow ties break on the fastest
-  last completed loop. The shared **Race finished** replay control bar
-  (`localStorage`) lets you scrub through historical loops in lockstep
-  with the Race dashboard and Leaderboard.
+In live mode the snapshot loop is the timer's `Loops completed`, so
+the tables flip the moment the timer crosses a boundary;
+`/api/jerseys` is polled 5 s after every loop boundary (with a 10 s
+fallback cadence). Tie-breaking on equal points uses the most
+recent contributing loop (Pink/Green); Yellow ties break on the
+fastest last completed loop. The shared **Race finished** replay
+bar (`localStorage`) lets you scrub historical loops in lockstep
+with the Race dashboard and Leaderboard.
+
+The Jerseys overview and the Yellow detail view both display an
+**🏆 Overall winner** banner above the per-gender tables, and the
+winner's row in every jersey table is prefixed with a `🏆` next to
+the runner's name. The trophy is only revealed once the race is
+actually decided — see *Winner gating* below. The winner rule
+(sex-independent):
+
+1. Search loops `L` from `min(snapshotLoop, jerseyYellow)` downward.
+2. A runner counts on `L` only if their lap time on `L` is `> 0`
+   and `≤` that loop's time limit (loop 1 = 30 min, then −1 min per
+   loop until *Hold time-limit after loop*, then constant).
+3. The smallest `lapSec` on `L` wins — across all runners regardless
+   of sex.
+4. If nobody counts on the top loop (e.g. solo timeout), fall back
+   to `L − 1`, and so on.
+
+**Winner gating** — the trophy is awarded only when the race is
+finished:
+
+* the backend has flagged the race as finished, *or*
+* the winner's decisive loop equals the configured Yellow & Winner
+  end-loop, *or*
+* the winner's decisive loop is strictly below `snapshotLoop`,
+  meaning a later loop attempt produced no qualifying finishers
+  (all DNF'd inside the time limit) and the race naturally ended
+  one loop earlier.
+
+Mid-race "current leader" states show no trophy.
 
 The front page lets you type a RaceResult event ID, pick a dashboard
-from a dropdown, and open it. A **← Back** button returns to the front
-page. The chosen event ID and dashboard are remembered in
+from a dropdown, and open it. A **← Back** button returns to the
+front page. The chosen event ID and dashboard are remembered in
 `localStorage`.
 
 ### URL routing
@@ -292,8 +296,7 @@ FastAPI backend on port 8000.
 - `GET /api/results/lists?event_id=<id>&page=results` →
   debug helper: enumerates every list published on the page along with
   each list's `DataFields` and a sample row.
-- `GET /api/health` → `{ "status": "ok" }`
-- `GET /` redirects to `/api/participants/count`
+- `GET /` redirects to `/api/participants/count`.
 
 `event_id` falls back to `RACERESULT_EVENT_ID` from `backend/.env` when
 omitted.
@@ -418,14 +421,16 @@ What the suite asserts:
 - **Overall winner**
   ([frontend/src/dashboards/__tests__/jerseyWinner.test.ts](frontend/src/dashboards/__tests__/jerseyWinner.test.ts)):
   covers `frontyardLoopLengthSec` (loop-1 = 30 min, shrink per loop,
-  hold past `lockAfter`), the `isRaceOver` gate (raceFinished OR
-  snapshot ≥ jerseyYellow), and `computeWinner` itself — fastest-lap
-  selection on the highest loop completed within the time limit,
-  solo-timeout fall-back, sex filtering (own field + lookup
-  fallback), `jerseyYellow` capping, and lap-limit enforcement with
-  custom `lockAfter`.
+  hold past `lockAfter`), the broad `isRaceOver` gate (raceFinished
+  OR snapshot ≥ jerseyYellow), `computeOverallWinner` itself
+  (sex-independent fastest-lap selection on the highest loop
+  completed within the time limit, solo-timeout fall-back,
+  `jerseyYellow` capping, lap-limit enforcement with custom
+  `lockAfter`), and the strict `isWinnerFinal` gate that withholds
+  the trophy until the race is actually decided (end-loop reached or
+  a later loop attempt produced no qualifying finishers).
 
-A green run prints `111 passed`.
+A green run prints `122 passed`.
 
 ### Loop-by-loop simulation script
 

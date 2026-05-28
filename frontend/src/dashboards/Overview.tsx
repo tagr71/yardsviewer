@@ -3,6 +3,7 @@ import {
   BACKYARD_LOOP_KM,
   FRONTYARD_LOOP_KM,
   playbackBtn,
+  playbackBarSticky,
   useTimerSettings,
   useViewLoop,
 } from "./timerCore";
@@ -190,6 +191,7 @@ export function Overview({ eventId }: { eventId: string }) {
             }
           }}
           style={{
+            ...playbackBarSticky,
             display: "flex",
             alignItems: "center",
             gap: "0.5rem",
@@ -272,7 +274,7 @@ export function Overview({ eventId }: { eventId: string }) {
           </div>
           <div style={statGridBottom}>
             <StatCard label="Current loop" value={fmt(currentLoop)} bg="#0f766e" color="white" />
-            <StatCard label="Acc. distance (km)" value={fmtKm(accKm)} bg="#117a3a" color="white" />
+            <StatCard label="Acc. distance (km)" value={fmtKm(accKm)} bg="#117a3a" color="white" valueStyle={{ fontSize: "4rem" }} />
             <StatCard label="Registered participants" value={fmt(count)} />
           </div>
         </>
@@ -293,16 +295,18 @@ function StatCard({
   value,
   bg,
   color,
+  valueStyle,
 }: {
   label: string;
   value: string | number;
   bg?: string;
   color?: string;
+  valueStyle?: React.CSSProperties;
 }) {
   return (
     <div style={{ ...statCard, ...(bg ? { background: bg } : {}) }}>
       <div style={{ ...statCardLabel, ...(color ? { color } : {}) }}>{label}</div>
-      <div style={{ ...statCardValue, ...(color ? { color } : {}) }}>{value}</div>
+      <div style={{ ...statCardValue, ...(color ? { color } : {}), ...valueStyle }}>{value}</div>
     </div>
   );
 }

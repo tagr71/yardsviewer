@@ -9,14 +9,14 @@ import {
   leaderboardGroupKey,
   osloWallClockToInstant,
   playbackBtn,
+  playbackBarSticky,
   useTimerSettings,
   useViewLoop,
 } from "./timerCore";
 import { friendlyFetchError } from "../utils/fetchError";
 import {
-  buildSexLookup,
-  computeWinner,
-  isRaceOver,
+  computeOverallWinner,
+  isWinnerFinal,
   type JerseyEntry,
   type WinnerRow,
 } from "./jerseyRanking";
@@ -876,14 +876,11 @@ export function Leaderboard({ eventId }: { eventId: string }) {
     jerseyYellow,
   ]);
 
-  const winners = useMemo(() => {
-    const empty: { K: WinnerRow | null; M: WinnerRow | null } = { K: null, M: null };
-    if (mode !== "frontyard") return empty;
+  const winner = useMemo<WinnerRow | null>(() => {
+    if (mode !== "frontyard") return null;
     const snapshotLoop =
       effectiveViewLoop ?? (liveCompletedLoops >= 1 ? liveCompletedLoops : null);
-    if (snapshotLoop === null) return empty;
-    // Only reveal the overall winner once the race is decided.
-    if (!isRaceOver(raceFinished, snapshotLoop, jerseyYellow)) return empty;
+    if (snapshotLoop === null) return null;
     const yellowEntries: JerseyEntry[] = rows.map((r) => ({
       bib: String(r.bib),
       name: r.name,
@@ -895,11 +892,16 @@ export function Leaderboard({ eventId }: { eventId: string }) {
         totalSec: typeof p.totalSec === "number" ? p.totalSec : 0,
       })),
     })) as unknown as JerseyEntry[];
-    const sexLookup = buildSexLookup({ green: [], pink: [], yellow: yellowEntries });
-    return {
-      K: computeWinner(yellowEntries, sexLookup, "K", jerseyYellow, snapshotLoop, fyLock),
-      M: computeWinner(yellowEntries, sexLookup, "M", jerseyYellow, snapshotLoop, fyLock),
-    };
+    const candidate = computeOverallWinner(
+      yellowEntries,
+      jerseyYellow,
+      snapshotLoop,
+      fyLock,
+    );
+    // Award the trophy only once the race is actually decided.
+    return isWinnerFinal(candidate, snapshotLoop, jerseyYellow, raceFinished)
+      ? candidate
+      : null;
   }, [mode, rows, effectiveViewLoop, liveCompletedLoops, jerseyYellow, fyLock, raceFinished]);
 
   function jerseyStatusesForBib(
@@ -1090,8 +1092,7 @@ export function Leaderboard({ eventId }: { eventId: string }) {
         <td style={tdNum}>{r.bib}</td>
         <td style={td}>
           {(() => {
-            const sx = r.sex === "K" ? "K" : r.sex === "M" ? "M" : null;
-            const isWinner = sx !== null && winners[sx]?.bib === String(r.bib);
+            const isWinner = winner?.bib === String(r.bib);
             return isWinner ? (
               <span
                 title="Overall winner — fastest lap on the highest loop completed within the time limit"
@@ -1302,6 +1303,7 @@ export function Leaderboard({ eventId }: { eventId: string }) {
             }
           }}
           style={{
+            ...playbackBarSticky,
             display: "flex",
             alignItems: "center",
             gap: "0.5rem",

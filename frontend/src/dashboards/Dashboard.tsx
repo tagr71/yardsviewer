@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  buildSexLookup,
-  computeWinner,
-  isRaceOver,
+  computeOverallWinner,
+  isWinnerFinal,
   type JerseyEntry,
   type WinnerRow,
 } from "./jerseyRanking";
@@ -25,6 +24,7 @@ import {
   playBeep,
   playBell,
   playbackBtn,
+  playbackBarSticky,
   useNowTick,
   useTimerSettings,
   useViewLoop,
@@ -495,24 +495,21 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
    * completed within that loop's time limit. A solo "going out alone"
    * attempt counts only if completed inside the limit; otherwise the
    * previous loop's winner stands. */
-  const winners = useMemo(() => {
-    const empty: { K: WinnerRow | null; M: WinnerRow | null } = {
-      K: null,
-      M: null,
-    };
-    if (mode !== "frontyard" || !jerseyData) return empty;
-    // The overall winner is only revealed once the race is decided.
-    if (!isRaceOver(raceFinished, holderSnapshotLoop, jerseyYellow)) return empty;
+  const winner = useMemo<WinnerRow | null>(() => {
+    if (mode !== "frontyard" || !jerseyData) return null;
     const yellow = jerseyData.yellow as unknown as JerseyEntry[];
-    const sexLookup = buildSexLookup({
-      green: jerseyData.green as unknown as JerseyEntry[],
-      pink: jerseyData.pink as unknown as JerseyEntry[],
+    const candidate = computeOverallWinner(
       yellow,
-    });
-    return {
-      K: computeWinner(yellow, sexLookup, "K", jerseyYellow, holderSnapshotLoop, fyLock),
-      M: computeWinner(yellow, sexLookup, "M", jerseyYellow, holderSnapshotLoop, fyLock),
-    };
+      jerseyYellow,
+      holderSnapshotLoop,
+      fyLock,
+    );
+    // Award the trophy only once the race is actually decided —
+    // end-loop reached, race-finished flag set, or a later loop
+    // produced no qualifying finishers.
+    return isWinnerFinal(candidate, holderSnapshotLoop, jerseyYellow, raceFinished)
+      ? candidate
+      : null;
   }, [mode, jerseyData, jerseyYellow, holderSnapshotLoop, fyLock, raceFinished]);
 
   // Derive the runners-this-loop / completed-past-loop counters. The
@@ -860,7 +857,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                   </div>
                 );
               })}
-              {c.key === "yellow" && (winners.K || winners.M) && (
+              {c.key === "yellow" && winner && (
                 <div
                   style={{
                     marginTop: "0.4rem",
@@ -879,49 +876,39 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                   >
                     🏆 Overall winner
                   </div>
-                  {(["K", "M"] as const).map((sx) => {
-                    const w = winners[sx];
-                    if (!w) return null;
-                    return (
-                      <div
-                        key={sx}
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "baseline",
-                          gap: "0.4rem",
-                          fontSize: "0.85rem",
-                          padding: "0.1rem 0",
-                        }}
-                      >
-                        <span style={{ color: "#555", fontWeight: 700, minWidth: "3.2rem" }}>
-                          {sx === "K" ? "Female" : "Male"}
-                        </span>
-                        <span
-                          style={{
-                            color: "#111",
-                            fontWeight: 700,
-                            flex: "1 1 auto",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                          }}
-                          title={`Decided on loop ${w.lap} — fastest lap on that loop`}
-                        >
-                          #{w.bib} {w.name}
-                        </span>
-                        <span
-                          style={{
-                            color: "#555",
-                            fontVariantNumeric: "tabular-nums",
-                            fontSize: "0.8rem",
-                          }}
-                        >
-                          L{w.lap} · {formatHms(w.lapSec)}
-                        </span>
-                      </div>
-                    );
-                  })}
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "baseline",
+                      gap: "0.4rem",
+                      fontSize: "0.85rem",
+                      padding: "0.1rem 0",
+                    }}
+                  >
+                    <span
+                      style={{
+                        color: "#111",
+                        fontWeight: 700,
+                        flex: "1 1 auto",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                      title={`Decided on loop ${winner.lap} — fastest lap on that loop`}
+                    >
+                      #{winner.bib} {winner.name}
+                    </span>
+                    <span
+                      style={{
+                        color: "#555",
+                        fontVariantNumeric: "tabular-nums",
+                        fontSize: "0.8rem",
+                      }}
+                    >
+                      L{winner.lap} · {formatHms(winner.lapSec)}
+                    </span>
+                  </div>
                 </div>
               )}
               <p
@@ -1034,6 +1021,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
             }
           }}
           style={{
+            ...playbackBarSticky,
             display: "flex",
             alignItems: "center",
             gap: "0.5rem",

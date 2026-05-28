@@ -64,7 +64,7 @@ function Logo({ style }: { style?: React.CSSProperties }) {
     <img
       src="/logo.png"
       alt="Logo"
-      style={{ height: "200px", width: "auto", display: "block", ...style }}
+      style={{ height: "64px", width: "auto", display: "block", ...style }}
     />
   );
 }
@@ -133,20 +133,19 @@ export function App() {
     };
   }, [selection]);
 
-  function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const trimmed = eventId.trim();
+  function applySelection(nextEventId: string, nextDashboardId: string) {
+    const trimmed = nextEventId.trim();
     if (!trimmed) return;
     localStorage.setItem(EVENT_ID_KEY, trimmed);
-    localStorage.setItem(DASHBOARD_KEY, dashboardId);
-    const next = { eventId: trimmed, dashboardId };
+    localStorage.setItem(DASHBOARD_KEY, nextDashboardId);
+    const next = { eventId: trimmed, dashboardId: nextDashboardId };
     window.history.pushState({}, "", pathFor(next));
     setSelection(next);
   }
 
-  function onBack() {
-    window.history.pushState({}, "", "/");
-    setSelection(null);
+  function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    applySelection(eventId, dashboardId);
   }
 
   // Browser back/forward: re-sync selection from the URL.
@@ -204,46 +203,106 @@ export function App() {
         flexDirection: "column",
       }}
     >
-      {selection && active && (
-        <div
-          style={{
-            padding: "0.75rem 1rem",
-            background: "#fafafa",
-            borderBottom: "1px solid #ddd",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.75rem",
-          }}
+      <form
+        onSubmit={onSubmit}
+        style={{
+          padding: "0.6rem 1rem",
+          background: "#fafafa",
+          borderBottom: "1px solid #ddd",
+          display: "flex",
+          alignItems: "center",
+          gap: "0.75rem",
+          flexWrap: "wrap",
+        }}
+      >
+        <Logo />
+
+        <label
+          style={{ display: "flex", flexDirection: "column", gap: "0.15rem" }}
         >
+          <span style={{ fontSize: "0.75rem", color: "#555" }}>Event</span>
+          <select
+            value={eventChoice}
+            onChange={(e) => {
+              const v = e.target.value;
+              setEventChoice(v);
+              if (v !== OTHER_OPTION) {
+                setEventId(v);
+                applySelection(v, dashboardId);
+              } else {
+                setEventId("");
+              }
+            }}
+            style={{ padding: "0.35rem 0.5rem", fontSize: "0.95rem" }}
+          >
+            {PREDEFINED_EVENTS.map((ev) => (
+              <option key={ev.id} value={ev.id}>
+                {ev.label} ({ev.id})
+              </option>
+            ))}
+            <option value={OTHER_OPTION}>Other…</option>
+          </select>
+        </label>
+
+        {eventChoice === OTHER_OPTION && (
+          <label
+            style={{ display: "flex", flexDirection: "column", gap: "0.15rem" }}
+          >
+            <span style={{ fontSize: "0.75rem", color: "#555" }}>Event ID</span>
+            <input
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              value={eventId}
+              placeholder="e.g. 374847"
+              onChange={(e) => setEventId(e.target.value)}
+              style={{ padding: "0.35rem 0.5rem", fontSize: "0.95rem", width: "8rem" }}
+            />
+          </label>
+        )}
+
+        <label
+          style={{ display: "flex", flexDirection: "column", gap: "0.15rem" }}
+        >
+          <span style={{ fontSize: "0.75rem", color: "#555" }}>Dashboard</span>
+          <select
+            value={dashboardId}
+            onChange={(e) => {
+              const v = e.target.value;
+              setDashboardId(v);
+              if (eventId.trim()) applySelection(eventId, v);
+            }}
+            style={{ padding: "0.35rem 0.5rem", fontSize: "0.95rem" }}
+          >
+            {visibleDashboards.map((d) => (
+              <option key={d.id} value={d.id}>
+                {d.title}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        {eventChoice === OTHER_OPTION && (
           <button
-            onClick={onBack}
+            type="submit"
+            disabled={!eventId.trim()}
             style={{
               padding: "0.4rem 0.9rem",
               fontSize: "0.95rem",
-              cursor: "pointer",
+              cursor: eventId.trim() ? "pointer" : "not-allowed",
+              alignSelf: "flex-end",
             }}
           >
-            ← Back
+            Open
           </button>
-          <span style={{ color: "#666" }}>
+        )}
+
+        {selection && active && (
+          <span style={{ color: "#666", marginLeft: "auto", fontSize: "0.9rem" }}>
             {active.title} · event {selection.eventId}
           </span>
-          <Logo style={{ marginLeft: "auto" }} />
-        </div>
-      )}
-
-      {!selection && (
-        <div
-          style={{
-            padding: "0.75rem 1rem",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "flex-end",
-          }}
-        >
-          <Logo />
-        </div>
-      )}
+        )}
+      </form>
 
       <div
         style={{
@@ -258,92 +317,6 @@ export function App() {
           overflow: "auto",
         }}
       >
-        {!selection && (
-          <form
-            onSubmit={onSubmit}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.75rem",
-              minWidth: "20rem",
-              padding: "1.5rem",
-              border: "1px solid #ddd",
-              borderRadius: "0.5rem",
-              background: "#fafafa",
-            }}
-          >
-            <h1 style={{ margin: 0, fontSize: "1.4rem" }}>RaceResult Simulation</h1>
-
-            <label
-              htmlFor="event-id"
-              style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}
-            >
-              <span>Event</span>
-              <select
-                id="event-id"
-                value={eventChoice}
-                onChange={(e) => {
-                  const v = e.target.value;
-                  setEventChoice(v);
-                  if (v !== OTHER_OPTION) setEventId(v);
-                  else setEventId("");
-                }}
-                style={{ padding: "0.4rem 0.6rem", fontSize: "1rem" }}
-              >
-                {PREDEFINED_EVENTS.map((ev) => (
-                  <option key={ev.id} value={ev.id}>
-                    {ev.label} ({ev.id})
-                  </option>
-                ))}
-                <option value={OTHER_OPTION}>Other…</option>
-              </select>
-              {eventChoice === OTHER_OPTION && (
-                <input
-                  id="event-id-custom"
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  value={eventId}
-                  placeholder="e.g. 374847"
-                  onChange={(e) => setEventId(e.target.value)}
-                  style={{ padding: "0.4rem 0.6rem", fontSize: "1rem" }}
-                />
-              )}
-            </label>
-
-            <label
-              htmlFor="dashboard"
-              style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}
-            >
-              <span>Dashboard</span>
-              <select
-                id="dashboard"
-                value={dashboardId}
-                onChange={(e) => setDashboardId(e.target.value)}
-                style={{ padding: "0.4rem 0.6rem", fontSize: "1rem" }}
-              >
-                {visibleDashboards.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.title}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <button
-              type="submit"
-              disabled={!eventId.trim()}
-              style={{
-                padding: "0.5rem 1rem",
-                fontSize: "1rem",
-                cursor: eventId.trim() ? "pointer" : "not-allowed",
-              }}
-            >
-              {`Open ${visibleDashboards.find((d) => d.id === dashboardId)?.title ?? "dashboard"}`}
-            </button>
-          </form>
-        )}
-
         {selection && active && (
           <active.component
             eventId={selection.eventId}
@@ -355,6 +328,12 @@ export function App() {
         {selection && !active && (
           <p style={{ color: "crimson" }}>
             Unknown dashboard: {selection.dashboardId}
+          </p>
+        )}
+
+        {!selection && (
+          <p style={{ color: "#666" }}>
+            Choose an event and a dashboard above.
           </p>
         )}
       </div>
