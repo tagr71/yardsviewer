@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <strings>
-    <string id="AppName">Frontyard Loop Timer</string>
+    <string id="AppName">YardLoopTimer</string>
 
     <string id="FirstLoopMinTitle">First loop minutes</string>
     <string id="FirstLoopMinPrompt">Length of loop 1 in minutes (default 30).</string>

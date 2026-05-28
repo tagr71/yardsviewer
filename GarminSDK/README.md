@@ -20,25 +20,28 @@ A green countdown donut around the bezel and, inside it, top to bottom:
   longer than the loop itself).
 - **White runner dot** (black contour) — rides clockwise along the donut.
   One full lap of the dot equals one configured loop distance
-  (`loopMeters`). If it leads the green sweep, you're ahead of pace;
-  if it trails, you're behind.
+  (`loopMeters`). If it leads the yellow pacer dot, you're ahead of pace;
+  if it trails, you're behind. Once you've covered the full loop
+  distance the white dot parks at the top of the ring (alongside the
+  closed green donut) until the next loop starts.
+- **Yellow pacer dot** — position of a fictive runner on exactly the
+  required average pace; drawn underneath the white dot when they
+  overlap.
 - **`n/max`** — current loop / total loops. Coloured **pink** at loop 10,
-  **green** at loop 15, **blue** otherwise.
+  **green** at loop 15, **yellow** on the final loop, **black** otherwise.
 - **`MM:SS`** (red, left) — time remaining in the current loop,
   with a tiny `mm:ss to next` label.
-- **`min/km`** (blue, right) — required pace for the loop,
+- **`min/km`** (black, right) — required pace for the loop,
   with a tiny `req pa min/km` label.
-- **♥ + BPM** (between the hero columns) — a small pink heart with the
-  current heart rate overlaid in black; shows `--` until a sensor
-  value is available.
+- **`bpm`** (black, between the hero columns) — current heart rate as a
+  plain number; shows `--` until a sensor value is available.
 - **`HH:MM:SS`** — current clock time (24h).
-- **Bottom row** (red, all on one line):
-  - **`br MM:SS`** — projected **break** time you would rest before the
-    next loop starts if you run the remaining loop distance at your
-    current running-average pace (`br --:--` before there is enough
-    data or when projected to miss the cutoff).
+- **Bottom row** (one line, centered):
   - **`gap ±MM:SS`** — signed time gap to the yellow pacer dot.
-  - **`pa MM:SS`** — running average pace in min/km.
+    **Green** when ahead (positive), **red** when behind (negative).
+  - **`pa MM:SS`** — current-loop average pace in min/km (resets each
+    loop). **Green** when fast enough to finish the loop before its
+    deadline, **red** when slower.
 - **`HH:MM:SS` + `next loop`** — predicted clock time when the next loop
   starts (hidden until the activity timer is running).
 
@@ -71,7 +74,7 @@ So loop 1 = 30 min, loop 2 = 29 min, …, loop 16 = 15 min, loops 17–27 = 14 m
 
 ## Settings
 
-In Garmin Connect → Connect IQ Apps → Tage Yard Timer → Settings:
+In Garmin Connect → Connect IQ Apps → YardLoopTimer → Settings:
 
 | Key | Default | Meaning |
 |-----|---------|---------|
@@ -79,6 +82,13 @@ In Garmin Connect → Connect IQ Apps → Tage Yard Timer → Settings:
 | `holdLoop`     | 17 | Loop number at which the pace floor is reached |
 | `maxLoops`     | 27 | Total number of loops to plan for |
 | `loopMeters`   | 3000 | Length of one loop in meters |
+
+Data field settings can only be edited from the **Garmin Connect Mobile**
+phone app (not from the watch UI). For **sideloaded** builds the mobile
+app often doesn't render the settings page at all — in that case either
+publish the app to the Connect IQ Store (private/beta) so the page
+appears, edit values in the simulator and re-push, or change the
+defaults in `resources/settings/properties.xml` and rebuild.
 
 ## Build
 
@@ -91,7 +101,7 @@ $sdk = "$env:APPDATA\Garmin\ConnectIQ\Sdks\connectiq-sdk-win-9.1.0-2026-03-09-6a
 & "$sdk\bin\monkeyc.bat" `
     -d fenix7 `
     -f monkey.jungle `
-    -o bin\TageYardTimer.prg `
+    -o bin\YardLoopTimer.prg `
     -y $env:APPDATA\Garmin\ConnectIQ\developer_key.der
 ```
 
@@ -101,18 +111,18 @@ Replace `fenix7` with the target device id to build for another watch
 ## Sideload
 
 1. Connect the watch over USB.
-2. Copy `bin/TageYardTimer.prg` to `GARMIN\APPS\` on the watch.
+2. Copy `bin/YardLoopTimer.prg` to `GARMIN\APPS\` on the watch.
 3. Safely eject.
 4. On the watch: **START** → activity (e.g. **Run**) → **MENU** →
    **Settings → Data Screens** → pick a screen →
    **Layout → Single field (Connect IQ)** →
-   **Edit Fields → Connect IQ → Tage Yard Timer**.
+   **Edit Fields → Connect IQ → YardLoopTimer**.
 
 ## Simulator
 
 ```powershell
 & "$sdk\bin\connectiq.bat"
-& "$sdk\bin\monkeydo.bat" bin\TageYardTimer.prg fenix7
+& "$sdk\bin\monkeydo.bat" bin\YardLoopTimer.prg fenix7
 ```
 
 To hear/feel the alerts in the simulator, enable
