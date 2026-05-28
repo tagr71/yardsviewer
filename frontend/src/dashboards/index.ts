@@ -2,7 +2,7 @@ import type { ComponentType } from "react";
 import { Overview } from "./Overview";
 import { Leaderboard } from "./Leaderboard";
 import { Dashboard as DashboardView } from "./Dashboard";
-import { Settings } from "./Settings";
+import { SettingsGated } from "./RequireAdmin";
 import { Jerseys } from "./Jerseys";
 
 export type DashboardProps = { eventId: string; eventName?: string; eventLocation?: string };
@@ -17,7 +17,7 @@ export const dashboards: Dashboard[] = [
   {
     id: "settings",
     title: "Settings",
-    component: Settings,
+    component: SettingsGated,
   },
   {
     id: "overview",

@@ -1,14 +1,18 @@
 /**
- * Unit tests for `computeWinner` + `frontyardLoopLengthSec` — the
- * pure helpers that derive the overall frontyard race winner per sex.
- *
- * Winner rule recap:
- *   * Search loops L = min(snapshotLoop, jerseyYellow) downward to 1.
- *   * A runner of the requested sex "counts" on loop L only if their
- *     `lapSec` on L is > 0 and ≤ the loop's time limit.
- *   * Among counting runners, the smallest `lapSec` on L wins.
- *   * If no runner of that sex counts on the top loop (e.g. solo
- *     timeout), fall back to L−1, etc.
+ * Unit tests for the overall-winner pure helpers:
+ *   - `frontyardLoopLengthSec` — per-loop time-limit table.
+ *   - `isRaceOver` — broad "race over" predicate used for gating UI.
+ *   - `computeOverallWinner` — sex-independent winner selection:
+ *       * Search loops L = min(snapshotLoop, jerseyYellow) downward to 1.
+ *       * A runner "counts" on loop L only if their `lapSec` on L is
+ *         > 0 and ≤ that loop's time limit.
+ *       * Among counting runners, the smallest `lapSec` on L wins.
+ *       * If nobody counts on the top loop (e.g. solo timeout), fall
+ *         back to L−1, and so on.
+ *   - `isWinnerFinal` — strict version of `isRaceOver`: the trophy is
+ *       only awarded once the race is actually decided (end-loop
+ *       reached, race-finished flag set, or a later loop attempt
+ *       produced no qualifying finishers).
  *
  * Loop length:
  *   * Loop 1 = 30 min, each subsequent loop −1 min, until `lockAfter`
@@ -17,10 +21,12 @@
 
 import { describe, expect, it } from "vitest";
 import {
-  computeWinner,
+  computeOverallWinner,
   frontyardLoopLengthSec,
   isRaceOver,
+  isWinnerFinal,
   type JerseyEntry,
+  type WinnerRow,
 } from "../jerseyRanking";
 
 const entry = (
@@ -81,24 +87,25 @@ describe("isRaceOver", () => {
   });
 });
 
-describe("computeWinner — basic selection", () => {
+describe("computeOverallWinner — basic selection", () => {
   it("returns null when snapshotLoop is null", () => {
-    const w = computeWinner([entry("1", "M", [{ loop: 1, lapSec: 60 }])],
-      new Map(), "M", 27, null, 17);
+    const w = computeOverallWinner(
+      [entry("1", "M", [{ loop: 1, lapSec: 60 }])],
+      27,
+      null,
+      17,
+    );
     expect(w).toBeNull();
   });
 
   it("returns null when snapshotLoop < 1", () => {
     expect(
-      computeWinner([entry("1", "M", [])], new Map(), "M", 27, 0, 17),
+      computeOverallWinner([entry("1", "M", [])], 27, 0, 17),
     ).toBeNull();
   });
 
-  it("returns null when no runner of the sex has any completed loop", () => {
-    const w = computeWinner(
-      [entry("1", "K", [{ loop: 1, lapSec: 60 }])],
-      new Map(), "M", 27, 5, 17,
-    );
+  it("returns null when nobody has any completed loop within the limit", () => {
+    const w = computeOverallWinner([], 27, 5, 17);
     expect(w).toBeNull();
   });
 
@@ -108,12 +115,13 @@ describe("computeWinner — basic selection", () => {
         { loop: 1, lapSec: 1500 },
         { loop: 2, lapSec: 1400 },
       ]),
-      entry("2", "M", [
+      entry("2", "K", [
         { loop: 1, lapSec: 1400 },
         { loop: 2, lapSec: 1300 },
       ]),
     ];
-    const w = computeWinner(yellow, new Map(), "M", 27, 2, 17);
+    const w = computeOverallWinner(yellow, 27, 2, 17);
+    // Sex-independent: the K runner wins on loop 2.
     expect(w?.bib).toBe("2");
     expect(w?.lap).toBe(2);
     expect(w?.lapSec).toBe(1300);
@@ -127,20 +135,20 @@ describe("computeWinner — basic selection", () => {
         { loop: 3, lapSec: 1300 },
       ]),
     ];
-    const w = computeWinner(yellow, new Map(), "M", 2, 5, 17);
+    const w = computeOverallWinner(yellow, 2, 5, 17);
     expect(w?.lap).toBe(2);
     expect(w?.lapSec).toBe(1400);
   });
 });
 
-describe("computeWinner — time-limit enforcement", () => {
+describe("computeOverallWinner — time-limit enforcement", () => {
   it("excludes runners whose lap exceeded the loop limit", () => {
     // Loop 2 limit = 29 min = 1740s.
     const yellow = [
       entry("1", "M", [{ loop: 1, lapSec: 1500 }, { loop: 2, lapSec: 1800 }]),
       entry("2", "M", [{ loop: 1, lapSec: 1600 }, { loop: 2, lapSec: 1700 }]),
     ];
-    const w = computeWinner(yellow, new Map(), "M", 27, 2, 17);
+    const w = computeOverallWinner(yellow, 27, 2, 17);
     expect(w?.bib).toBe("2");
     expect(w?.lap).toBe(2);
   });
@@ -154,7 +162,7 @@ describe("computeWinner — time-limit enforcement", () => {
         { loop: 3, lapSec: 1700 },
       ]),
     ];
-    const w = computeWinner(yellow, new Map(), "M", 27, 3, 17);
+    const w = computeOverallWinner(yellow, 27, 3, 17);
     expect(w?.bib).toBe("1");
     expect(w?.lap).toBe(2);
     expect(w?.lapSec).toBe(1600);
@@ -165,52 +173,10 @@ describe("computeWinner — time-limit enforcement", () => {
       entry("1", "M", [{ loop: 1, lapSec: 1500 }, { loop: 2, lapSec: 0 }]),
       entry("2", "M", [{ loop: 1, lapSec: 1600 }]),
     ];
-    const w = computeWinner(yellow, new Map(), "M", 27, 2, 17);
+    const w = computeOverallWinner(yellow, 27, 2, 17);
     expect(w?.bib).toBe("1");
     expect(w?.lap).toBe(1);
     expect(w?.lapSec).toBe(1500);
-  });
-});
-
-describe("computeWinner — sex filtering", () => {
-  it("uses the entry's own sex when M/K", () => {
-    const yellow = [
-      entry("1", "K", [{ loop: 1, lapSec: 1500 }]),
-      entry("2", "M", [{ loop: 1, lapSec: 1400 }]),
-    ];
-    const wK = computeWinner(yellow, new Map(), "K", 27, 1, 17);
-    const wM = computeWinner(yellow, new Map(), "M", 27, 1, 17);
-    expect(wK?.bib).toBe("1");
-    expect(wM?.bib).toBe("2");
-  });
-
-  it("falls back to the sexLookup when the entry has no sex set", () => {
-    const yellow: JerseyEntry[] = [
-      { bib: "9", name: "X", club: "", sex: "", perLoop: [{ loop: 1, lapSec: 1500, totalSec: 1500 }] },
-    ];
-    const lookup = new Map<string, string>([["9", "K"]]);
-    expect(computeWinner(yellow, lookup, "K", 27, 1, 17)?.bib).toBe("9");
-    expect(computeWinner(yellow, lookup, "M", 27, 1, 17)).toBeNull();
-  });
-});
-
-describe("computeWinner — output payload", () => {
-  it("returns lap, lapSec and totalSec from the winning loop", () => {
-    const yellow = [
-      entry("1", "M", [
-        { loop: 1, lapSec: 1500, totalSec: 1500 },
-        { loop: 2, lapSec: 1400, totalSec: 2900 },
-      ]),
-    ];
-    const w = computeWinner(yellow, new Map(), "M", 27, 2, 17);
-    expect(w).toEqual({
-      bib: "1",
-      name: "R1",
-      club: "C",
-      lap: 2,
-      lapSec: 1400,
-      totalSec: 2900,
-    });
   });
 
   it("respects lockAfter when checking the time limit", () => {
@@ -222,21 +188,79 @@ describe("computeWinner — output payload", () => {
         totalSec: (i + 1) * 1200,
       }))),
     ];
-    const w = computeWinner(yellow, new Map(), "M", 27, 20, 10);
+    const w = computeOverallWinner(yellow, 27, 20, 10);
     expect(w?.lap).toBe(20);
     expect(w?.lapSec).toBe(1200);
   });
 
   it("falls back when the runner exceeds the locked limit on a late loop", () => {
-    // With lockAfter=10, loop 20 limit = 21 min = 1260s. Runner takes 1300s.
     const yellow = [
       entry("1", "M", [
         { loop: 19, lapSec: 1200, totalSec: 19 * 1200 },
         { loop: 20, lapSec: 1300, totalSec: 19 * 1200 + 1300 },
       ]),
     ];
-    const w = computeWinner(yellow, new Map(), "M", 27, 20, 10);
+    const w = computeOverallWinner(yellow, 27, 20, 10);
     expect(w?.lap).toBe(19);
     expect(w?.lapSec).toBe(1200);
+  });
+});
+
+describe("computeOverallWinner — output payload", () => {
+  it("returns bib, name, club, lap, lapSec and totalSec from the winning loop", () => {
+    const yellow = [
+      entry("1", "M", [
+        { loop: 1, lapSec: 1500, totalSec: 1500 },
+        { loop: 2, lapSec: 1400, totalSec: 2900 },
+      ]),
+    ];
+    const w = computeOverallWinner(yellow, 27, 2, 17);
+    expect(w).toEqual({
+      bib: "1",
+      name: "R1",
+      club: "C",
+      lap: 2,
+      lapSec: 1400,
+      totalSec: 2900,
+    });
+  });
+});
+
+describe("isWinnerFinal", () => {
+  const w = (lap: number): WinnerRow => ({
+    bib: "1",
+    name: "R1",
+    club: "C",
+    lap,
+    lapSec: 1200,
+    totalSec: lap * 1200,
+  });
+
+  it("returns true when raceFinished is set (even with no winner)", () => {
+    expect(isWinnerFinal(null, 5, 27, true)).toBe(true);
+  });
+
+  it("returns false when no winner is provided", () => {
+    expect(isWinnerFinal(null, 5, 27, false)).toBe(false);
+  });
+
+  it("returns false when snapshotLoop is null", () => {
+    expect(isWinnerFinal(w(5), null, 27, false)).toBe(false);
+  });
+
+  it("returns true when the winning loop reaches the configured end-loop", () => {
+    expect(isWinnerFinal(w(27), 27, 27, false)).toBe(true);
+  });
+
+  it("returns true when winner.lap < snapshotLoop (later loop produced no finishers)", () => {
+    // The race naturally ended on loop 6 because everyone DNF'd; the
+    // last decided loop is 5.
+    expect(isWinnerFinal(w(5), 6, 27, false)).toBe(true);
+  });
+
+  it("returns false while the race is mid-way and the leader is still in", () => {
+    // snapshot 5, winner decided on 5, end-loop 27 → race could still
+    // continue, leader is provisional.
+    expect(isWinnerFinal(w(5), 5, 27, false)).toBe(false);
   });
 });

@@ -203,6 +203,16 @@ export const playbackBtn: React.CSSProperties = {
   cursor: "pointer",
 };
 
+/** Sticky-positioning fragment for the replay-scrubber bar so it stays
+ * pinned at the top of the dashboard's scroll container while the rest
+ * of the page scrolls beneath it. Each dashboard spreads this into its
+ * existing bar wrapper style. */
+export const playbackBarSticky: React.CSSProperties = {
+  position: "sticky",
+  top: 0,
+  zIndex: 10,
+};
+
 function osloOffsetMinutes(instant: Date): number {
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone: OSLO_TZ,

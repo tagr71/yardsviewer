@@ -237,32 +237,48 @@ export function isRaceOver(
   return snapshotLoop >= jerseyYellow;
 }
 
-/** Compute the overall winner of the frontyard race, per sex.
- *
- * Rule: the winner is the runner with the fastest lap on the highest
- * loop L ≤ `min(snapshotLoop, jerseyYellow)` that any runner of the
- * given sex completed within the loop's time limit. A solo "going out
- * alone" attempt counts only if the runner makes it back inside the
- * limit; otherwise the previous loop's winner stands.
- *
- * Returns `null` if no runner of `sex` has any completed loop within
- * the time limit yet (or if no snapshot is available). */
-export function computeWinner(
+/** Returns `true` when the overall winner is *final* (i.e. the trophy
+ * has actually been awarded). This is the strict version of
+ * `isRaceOver`: a winner is final when
+ *   * the backend flagged the race as finished, OR
+ *   * the snapshot reached the configured yellow & winner end-loop
+ *     and that runner finished it within the limit, OR
+ *   * the winner's decisive loop is below `snapshotLoop`, meaning some
+ *     later loop attempt produced no qualifying finishers (all DNF'd
+ *     within the time limit) and the race naturally ended one loop
+ *     earlier.
+ * Mid-race "current leader" states are *not* final and the trophy
+ * is withheld until the race actually decides. */
+export function isWinnerFinal(
+  winner: WinnerRow | null,
+  snapshotLoop: number | null,
+  jerseyYellow: number,
+  raceFinished: boolean,
+): boolean {
+  if (raceFinished) return true;
+  if (!winner || snapshotLoop === null) return false;
+  if (winner.lap >= jerseyYellow) return true;
+  return winner.lap < snapshotLoop;
+}
+
+/** Compute the single overall winner of the frontyard race, independent
+ * of sex: the runner with the fastest lap on the highest loop
+ * L ≤ `min(snapshotLoop, jerseyYellow)` that any runner completed
+ * within the loop's time limit. Returns `null` when no loop has been
+ * completed within the limit yet. */
+export function computeOverallWinner(
   yellowEntries: JerseyEntry[],
-  sexLookup: Map<string, string>,
-  sex: Sex,
   jerseyYellow: number,
   snapshotLoop: number | null,
   lockAfter: number,
 ): WinnerRow | null {
   if (snapshotLoop === null || snapshotLoop < 1) return null;
   const top = Math.min(snapshotLoop, jerseyYellow);
-  const sexed = yellowEntries.filter((e) => resolveSex(e, sexLookup) === sex);
   for (let L = top; L >= 1; L -= 1) {
     const limit = frontyardLoopLengthSec(L, lockAfter);
     type Cand = { e: JerseyEntry; lapSec: number };
     const candidates: Cand[] = [];
-    for (const e of sexed) {
+    for (const e of yellowEntries) {
       const per = (e.perLoop ?? []).find((p) => p.loop === L);
       const lapSec = per?.lapSec;
       if (typeof lapSec === "number" && lapSec > 0 && lapSec <= limit) {
