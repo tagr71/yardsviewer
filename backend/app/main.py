@@ -29,6 +29,11 @@ RACERESULT_EVENT_ID = os.getenv("RACERESULT_EVENT_ID", "")
 RACERESULT_API_KEY = os.getenv("RACERESULT_API_KEY", "")
 RACERESULT_BASE = os.getenv("RACERESULT_BASE", "https://my.raceresult.com")
 
+# Local wall-clock fallback used when RaceResult publishes only a date
+# (no time of day) on its landing page. Applies to both backyard and
+# frontyard events.
+DEFAULT_EVENT_START_TIME = "10:00:00"
+
 app = FastAPI(title="Race dashboards API")
 
 # CORS configuration.
@@ -710,9 +715,7 @@ async def results(
     if iso_date and iso_time:
         event_start_time = f"{iso_date}T{iso_time}"
     elif iso_date:
-        # Default to 09:00 local when only a date is available — RaceResult
-        # rarely publishes the time of day on its landing pages.
-        event_start_time = f"{iso_date}T09:00:00"
+        event_start_time = f"{iso_date}T{DEFAULT_EVENT_START_TIME}"
 
     # Detect backyard vs frontyard from the event name. Both formats use
     # the same RaceResult template (splits are named "Yard N"), so the

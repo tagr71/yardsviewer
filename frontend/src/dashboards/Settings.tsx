@@ -6,6 +6,7 @@ import {
   FRONTYARD_MAX_CAP,
   FRONTYARD_START_MIN,
   NowOsloRow,
+  beepEditedKey,
   beepKey,
   jerseyGreenKey,
   jerseyPinkKey,
@@ -13,8 +14,10 @@ import {
   lockKey,
   locationKey,
   maxLoopsKey,
+  modeEditedKey,
   modeKey,
   playBeep,
+  startTimeEditedKey,
   startTimeKey,
   useNowTick,
   useTimerSettings,
@@ -46,10 +49,11 @@ export function Settings({ eventId, eventName, eventLocation }: { eventId: strin
     setStartPicker(isoToPicker(startTime));
   }, [startTime]);
 
-  // For a finished race, auto-populate the start time and mode from the
-  // RaceResult event metadata if the user hasn't set them yet. Manual
-  // edits are preserved — we only fill when the corresponding
-  // localStorage key is unset.
+  // Auto-populate the start time and mode from the RaceResult event
+  // metadata. The server value always wins until the user explicitly
+  // edits the field in Settings (tracked via the `*.userEdited` flag in
+  // localStorage); this way stale values cached from previous sessions
+  // don't linger when RaceResult publishes a corrected date/time.
   useEffect(() => {
     if (!eventId) return;
     let cancelled = false;
@@ -63,21 +67,18 @@ export function Settings({ eventId, eventName, eventLocation }: { eventId: strin
         }) => {
           if (cancelled) return;
           setRaceFinished(Boolean(data.raceFinished));
-          if (!data.raceFinished) return;
           const iso = (data.eventStartTime ?? "").trim();
-          if (iso) {
-            const existing = localStorage.getItem(startTimeKey(eventId));
-            if (!existing || !existing.trim()) {
-              setStartTime(iso);
-              localStorage.setItem(startTimeKey(eventId), iso);
-            }
+          if (iso && !localStorage.getItem(startTimeEditedKey(eventId))) {
+            setStartTime(iso);
+            localStorage.setItem(startTimeKey(eventId), iso);
           }
           const detected = (data.eventMode ?? "").trim();
-          if (detected === "backyard" || detected === "frontyard") {
-            if (localStorage.getItem(modeKey(eventId)) === null) {
-              setMode(detected);
-              localStorage.setItem(modeKey(eventId), detected);
-            }
+          if (
+            (detected === "backyard" || detected === "frontyard") &&
+            !localStorage.getItem(modeEditedKey(eventId))
+          ) {
+            setMode(detected);
+            localStorage.setItem(modeKey(eventId), detected);
           }
         },
       )
@@ -99,6 +100,7 @@ export function Settings({ eventId, eventName, eventLocation }: { eventId: strin
   function onBeepToggle(next: boolean) {
     setBeepEnabled(next);
     localStorage.setItem(beepKey(eventId), next ? "1" : "0");
+    localStorage.setItem(beepEditedKey(eventId), "1");
     if (next) playBeep(); // unlock audio context with a user gesture
   }
 
@@ -116,11 +118,15 @@ export function Settings({ eventId, eventName, eventLocation }: { eventId: strin
     setStartTime(iso);
     if (iso) localStorage.setItem(startTimeKey(eventId), iso);
     else localStorage.removeItem(startTimeKey(eventId));
+    // Mark the field as user-edited so the auto-fill effect stops
+    // overwriting it with the RaceResult value on subsequent loads.
+    localStorage.setItem(startTimeEditedKey(eventId), "1");
   }
 
   function onModeChange(next: Mode) {
     setMode(next);
     localStorage.setItem(modeKey(eventId), next);
+    localStorage.setItem(modeEditedKey(eventId), "1");
   }
 
   function onFyLockChange(next: number) {

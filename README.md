@@ -48,7 +48,7 @@ The dashboard dropdown lists, in order: **Settings**, **Overview**,
   fallback. For a finished race the start date and mode are
   auto-populated from RaceResult metadata when unset: the date comes
   from the landing page's schema.org JSON-LD `startDate` (time
-  defaults to 09:00); the mode is inferred from the event name
+  defaults to 10:00); the mode is inferred from the event name
   (`frontyard` / `backyard` substring).
 - **Dashboard (race timer)** — live race clock (`dd.hh.mm.ss`,
   ticked every wall-clock second via a self-correcting `setTimeout`)
@@ -282,7 +282,7 @@ FastAPI backend on port 8000.
   status matching `dnf|dns|dq|withdrawn` (i.e. a single survivor).
   `eventStartTime` is an ISO timestamp (`YYYY-MM-DDTHH:MM:SS`) scraped
   from the public landing page's schema.org `startDate`; if only a date
-  is available the time defaults to `09:00:00`. Either field is `""`
+  is available the time defaults to `10:00:00`. Either field is `""`
   when not detectable.
 
   Without `listname` the backend fetches the `Resultatliste` list

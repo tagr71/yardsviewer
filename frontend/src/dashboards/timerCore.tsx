@@ -64,6 +64,16 @@ export function startTimeKey(eventId: string) {
 export function modeKey(eventId: string) {
   return `raceresult.timerMode.${eventId}`;
 }
+// "Sticky" flags set the first time the user explicitly edits the start
+// time or mode in Settings. While unset, the auto-fill effect in
+// Settings.tsx keeps mirroring the RaceResult server values so stale
+// values from previous sessions never linger.
+export function startTimeEditedKey(eventId: string) {
+  return `raceresult.startTime.${eventId}.userEdited`;
+}
+export function modeEditedKey(eventId: string) {
+  return `raceresult.timerMode.${eventId}.userEdited`;
+}
 export function lockKey(eventId: string) {
   return `raceresult.timerFrontyardLock.${eventId}`;
 }
@@ -72,6 +82,13 @@ export function maxLoopsKey(eventId: string) {
 }
 export function beepKey(eventId: string) {
   return `raceresult.timerBeep.${eventId}`;
+}
+// Sticky flag set the first time the user toggles the beep setting in
+// Settings. Until it's set, the beep stays off regardless of any value
+// previously written to `beepKey` — so a stale "1" from a past session
+// can't surprise an audience with sudden countdown beeps.
+export function beepEditedKey(eventId: string) {
+  return `raceresult.timerBeep.${eventId}.userEdited`;
 }
 export function locationKey(eventId: string) {
   return `raceresult.eventLocation.${eventId}`;
@@ -380,7 +397,9 @@ export function useTimerSettings(eventId: string) {
     () => Math.min(FRONTYARD_MAX_CAP, readIntSetting(maxLoopsKey(eventId), FRONTYARD_MAX_DEFAULT)),
   );
   const [beepEnabled, setBeepEnabled] = useState<boolean>(
-    () => localStorage.getItem(beepKey(eventId)) === "1",
+    () =>
+      localStorage.getItem(beepEditedKey(eventId)) !== null &&
+      localStorage.getItem(beepKey(eventId)) === "1",
   );
   const [location, setLocation] = useState<string>(
     () => localStorage.getItem(locationKey(eventId)) ?? "",
@@ -407,7 +426,10 @@ export function useTimerSettings(eventId: string) {
     setFyMax(
       Math.min(FRONTYARD_MAX_CAP, readIntSetting(maxLoopsKey(eventId), FRONTYARD_MAX_DEFAULT)),
     );
-    setBeepEnabled(localStorage.getItem(beepKey(eventId)) === "1");
+    setBeepEnabled(
+      localStorage.getItem(beepEditedKey(eventId)) !== null &&
+        localStorage.getItem(beepKey(eventId)) === "1",
+    );
     setLocation(localStorage.getItem(locationKey(eventId)) ?? "");
     setJerseyPink(readIntSetting(jerseyPinkKey(eventId), JERSEY_PINK_DEFAULT));
     setJerseyGreen(readIntSetting(jerseyGreenKey(eventId), JERSEY_GREEN_DEFAULT));
@@ -424,6 +446,7 @@ export function useTimerSettings(eventId: string) {
         e.key === lockKey(eventId) ||
         e.key === maxLoopsKey(eventId) ||
         e.key === beepKey(eventId) ||
+        e.key === beepEditedKey(eventId) ||
         e.key === locationKey(eventId) ||
         e.key === jerseyPinkKey(eventId) ||
         e.key === jerseyGreenKey(eventId) ||
