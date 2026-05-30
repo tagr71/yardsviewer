@@ -2,7 +2,7 @@ import type { ComponentType } from "react";
 import { Overview } from "./Overview";
 import { Leaderboard } from "./Leaderboard";
 import { Dashboard as DashboardView } from "./Dashboard";
-import { SettingsGated } from "./RequireAdmin";
+import { SettingsGated } from "./Settings";
 import { Jerseys } from "./Jerseys";
 
 export type DashboardProps = { eventId: string; eventName?: string; eventLocation?: string };

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { FormEvent } from "react";
 import {
   FRONTYARD_LOCK_MAX,
   FRONTYARD_LOCK_MIN,
@@ -382,6 +383,115 @@ export function Settings({ eventId, eventName, eventLocation }: { eventId: strin
       <p style={{ margin: 0, color: "#888", fontSize: "0.85rem", textAlign: "center" }}>
         Settings are saved automatically and used by the Dashboard.
       </p>
+    </section>
+  );
+}
+
+/** Passphrase that unlocks the Settings dashboard. UX gate only — settings
+ * still live in localStorage and can be edited via DevTools by a determined
+ * user. The unlock flag is kept only in memory, so every page reload (or
+ * navigation to Settings via a fresh component mount) re-locks. */
+export const ORGANIZER_PASSPHRASE = "4admin";
+
+/** Renders `Settings` once the organizer passphrase has been entered.
+ * Shows a small unlock card otherwise. */
+export function SettingsGated(props: {
+  eventId: string;
+  eventName?: string;
+  eventLocation?: string;
+}) {
+  const [unlocked, setUnlocked] = useState(false);
+  const [input, setInput] = useState("");
+  const [error, setError] = useState(false);
+
+  function tryUnlock(e: FormEvent) {
+    e.preventDefault();
+    if (input === ORGANIZER_PASSPHRASE) {
+      setUnlocked(true);
+      setInput("");
+      setError(false);
+    } else {
+      setError(true);
+    }
+  }
+
+  if (unlocked) {
+    return (
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Settings {...props} />
+      </div>
+    );
+  }
+
+  return (
+    <section
+      style={{
+        width: "100%",
+        maxWidth: "420px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "1rem",
+        padding: "1.5rem",
+      }}
+    >
+      <h1 style={{ margin: 0, fontSize: "1.25rem" }}>Organizer access required</h1>
+      <p style={{ margin: 0, textAlign: "center", color: "#475569" }}>
+        Enter the organizer passphrase to edit race settings.
+      </p>
+      <form
+        onSubmit={tryUnlock}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.5rem",
+          width: "100%",
+        }}
+      >
+        <input
+          type="password"
+          autoFocus
+          value={input}
+          onChange={(e) => {
+            setInput(e.target.value);
+            if (error) setError(false);
+          }}
+          placeholder="Passphrase"
+          aria-label="Organizer passphrase"
+          style={{
+            padding: "0.5rem 0.7rem",
+            fontSize: "1rem",
+            border: `1px solid ${error ? "#dc2626" : "#cbd5e1"}`,
+            borderRadius: "0.375rem",
+          }}
+        />
+        {error && (
+          <span style={{ color: "#dc2626", fontSize: "0.875rem" }}>
+            Wrong passphrase.
+          </span>
+        )}
+        <button
+          type="submit"
+          style={{
+            padding: "0.5rem 0.7rem",
+            fontSize: "1rem",
+            border: "none",
+            borderRadius: "0.375rem",
+            background: "#0f172a",
+            color: "white",
+            cursor: "pointer",
+          }}
+        >
+          Unlock
+        </button>
+      </form>
     </section>
   );
 }
