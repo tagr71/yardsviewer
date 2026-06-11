@@ -1,0 +1,1048 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<debugInfo>
+    <manifest filename="C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\manifest-support.xml"/>
+    <pcToLineNum>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="1" lineNum="44" parent="globals/UltraLoopTimerView" pc="268435460" symbol="&lt;init&gt;"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerApp.mc" id="2" lineNum="4" parent="globals/UltraLoopTimerApp" pc="268435472" symbol="&lt;init&gt;"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\bin\\gen\\006-B4315-00\\source\\Rez.mcgen" id="3" lineNum="7" parent="globals/Rez" pc="268435484" symbol="&lt;init&gt;"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="4" lineNum="100" parent="globals/UltraLoopTimerView" pc="268435504" symbol="onTimerLap"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="4" lineNum="101" parent="globals/UltraLoopTimerView" pc="268435507" symbol="onTimerLap"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="4" lineNum="101" parent="globals/UltraLoopTimerView" pc="268435516" symbol="onTimerLap"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="4" lineNum="102" parent="globals/UltraLoopTimerView" pc="268435520" symbol="onTimerLap"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="4" lineNum="103" parent="globals/UltraLoopTimerView" pc="268435527" symbol="onTimerLap"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="4" lineNum="104" parent="globals/UltraLoopTimerView" pc="268435554" symbol="onTimerLap"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="4" lineNum="106" parent="globals/UltraLoopTimerView" pc="268435572" symbol="onTimerLap"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="4" lineNum="107" parent="globals/UltraLoopTimerView" pc="268435581" symbol="onTimerLap"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="4" lineNum="110" parent="globals/UltraLoopTimerView" pc="268435590" symbol="onTimerLap"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="4" lineNum="111" parent="globals/UltraLoopTimerView" pc="268435601" symbol="onTimerLap"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="591" parent="globals/UltraLoopTimerView" pc="268435613" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="592" parent="globals/UltraLoopTimerView" pc="268435616" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="592" parent="globals/UltraLoopTimerView" pc="268435644" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="593" parent="globals/UltraLoopTimerView" pc="268435648" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="594" parent="globals/UltraLoopTimerView" pc="268435673" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="594" parent="globals/UltraLoopTimerView" pc="268435680" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="595" parent="globals/UltraLoopTimerView" pc="268435684" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="596" parent="globals/UltraLoopTimerView" pc="268435697" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="596" parent="globals/UltraLoopTimerView" pc="268435705" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="597" parent="globals/UltraLoopTimerView" pc="268435715" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="597" parent="globals/UltraLoopTimerView" pc="268435722" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="598" parent="globals/UltraLoopTimerView" pc="268435728" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="599" parent="globals/UltraLoopTimerView" pc="268435735" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="600" parent="globals/UltraLoopTimerView" pc="268435763" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="601" parent="globals/UltraLoopTimerView" pc="268435770" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="602" parent="globals/UltraLoopTimerView" pc="268435796" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="603" parent="globals/UltraLoopTimerView" pc="268435824" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="604" parent="globals/UltraLoopTimerView" pc="268435852" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="605" parent="globals/UltraLoopTimerView" pc="268435865" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="606" parent="globals/UltraLoopTimerView" pc="268435884" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="607" parent="globals/UltraLoopTimerView" pc="268435900" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="608" parent="globals/UltraLoopTimerView" pc="268435916" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="609" parent="globals/UltraLoopTimerView" pc="268435919" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="610" parent="globals/UltraLoopTimerView" pc="268435935" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="611" parent="globals/UltraLoopTimerView" pc="268435948" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="5" lineNum="613" parent="globals/UltraLoopTimerView" pc="268435983" symbol="drawRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="6" lineNum="211" parent="globals/UltraLoopTimerView" pc="268435998" symbol="rebuildSchedule"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="6" lineNum="212" parent="globals/UltraLoopTimerView" pc="268436001" symbol="rebuildSchedule"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="6" lineNum="214" parent="globals/UltraLoopTimerView" pc="268436022" symbol="rebuildSchedule"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="6" lineNum="215" parent="globals/UltraLoopTimerView" pc="268436039" symbol="rebuildSchedule"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="6" lineNum="215" parent="globals/UltraLoopTimerView" pc="268436047" symbol="rebuildSchedule"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="6" lineNum="216" parent="globals/UltraLoopTimerView" pc="268436054" symbol="rebuildSchedule"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="6" lineNum="216" parent="globals/UltraLoopTimerView" pc="268436062" symbol="rebuildSchedule"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="6" lineNum="217" parent="globals/UltraLoopTimerView" pc="268436069" symbol="rebuildSchedule"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="6" lineNum="219" parent="globals/UltraLoopTimerView" pc="268436082" symbol="rebuildSchedule"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="6" lineNum="220" parent="globals/UltraLoopTimerView" pc="268436107" symbol="rebuildSchedule"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="6" lineNum="220" parent="globals/UltraLoopTimerView" pc="268436121" symbol="rebuildSchedule"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="6" lineNum="222" parent="globals/UltraLoopTimerView" pc="268436136" symbol="rebuildSchedule"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="6" lineNum="223" parent="globals/UltraLoopTimerView" pc="268436158" symbol="rebuildSchedule"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="6" lineNum="223" parent="globals/UltraLoopTimerView" pc="268436169" symbol="rebuildSchedule"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="6" lineNum="224" parent="globals/UltraLoopTimerView" pc="268436181" symbol="rebuildSchedule"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="6" lineNum="224" parent="globals/UltraLoopTimerView" pc="268436192" symbol="rebuildSchedule"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="6" lineNum="226" parent="globals/UltraLoopTimerView" pc="268436204" symbol="rebuildSchedule"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="6" lineNum="227" parent="globals/UltraLoopTimerView" pc="268436226" symbol="rebuildSchedule"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="6" lineNum="227" parent="globals/UltraLoopTimerView" pc="268436237" symbol="rebuildSchedule"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="6" lineNum="228" parent="globals/UltraLoopTimerView" pc="268436249" symbol="rebuildSchedule"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="6" lineNum="228" parent="globals/UltraLoopTimerView" pc="268436260" symbol="rebuildSchedule"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="6" lineNum="230" parent="globals/UltraLoopTimerView" pc="268436272" symbol="rebuildSchedule"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="7" lineNum="618" parent="globals/UltraLoopTimerView" pc="268436281" symbol="drawStatRow"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="7" lineNum="619" parent="globals/UltraLoopTimerView" pc="268436284" symbol="drawStatRow"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="7" lineNum="622" parent="globals/UltraLoopTimerView" pc="268436331" symbol="drawStatRow"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="7" lineNum="625" parent="globals/UltraLoopTimerView" pc="268436378" symbol="drawStatRow"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="7" lineNum="626" parent="globals/UltraLoopTimerView" pc="268436382" symbol="drawStatRow"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="7" lineNum="627" parent="globals/UltraLoopTimerView" pc="268436397" symbol="drawStatRow"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="7" lineNum="628" parent="globals/UltraLoopTimerView" pc="268436412" symbol="drawStatRow"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="7" lineNum="629" parent="globals/UltraLoopTimerView" pc="268436422" symbol="drawStatRow"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="7" lineNum="630" parent="globals/UltraLoopTimerView" pc="268436432" symbol="drawStatRow"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="7" lineNum="631" parent="globals/UltraLoopTimerView" pc="268436448" symbol="drawStatRow"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="7" lineNum="632" parent="globals/UltraLoopTimerView" pc="268436468" symbol="drawStatRow"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="7" lineNum="633" parent="globals/UltraLoopTimerView" pc="268436494" symbol="drawStatRow"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="8" lineNum="153" parent="globals/UltraLoopTimerView" pc="268436509" symbol="readNumber"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="8" lineNum="154" parent="globals/UltraLoopTimerView" pc="268436512" symbol="readNumber"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="8" lineNum="156" parent="globals/UltraLoopTimerView" pc="268436515" symbol="readNumber"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="8" lineNum="157" parent="globals/UltraLoopTimerView" pc="268436543" symbol="readNumber"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="8" lineNum="158" parent="globals/UltraLoopTimerView" pc="268436547" symbol="readNumber"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="8" lineNum="160" parent="globals/UltraLoopTimerView" pc="268436566" symbol="readNumber"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="8" lineNum="160" parent="globals/UltraLoopTimerView" pc="268436572" symbol="readNumber"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="8" lineNum="161" parent="globals/UltraLoopTimerView" pc="268436578" symbol="readNumber"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="8" lineNum="161" parent="globals/UltraLoopTimerView" pc="268436593" symbol="readNumber"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="8" lineNum="162" parent="globals/UltraLoopTimerView" pc="268436599" symbol="readNumber"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="8" lineNum="162" parent="globals/UltraLoopTimerView" pc="268436614" symbol="readNumber"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="8" lineNum="163" parent="globals/UltraLoopTimerView" pc="268436626" symbol="readNumber"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="8" lineNum="164" parent="globals/UltraLoopTimerView" pc="268436641" symbol="readNumber"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="8" lineNum="164" parent="globals/UltraLoopTimerView" pc="268436659" symbol="readNumber"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="8" lineNum="164" parent="globals/UltraLoopTimerView" pc="268436663" symbol="readNumber"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="8" lineNum="166" parent="globals/UltraLoopTimerView" pc="268436685" symbol="readNumber"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="9" lineNum="749" parent="globals/UltraLoopTimerView" pc="268436688" symbol="fmtMmSs"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="9" lineNum="750" parent="globals/UltraLoopTimerView" pc="268436691" symbol="fmtMmSs"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="9" lineNum="751" parent="globals/UltraLoopTimerView" pc="268436705" symbol="fmtMmSs"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="9" lineNum="751" parent="globals/UltraLoopTimerView" pc="268436721" symbol="fmtMmSs"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="9" lineNum="752" parent="globals/UltraLoopTimerView" pc="268436734" symbol="fmtMmSs"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="9" lineNum="752" parent="globals/UltraLoopTimerView" pc="268436741" symbol="fmtMmSs"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="9" lineNum="753" parent="globals/UltraLoopTimerView" pc="268436747" symbol="fmtMmSs"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="9" lineNum="754" parent="globals/UltraLoopTimerView" pc="268436754" symbol="fmtMmSs"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="9" lineNum="755" parent="globals/UltraLoopTimerView" pc="268436761" symbol="fmtMmSs"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="237" parent="globals/UltraLoopTimerView" pc="268436797" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="238" parent="globals/UltraLoopTimerView" pc="268436800" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="238" parent="globals/UltraLoopTimerView" pc="268436806" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="240" parent="globals/UltraLoopTimerView" pc="268436810" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="241" parent="globals/UltraLoopTimerView" pc="268436818" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="242" parent="globals/UltraLoopTimerView" pc="268436842" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="245" parent="globals/UltraLoopTimerView" pc="268436851" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="246" parent="globals/UltraLoopTimerView" pc="268436881" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="252" parent="globals/UltraLoopTimerView" pc="268436891" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="253" parent="globals/UltraLoopTimerView" pc="268436919" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="255" parent="globals/UltraLoopTimerView" pc="268436948" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="256" parent="globals/UltraLoopTimerView" pc="268436955" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="257" parent="globals/UltraLoopTimerView" pc="268436977" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="258" parent="globals/UltraLoopTimerView" pc="268436988" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="259" parent="globals/UltraLoopTimerView" pc="268436997" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="272" parent="globals/UltraLoopTimerView" pc="268437017" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="273" parent="globals/UltraLoopTimerView" pc="268437025" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="274" parent="globals/UltraLoopTimerView" pc="268437045" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="276" parent="globals/UltraLoopTimerView" pc="268437074" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="277" parent="globals/UltraLoopTimerView" pc="268437081" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="278" parent="globals/UltraLoopTimerView" pc="268437103" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="279" parent="globals/UltraLoopTimerView" pc="268437114" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="280" parent="globals/UltraLoopTimerView" pc="268437129" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="281" parent="globals/UltraLoopTimerView" pc="268437141" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="282" parent="globals/UltraLoopTimerView" pc="268437168" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="286" parent="globals/UltraLoopTimerView" pc="268437191" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="291" parent="globals/UltraLoopTimerView" pc="268437212" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="292" parent="globals/UltraLoopTimerView" pc="268437215" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="293" parent="globals/UltraLoopTimerView" pc="268437223" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="294" parent="globals/UltraLoopTimerView" pc="268437236" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="296" parent="globals/UltraLoopTimerView" pc="268437249" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="297" parent="globals/UltraLoopTimerView" pc="268437258" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="298" parent="globals/UltraLoopTimerView" pc="268437268" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="299" parent="globals/UltraLoopTimerView" pc="268437289" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="300" parent="globals/UltraLoopTimerView" pc="268437297" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="301" parent="globals/UltraLoopTimerView" pc="268437314" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="303" parent="globals/UltraLoopTimerView" pc="268437350" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="309" parent="globals/UltraLoopTimerView" pc="268437361" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="310" parent="globals/UltraLoopTimerView" pc="268437371" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="310" parent="globals/UltraLoopTimerView" pc="268437378" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="314" parent="globals/UltraLoopTimerView" pc="268437384" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="315" parent="globals/UltraLoopTimerView" pc="268437393" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="316" parent="globals/UltraLoopTimerView" pc="268437401" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="317" parent="globals/UltraLoopTimerView" pc="268437427" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="319" parent="globals/UltraLoopTimerView" pc="268437441" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="320" parent="globals/UltraLoopTimerView" pc="268437458" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="321" parent="globals/UltraLoopTimerView" pc="268437469" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="324" parent="globals/UltraLoopTimerView" pc="268437483" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="325" parent="globals/UltraLoopTimerView" pc="268437500" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="329" parent="globals/UltraLoopTimerView" pc="268437514" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="330" parent="globals/UltraLoopTimerView" pc="268437523" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="338" parent="globals/UltraLoopTimerView" pc="268437532" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="339" parent="globals/UltraLoopTimerView" pc="268437549" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="340" parent="globals/UltraLoopTimerView" pc="268437581" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="341" parent="globals/UltraLoopTimerView" pc="268437601" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="342" parent="globals/UltraLoopTimerView" pc="268437626" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="343" parent="globals/UltraLoopTimerView" pc="268437645" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="346" parent="globals/UltraLoopTimerView" pc="268437673" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="348" parent="globals/UltraLoopTimerView" pc="268437706" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="349" parent="globals/UltraLoopTimerView" pc="268437714" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="350" parent="globals/UltraLoopTimerView" pc="268437722" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="355" parent="globals/UltraLoopTimerView" pc="268437730" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="356" parent="globals/UltraLoopTimerView" pc="268437756" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="10" lineNum="358" parent="globals/UltraLoopTimerView" pc="268437800" symbol="compute"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="11" lineNum="637" parent="globals/UltraLoopTimerView" pc="268437824" symbol="loopSecToPaceMinPerKm"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="11" lineNum="638" parent="globals/UltraLoopTimerView" pc="268437827" symbol="loopSecToPaceMinPerKm"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="11" lineNum="638" parent="globals/UltraLoopTimerView" pc="268437844" symbol="loopSecToPaceMinPerKm"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="11" lineNum="639" parent="globals/UltraLoopTimerView" pc="268437849" symbol="loopSecToPaceMinPerKm"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="11" lineNum="640" parent="globals/UltraLoopTimerView" pc="268437876" symbol="loopSecToPaceMinPerKm"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="12" lineNum="169" parent="globals/UltraLoopTimerView" pc="268437885" symbol="readFloat"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="12" lineNum="170" parent="globals/UltraLoopTimerView" pc="268437888" symbol="readFloat"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="12" lineNum="172" parent="globals/UltraLoopTimerView" pc="268437891" symbol="readFloat"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="12" lineNum="173" parent="globals/UltraLoopTimerView" pc="268437919" symbol="readFloat"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="12" lineNum="174" parent="globals/UltraLoopTimerView" pc="268437923" symbol="readFloat"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="12" lineNum="176" parent="globals/UltraLoopTimerView" pc="268437942" symbol="readFloat"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="12" lineNum="176" parent="globals/UltraLoopTimerView" pc="268437948" symbol="readFloat"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="12" lineNum="177" parent="globals/UltraLoopTimerView" pc="268437954" symbol="readFloat"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="12" lineNum="177" parent="globals/UltraLoopTimerView" pc="268437969" symbol="readFloat"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="12" lineNum="178" parent="globals/UltraLoopTimerView" pc="268437975" symbol="readFloat"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="12" lineNum="178" parent="globals/UltraLoopTimerView" pc="268437990" symbol="readFloat"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="12" lineNum="179" parent="globals/UltraLoopTimerView" pc="268438002" symbol="readFloat"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="12" lineNum="180" parent="globals/UltraLoopTimerView" pc="268438017" symbol="readFloat"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="12" lineNum="180" parent="globals/UltraLoopTimerView" pc="268438035" symbol="readFloat"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="12" lineNum="180" parent="globals/UltraLoopTimerView" pc="268438039" symbol="readFloat"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="12" lineNum="182" parent="globals/UltraLoopTimerView" pc="268438061" symbol="readFloat"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="551" parent="globals/UltraLoopTimerView" pc="268438064" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="552" parent="globals/UltraLoopTimerView" pc="268438067" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="552" parent="globals/UltraLoopTimerView" pc="268438087" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="553" parent="globals/UltraLoopTimerView" pc="268438091" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="554" parent="globals/UltraLoopTimerView" pc="268438110" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="555" parent="globals/UltraLoopTimerView" pc="268438117" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="556" parent="globals/UltraLoopTimerView" pc="268438134" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="557" parent="globals/UltraLoopTimerView" pc="268438146" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="558" parent="globals/UltraLoopTimerView" pc="268438153" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="559" parent="globals/UltraLoopTimerView" pc="268438175" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="559" parent="globals/UltraLoopTimerView" pc="268438183" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="562" parent="globals/UltraLoopTimerView" pc="268438196" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="563" parent="globals/UltraLoopTimerView" pc="268438206" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="564" parent="globals/UltraLoopTimerView" pc="268438216" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="565" parent="globals/UltraLoopTimerView" pc="268438226" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="565" parent="globals/UltraLoopTimerView" pc="268438233" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="566" parent="globals/UltraLoopTimerView" pc="268438239" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="566" parent="globals/UltraLoopTimerView" pc="268438250" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="567" parent="globals/UltraLoopTimerView" pc="268438260" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="567" parent="globals/UltraLoopTimerView" pc="268438267" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="568" parent="globals/UltraLoopTimerView" pc="268438271" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="569" parent="globals/UltraLoopTimerView" pc="268438291" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="570" parent="globals/UltraLoopTimerView" pc="268438301" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="571" parent="globals/UltraLoopTimerView" pc="268438305" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="572" parent="globals/UltraLoopTimerView" pc="268438317" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="573" parent="globals/UltraLoopTimerView" pc="268438338" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="574" parent="globals/UltraLoopTimerView" pc="268438354" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="575" parent="globals/UltraLoopTimerView" pc="268438370" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="576" parent="globals/UltraLoopTimerView" pc="268438398" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="577" parent="globals/UltraLoopTimerView" pc="268438426" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="578" parent="globals/UltraLoopTimerView" pc="268438439" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="579" parent="globals/UltraLoopTimerView" pc="268438458" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="580" parent="globals/UltraLoopTimerView" pc="268438474" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="13" lineNum="582" parent="globals/UltraLoopTimerView" pc="268438500" symbol="drawLapMarkers"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="14" lineNum="711" parent="globals/UltraLoopTimerView" pc="268438515" symbol="vibrateOnly"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="14" lineNum="712" parent="globals/UltraLoopTimerView" pc="268438518" symbol="vibrateOnly"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="14" lineNum="712" parent="globals/UltraLoopTimerView" pc="268438526" symbol="vibrateOnly"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="14" lineNum="713" parent="globals/UltraLoopTimerView" pc="268438533" symbol="vibrateOnly"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="14" lineNum="715" parent="globals/UltraLoopTimerView" pc="268438563" symbol="vibrateOnly"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="14" lineNum="716" parent="globals/UltraLoopTimerView" pc="268438574" symbol="vibrateOnly"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="14" lineNum="717" parent="globals/UltraLoopTimerView" pc="268438585" symbol="vibrateOnly"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="14" lineNum="718" parent="globals/UltraLoopTimerView" pc="268438620" symbol="vibrateOnly"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="14" lineNum="719" parent="globals/UltraLoopTimerView" pc="268438639" symbol="vibrateOnly"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="14" lineNum="722" parent="globals/UltraLoopTimerView" pc="268438688" symbol="vibrateOnly"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="14" lineNum="723" parent="globals/UltraLoopTimerView" pc="268438709" symbol="vibrateOnly"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="15" lineNum="738" parent="globals/UltraLoopTimerView" pc="268438729" symbol="formatPace"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="15" lineNum="739" parent="globals/UltraLoopTimerView" pc="268438732" symbol="formatPace"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="15" lineNum="740" parent="globals/UltraLoopTimerView" pc="268438747" symbol="formatPace"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="15" lineNum="742" parent="globals/UltraLoopTimerView" pc="268438756" symbol="formatPace"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="15" lineNum="743" parent="globals/UltraLoopTimerView" pc="268438778" symbol="formatPace"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="15" lineNum="744" parent="globals/UltraLoopTimerView" pc="268438785" symbol="formatPace"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="15" lineNum="745" parent="globals/UltraLoopTimerView" pc="268438792" symbol="formatPace"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="16" lineNum="197" parent="globals/UltraLoopTimerView" pc="268438828" symbol="readBool"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="16" lineNum="198" parent="globals/UltraLoopTimerView" pc="268438831" symbol="readBool"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="16" lineNum="200" parent="globals/UltraLoopTimerView" pc="268438834" symbol="readBool"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="16" lineNum="201" parent="globals/UltraLoopTimerView" pc="268438862" symbol="readBool"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="16" lineNum="202" parent="globals/UltraLoopTimerView" pc="268438866" symbol="readBool"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="16" lineNum="204" parent="globals/UltraLoopTimerView" pc="268438885" symbol="readBool"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="16" lineNum="204" parent="globals/UltraLoopTimerView" pc="268438891" symbol="readBool"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="16" lineNum="205" parent="globals/UltraLoopTimerView" pc="268438897" symbol="readBool"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="16" lineNum="205" parent="globals/UltraLoopTimerView" pc="268438912" symbol="readBool"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="16" lineNum="206" parent="globals/UltraLoopTimerView" pc="268438918" symbol="readBool"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="16" lineNum="206" parent="globals/UltraLoopTimerView" pc="268438933" symbol="readBool"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="16" lineNum="207" parent="globals/UltraLoopTimerView" pc="268438941" symbol="readBool"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="16" lineNum="207" parent="globals/UltraLoopTimerView" pc="268438956" symbol="readBool"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="16" lineNum="208" parent="globals/UltraLoopTimerView" pc="268438996" symbol="readBool"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="649" parent="globals/UltraLoopTimerView" pc="268438999" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="650" parent="globals/UltraLoopTimerView" pc="268439002" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="650" parent="globals/UltraLoopTimerView" pc="268439012" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="651" parent="globals/UltraLoopTimerView" pc="268439016" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="652" parent="globals/UltraLoopTimerView" pc="268439023" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="653" parent="globals/UltraLoopTimerView" pc="268439031" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="654" parent="globals/UltraLoopTimerView" pc="268439050" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="655" parent="globals/UltraLoopTimerView" pc="268439067" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="656" parent="globals/UltraLoopTimerView" pc="268439079" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="657" parent="globals/UltraLoopTimerView" pc="268439086" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="658" parent="globals/UltraLoopTimerView" pc="268439108" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="658" parent="globals/UltraLoopTimerView" pc="268439116" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="662" parent="globals/UltraLoopTimerView" pc="268439132" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="662" parent="globals/UltraLoopTimerView" pc="268439139" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="663" parent="globals/UltraLoopTimerView" pc="268439145" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="664" parent="globals/UltraLoopTimerView" pc="268439155" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="666" parent="globals/UltraLoopTimerView" pc="268439165" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="667" parent="globals/UltraLoopTimerView" pc="268439185" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="668" parent="globals/UltraLoopTimerView" pc="268439195" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="669" parent="globals/UltraLoopTimerView" pc="268439198" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="670" parent="globals/UltraLoopTimerView" pc="268439214" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="671" parent="globals/UltraLoopTimerView" pc="268439229" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="672" parent="globals/UltraLoopTimerView" pc="268439250" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="673" parent="globals/UltraLoopTimerView" pc="268439266" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="674" parent="globals/UltraLoopTimerView" pc="268439282" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="675" parent="globals/UltraLoopTimerView" pc="268439310" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="676" parent="globals/UltraLoopTimerView" pc="268439338" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="677" parent="globals/UltraLoopTimerView" pc="268439352" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="17" lineNum="680" parent="globals/UltraLoopTimerView" pc="268439397" symbol="drawLoopNumberLabels"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="18" lineNum="233" parent="globals/UltraLoopTimerView" pc="268439412" symbol="onLayout"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="468" parent="globals/UltraLoopTimerView" pc="268439415" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="469" parent="globals/UltraLoopTimerView" pc="268439418" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="469" parent="globals/UltraLoopTimerView" pc="268439438" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="470" parent="globals/UltraLoopTimerView" pc="268439442" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="472" parent="globals/UltraLoopTimerView" pc="268439449" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="473" parent="globals/UltraLoopTimerView" pc="268439468" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="474" parent="globals/UltraLoopTimerView" pc="268439488" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="475" parent="globals/UltraLoopTimerView" pc="268439495" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="476" parent="globals/UltraLoopTimerView" pc="268439505" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="477" parent="globals/UltraLoopTimerView" pc="268439515" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="478" parent="globals/UltraLoopTimerView" pc="268439518" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="479" parent="globals/UltraLoopTimerView" pc="268439534" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="480" parent="globals/UltraLoopTimerView" pc="268439537" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="482" parent="globals/UltraLoopTimerView" pc="268439553" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="483" parent="globals/UltraLoopTimerView" pc="268439573" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="484" parent="globals/UltraLoopTimerView" pc="268439586" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="484" parent="globals/UltraLoopTimerView" pc="268439593" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="485" parent="globals/UltraLoopTimerView" pc="268439599" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="486" parent="globals/UltraLoopTimerView" pc="268439621" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="487" parent="globals/UltraLoopTimerView" pc="268439637" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="488" parent="globals/UltraLoopTimerView" pc="268439656" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="489" parent="globals/UltraLoopTimerView" pc="268439684" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="490" parent="globals/UltraLoopTimerView" pc="268439700" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="491" parent="globals/UltraLoopTimerView" pc="268439716" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="492" parent="globals/UltraLoopTimerView" pc="268439732" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="495" parent="globals/UltraLoopTimerView" pc="268439748" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="496" parent="globals/UltraLoopTimerView" pc="268439761" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="497" parent="globals/UltraLoopTimerView" pc="268439780" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="498" parent="globals/UltraLoopTimerView" pc="268439797" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="501" parent="globals/UltraLoopTimerView" pc="268439813" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="502" parent="globals/UltraLoopTimerView" pc="268439835" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="503" parent="globals/UltraLoopTimerView" pc="268439848" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="507" parent="globals/UltraLoopTimerView" pc="268439879" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="508" parent="globals/UltraLoopTimerView" pc="268439895" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="509" parent="globals/UltraLoopTimerView" pc="268439911" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="510" parent="globals/UltraLoopTimerView" pc="268439928" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="19" lineNum="513" parent="globals/UltraLoopTimerView" pc="268439970" symbol="drawFictiveRunners"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="20" lineNum="683" parent="globals/UltraLoopTimerView" pc="268439985" symbol="ringBell"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="20" lineNum="684" parent="globals/UltraLoopTimerView" pc="268439988" symbol="ringBell"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="20" lineNum="684" parent="globals/UltraLoopTimerView" pc="268439996" symbol="ringBell"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="20" lineNum="685" parent="globals/UltraLoopTimerView" pc="268440003" symbol="ringBell"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="20" lineNum="686" parent="globals/UltraLoopTimerView" pc="268440018" symbol="ringBell"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="20" lineNum="688" parent="globals/UltraLoopTimerView" pc="268440033" symbol="ringBell"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="20" lineNum="689" parent="globals/UltraLoopTimerView" pc="268440044" symbol="ringBell"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="20" lineNum="691" parent="globals/UltraLoopTimerView" pc="268440075" symbol="ringBell"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="20" lineNum="693" parent="globals/UltraLoopTimerView" pc="268440094" symbol="ringBell"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="20" lineNum="695" parent="globals/UltraLoopTimerView" pc="268440109" symbol="ringBell"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="20" lineNum="696" parent="globals/UltraLoopTimerView" pc="268440120" symbol="ringBell"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="20" lineNum="697" parent="globals/UltraLoopTimerView" pc="268440131" symbol="ringBell"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="20" lineNum="698" parent="globals/UltraLoopTimerView" pc="268440166" symbol="ringBell"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="20" lineNum="699" parent="globals/UltraLoopTimerView" pc="268440185" symbol="ringBell"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="20" lineNum="702" parent="globals/UltraLoopTimerView" pc="268440235" symbol="ringBell"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="20" lineNum="703" parent="globals/UltraLoopTimerView" pc="268440256" symbol="ringBell"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="21" lineNum="185" parent="globals/UltraLoopTimerView" pc="268440279" symbol="readString"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="21" lineNum="186" parent="globals/UltraLoopTimerView" pc="268440282" symbol="readString"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="21" lineNum="188" parent="globals/UltraLoopTimerView" pc="268440285" symbol="readString"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="21" lineNum="189" parent="globals/UltraLoopTimerView" pc="268440313" symbol="readString"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="21" lineNum="190" parent="globals/UltraLoopTimerView" pc="268440317" symbol="readString"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="21" lineNum="192" parent="globals/UltraLoopTimerView" pc="268440336" symbol="readString"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="21" lineNum="192" parent="globals/UltraLoopTimerView" pc="268440342" symbol="readString"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="21" lineNum="193" parent="globals/UltraLoopTimerView" pc="268440348" symbol="readString"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="21" lineNum="193" parent="globals/UltraLoopTimerView" pc="268440363" symbol="readString"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="21" lineNum="194" parent="globals/UltraLoopTimerView" pc="268440369" symbol="readString"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="22" lineNum="126" parent="globals/UltraLoopTimerView" pc="268440377" symbol="finalizeBurst"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="22" lineNum="127" parent="globals/UltraLoopTimerView" pc="268440380" symbol="finalizeBurst"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="22" lineNum="128" parent="globals/UltraLoopTimerView" pc="268440387" symbol="finalizeBurst"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="22" lineNum="129" parent="globals/UltraLoopTimerView" pc="268440394" symbol="finalizeBurst"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="22" lineNum="130" parent="globals/UltraLoopTimerView" pc="268440403" symbol="finalizeBurst"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="22" lineNum="131" parent="globals/UltraLoopTimerView" pc="268440411" symbol="finalizeBurst"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="22" lineNum="131" parent="globals/UltraLoopTimerView" pc="268440418" symbol="finalizeBurst"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="22" lineNum="133" parent="globals/UltraLoopTimerView" pc="268440422" symbol="finalizeBurst"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="22" lineNum="135" parent="globals/UltraLoopTimerView" pc="268440430" symbol="finalizeBurst"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="22" lineNum="136" parent="globals/UltraLoopTimerView" pc="268440440" symbol="finalizeBurst"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="22" lineNum="136" parent="globals/UltraLoopTimerView" pc="268440447" symbol="finalizeBurst"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="22" lineNum="137" parent="globals/UltraLoopTimerView" pc="268440453" symbol="finalizeBurst"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="22" lineNum="138" parent="globals/UltraLoopTimerView" pc="268440465" symbol="finalizeBurst"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="22" lineNum="139" parent="globals/UltraLoopTimerView" pc="268440474" symbol="finalizeBurst"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="22" lineNum="140" parent="globals/UltraLoopTimerView" pc="268440483" symbol="finalizeBurst"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="22" lineNum="141" parent="globals/UltraLoopTimerView" pc="268440498" symbol="finalizeBurst"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="22" lineNum="144" parent="globals/UltraLoopTimerView" pc="268440525" symbol="finalizeBurst"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="22" lineNum="145" parent="globals/UltraLoopTimerView" pc="268440535" symbol="finalizeBurst"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="22" lineNum="146" parent="globals/UltraLoopTimerView" pc="268440550" symbol="finalizeBurst"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="22" lineNum="147" parent="globals/UltraLoopTimerView" pc="268440562" symbol="finalizeBurst"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="22" lineNum="149" parent="globals/UltraLoopTimerView" pc="268440573" symbol="finalizeBurst"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="768" parent="globals/UltraLoopTimerView" pc="268440585" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="769" parent="globals/UltraLoopTimerView" pc="268440588" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="770" parent="globals/UltraLoopTimerView" pc="268440595" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="771" parent="globals/UltraLoopTimerView" pc="268440626" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="772" parent="globals/UltraLoopTimerView" pc="268440645" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="773" parent="globals/UltraLoopTimerView" pc="268440667" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="774" parent="globals/UltraLoopTimerView" pc="268440706" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="775" parent="globals/UltraLoopTimerView" pc="268440745" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="777" parent="globals/UltraLoopTimerView" pc="268440790" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="778" parent="globals/UltraLoopTimerView" pc="268440794" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="779" parent="globals/UltraLoopTimerView" pc="268440798" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="780" parent="globals/UltraLoopTimerView" pc="268440814" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="782" parent="globals/UltraLoopTimerView" pc="268440830" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="783" parent="globals/UltraLoopTimerView" pc="268440834" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="785" parent="globals/UltraLoopTimerView" pc="268440844" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="786" parent="globals/UltraLoopTimerView" pc="268440858" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="787" parent="globals/UltraLoopTimerView" pc="268440878" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="790" parent="globals/UltraLoopTimerView" pc="268440904" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="791" parent="globals/UltraLoopTimerView" pc="268440917" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="792" parent="globals/UltraLoopTimerView" pc="268440927" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="793" parent="globals/UltraLoopTimerView" pc="268440937" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="794" parent="globals/UltraLoopTimerView" pc="268440947" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="795" parent="globals/UltraLoopTimerView" pc="268440967" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="796" parent="globals/UltraLoopTimerView" pc="268440987" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="797" parent="globals/UltraLoopTimerView" pc="268441003" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="23" lineNum="798" parent="globals/UltraLoopTimerView" pc="268441023" symbol="renderRunnerHero"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="24" lineNum="115" parent="globals/UltraLoopTimerView" pc="268441038" symbol="onTimerReset"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="24" lineNum="116" parent="globals/UltraLoopTimerView" pc="268441040" symbol="onTimerReset"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="24" lineNum="117" parent="globals/UltraLoopTimerView" pc="268441048" symbol="onTimerReset"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="24" lineNum="118" parent="globals/UltraLoopTimerView" pc="268441056" symbol="onTimerReset"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="24" lineNum="119" parent="globals/UltraLoopTimerView" pc="268441064" symbol="onTimerReset"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="24" lineNum="120" parent="globals/UltraLoopTimerView" pc="268441072" symbol="onTimerReset"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="24" lineNum="121" parent="globals/UltraLoopTimerView" pc="268441081" symbol="onTimerReset"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="24" lineNum="122" parent="globals/UltraLoopTimerView" pc="268441089" symbol="onTimerReset"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="25" lineNum="71" parent="globals/UltraLoopTimerView" pc="268441098" symbol="initialize"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="25" lineNum="72" parent="globals/UltraLoopTimerView" pc="268441100" symbol="initialize"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="25" lineNum="73" parent="globals/UltraLoopTimerView" pc="268441112" symbol="initialize"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="25" lineNum="74" parent="globals/UltraLoopTimerView" pc="268441120" symbol="initialize"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="25" lineNum="75" parent="globals/UltraLoopTimerView" pc="268441128" symbol="initialize"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="25" lineNum="76" parent="globals/UltraLoopTimerView" pc="268441136" symbol="initialize"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="25" lineNum="77" parent="globals/UltraLoopTimerView" pc="268441144" symbol="initialize"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="25" lineNum="78" parent="globals/UltraLoopTimerView" pc="268441152" symbol="initialize"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="25" lineNum="79" parent="globals/UltraLoopTimerView" pc="268441160" symbol="initialize"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="25" lineNum="80" parent="globals/UltraLoopTimerView" pc="268441168" symbol="initialize"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="25" lineNum="81" parent="globals/UltraLoopTimerView" pc="268441176" symbol="initialize"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="25" lineNum="82" parent="globals/UltraLoopTimerView" pc="268441184" symbol="initialize"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="25" lineNum="83" parent="globals/UltraLoopTimerView" pc="268441192" symbol="initialize"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="25" lineNum="84" parent="globals/UltraLoopTimerView" pc="268441200" symbol="initialize"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="25" lineNum="85" parent="globals/UltraLoopTimerView" pc="268441208" symbol="initialize"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="25" lineNum="86" parent="globals/UltraLoopTimerView" pc="268441217" symbol="initialize"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="25" lineNum="87" parent="globals/UltraLoopTimerView" pc="268441226" symbol="initialize"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="25" lineNum="88" parent="globals/UltraLoopTimerView" pc="268441234" symbol="initialize"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="25" lineNum="89" parent="globals/UltraLoopTimerView" pc="268441242" symbol="initialize"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="25" lineNum="90" parent="globals/UltraLoopTimerView" pc="268441250" symbol="initialize"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="362" parent="globals/UltraLoopTimerView" pc="268441258" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="363" parent="globals/UltraLoopTimerView" pc="268441261" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="364" parent="globals/UltraLoopTimerView" pc="268441269" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="365" parent="globals/UltraLoopTimerView" pc="268441287" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="366" parent="globals/UltraLoopTimerView" pc="268441301" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="367" parent="globals/UltraLoopTimerView" pc="268441309" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="369" parent="globals/UltraLoopTimerView" pc="268441323" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="370" parent="globals/UltraLoopTimerView" pc="268441332" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="371" parent="globals/UltraLoopTimerView" pc="268441341" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="372" parent="globals/UltraLoopTimerView" pc="268441348" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="373" parent="globals/UltraLoopTimerView" pc="268441352" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="374" parent="globals/UltraLoopTimerView" pc="268441365" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="376" parent="globals/UltraLoopTimerView" pc="268441378" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="377" parent="globals/UltraLoopTimerView" pc="268441386" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="378" parent="globals/UltraLoopTimerView" pc="268441409" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="379" parent="globals/UltraLoopTimerView" pc="268441432" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="383" parent="globals/UltraLoopTimerView" pc="268441458" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="384" parent="globals/UltraLoopTimerView" pc="268441481" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="385" parent="globals/UltraLoopTimerView" pc="268441504" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="386" parent="globals/UltraLoopTimerView" pc="268441523" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="393" parent="globals/UltraLoopTimerView" pc="268441524" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="394" parent="globals/UltraLoopTimerView" pc="268441532" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="395" parent="globals/UltraLoopTimerView" pc="268441539" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="397" parent="globals/UltraLoopTimerView" pc="268441549" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="398" parent="globals/UltraLoopTimerView" pc="268441574" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="400" parent="globals/UltraLoopTimerView" pc="268441614" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="402" parent="globals/UltraLoopTimerView" pc="268441629" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="404" parent="globals/UltraLoopTimerView" pc="268441679" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="405" parent="globals/UltraLoopTimerView" pc="268441691" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="410" parent="globals/UltraLoopTimerView" pc="268441764" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="411" parent="globals/UltraLoopTimerView" pc="268441768" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="412" parent="globals/UltraLoopTimerView" pc="268441772" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="413" parent="globals/UltraLoopTimerView" pc="268441776" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="414" parent="globals/UltraLoopTimerView" pc="268441780" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="416" parent="globals/UltraLoopTimerView" pc="268441784" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="417" parent="globals/UltraLoopTimerView" pc="268441800" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="418" parent="globals/UltraLoopTimerView" pc="268441816" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="419" parent="globals/UltraLoopTimerView" pc="268441832" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="420" parent="globals/UltraLoopTimerView" pc="268441848" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="422" parent="globals/UltraLoopTimerView" pc="268441864" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="423" parent="globals/UltraLoopTimerView" pc="268441874" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="424" parent="globals/UltraLoopTimerView" pc="268441890" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="425" parent="globals/UltraLoopTimerView" pc="268441900" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="426" parent="globals/UltraLoopTimerView" pc="268441910" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="426" parent="globals/UltraLoopTimerView" pc="268441917" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="428" parent="globals/UltraLoopTimerView" pc="268441923" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="429" parent="globals/UltraLoopTimerView" pc="268441927" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="430" parent="globals/UltraLoopTimerView" pc="268441937" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="431" parent="globals/UltraLoopTimerView" pc="268441947" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="432" parent="globals/UltraLoopTimerView" pc="268441957" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="435" parent="globals/UltraLoopTimerView" pc="268441967" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="437" parent="globals/UltraLoopTimerView" pc="268442012" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="438" parent="globals/UltraLoopTimerView" pc="268442026" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="441" parent="globals/UltraLoopTimerView" pc="268442046" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="442" parent="globals/UltraLoopTimerView" pc="268442060" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="445" parent="globals/UltraLoopTimerView" pc="268442080" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="448" parent="globals/UltraLoopTimerView" pc="268442099" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="449" parent="globals/UltraLoopTimerView" pc="268442113" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="452" parent="globals/UltraLoopTimerView" pc="268442133" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="453" parent="globals/UltraLoopTimerView" pc="268442147" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="26" lineNum="457" parent="globals/UltraLoopTimerView" pc="268442167" symbol="onUpdate"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="27" lineNum="521" parent="globals/UltraLoopTimerView" pc="268442191" symbol="drawActualRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="27" lineNum="522" parent="globals/UltraLoopTimerView" pc="268442194" symbol="drawActualRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="27" lineNum="522" parent="globals/UltraLoopTimerView" pc="268442204" symbol="drawActualRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="27" lineNum="523" parent="globals/UltraLoopTimerView" pc="268442208" symbol="drawActualRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="27" lineNum="524" parent="globals/UltraLoopTimerView" pc="268442233" symbol="drawActualRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="27" lineNum="525" parent="globals/UltraLoopTimerView" pc="268442252" symbol="drawActualRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="27" lineNum="526" parent="globals/UltraLoopTimerView" pc="268442280" symbol="drawActualRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="27" lineNum="527" parent="globals/UltraLoopTimerView" pc="268442287" symbol="drawActualRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="27" lineNum="528" parent="globals/UltraLoopTimerView" pc="268442313" symbol="drawActualRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="27" lineNum="529" parent="globals/UltraLoopTimerView" pc="268442341" symbol="drawActualRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="27" lineNum="530" parent="globals/UltraLoopTimerView" pc="268442369" symbol="drawActualRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="27" lineNum="531" parent="globals/UltraLoopTimerView" pc="268442382" symbol="drawActualRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="27" lineNum="532" parent="globals/UltraLoopTimerView" pc="268442401" symbol="drawActualRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="27" lineNum="533" parent="globals/UltraLoopTimerView" pc="268442417" symbol="drawActualRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="27" lineNum="535" parent="globals/UltraLoopTimerView" pc="268442433" symbol="drawActualRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="27" lineNum="536" parent="globals/UltraLoopTimerView" pc="268442436" symbol="drawActualRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="27" lineNum="537" parent="globals/UltraLoopTimerView" pc="268442452" symbol="drawActualRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="27" lineNum="538" parent="globals/UltraLoopTimerView" pc="268442465" symbol="drawActualRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="27" lineNum="541" parent="globals/UltraLoopTimerView" pc="268442500" symbol="drawActualRunnerDot"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="28" lineNum="728" parent="globals/UltraLoopTimerView" pc="268442515" symbol="fmtHmsAlways"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="28" lineNum="729" parent="globals/UltraLoopTimerView" pc="268442518" symbol="fmtHmsAlways"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="28" lineNum="730" parent="globals/UltraLoopTimerView" pc="268442532" symbol="fmtHmsAlways"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="28" lineNum="730" parent="globals/UltraLoopTimerView" pc="268442548" symbol="fmtHmsAlways"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="28" lineNum="731" parent="globals/UltraLoopTimerView" pc="268442561" symbol="fmtHmsAlways"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="28" lineNum="731" parent="globals/UltraLoopTimerView" pc="268442568" symbol="fmtHmsAlways"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="28" lineNum="732" parent="globals/UltraLoopTimerView" pc="268442574" symbol="fmtHmsAlways"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="28" lineNum="733" parent="globals/UltraLoopTimerView" pc="268442582" symbol="fmtHmsAlways"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="28" lineNum="734" parent="globals/UltraLoopTimerView" pc="268442592" symbol="fmtHmsAlways"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerView.mc" id="28" lineNum="735" parent="globals/UltraLoopTimerView" pc="268442599" symbol="fmtHmsAlways"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerApp.mc" id="29" lineNum="12" parent="globals/UltraLoopTimerApp" pc="268442656" symbol="onStart"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerApp.mc" id="30" lineNum="23" parent="globals/UltraLoopTimerApp" pc="268442659" symbol="onSettingsChanged"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerApp.mc" id="30" lineNum="24" parent="globals/UltraLoopTimerApp" pc="268442661" symbol="onSettingsChanged"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerApp.mc" id="30" lineNum="25" parent="globals/UltraLoopTimerApp" pc="268442670" symbol="onSettingsChanged"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerApp.mc" id="30" lineNum="27" parent="globals/UltraLoopTimerApp" pc="268442685" symbol="onSettingsChanged"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerApp.mc" id="31" lineNum="18" parent="globals/UltraLoopTimerApp" pc="268442697" symbol="getInitialView"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerApp.mc" id="31" lineNum="19" parent="globals/UltraLoopTimerApp" pc="268442699" symbol="getInitialView"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerApp.mc" id="31" lineNum="20" parent="globals/UltraLoopTimerApp" pc="268442724" symbol="getInitialView"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerApp.mc" id="32" lineNum="8" parent="globals/UltraLoopTimerApp" pc="268442737" symbol="initialize"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerApp.mc" id="32" lineNum="9" parent="globals/UltraLoopTimerApp" pc="268442739" symbol="initialize"/>
+        <entry filename="C:\\Users\\TAGR\\Documents\\rotvollfjaerafrontyardultra\\UltraLoopTimer\\source\\UltraLoopTimerApp.mc" id="33" lineNum="15" parent="globals/UltraLoopTimerApp" pc="268442752" symbol="onStop"/>
+    </pcToLineNum>
+    <symbolTable>
+        <entry id="8388639" module="true" symbol="Graphics"/>
+        <entry field="true" id="18" symbol="&lt;globals/UltraLoopTimerView/&lt;&gt;_lastLoopSec&gt;"/>
+        <entry field="true" id="49" symbol="&lt;globals/UltraLoopTimerApp/&lt;&gt;_view&gt;"/>
+        <entry field="true" id="53" symbol="CorrectionWindowPrompt"/>
+        <entry id="31" method="true" symbol="drawFictiveRunners"/>
+        <entry id="8388632" method="true" symbol="&lt;init&gt;"/>
+        <entry field="true" id="10" symbol="&lt;globals/UltraLoopTimerView/&lt;&gt;_avgPaceMinPerKm&gt;"/>
+        <entry id="48" method="true" symbol="vibrateOnly"/>
+        <entry field="true" id="57" symbol="LoopsPerCirclePrompt"/>
+        <entry id="8389683" method="true" symbol="onSettingsChanged"/>
+        <entry id="44" method="true" symbol="readString"/>
+        <entry id="35" method="true" symbol="drawStatRow"/>
+        <entry field="true" id="26" symbol="&lt;globals/UltraLoopTimerView/&lt;&gt;_supportMode&gt;"/>
+        <entry field="true" id="52" symbol="AppNameSupport"/>
+        <entry id="41" method="true" symbol="readBool"/>
+        <entry id="36" method="true" symbol="finalizeBurst"/>
+        <entry field="true" id="59" symbol="ModePrompt"/>
+        <entry field="true" id="8388611" module="true" symbol="Toybox"/>
+        <entry field="true" id="55" symbol="LoopMetersPrompt"/>
+        <entry field="true" id="13" symbol="&lt;globals/UltraLoopTimerView/&lt;&gt;_completedLoops&gt;"/>
+        <entry field="true" id="12" symbol="&lt;globals/UltraLoopTimerView/&lt;&gt;_burstStartSec&gt;"/>
+        <entry field="true" id="51" symbol="AppName"/>
+        <entry field="true" id="23" symbol="&lt;globals/UltraLoopTimerView/&lt;&gt;_prevTimeToFinish&gt;"/>
+        <entry field="true" id="29" symbol="&lt;globals/UltraLoopTimerView/&lt;&gt;_yellowLoopsDone&gt;"/>
+        <entry id="4" module="true" symbol="globals/Rez/Strings"/>
+        <entry id="8388648" module="true" symbol="WatchUi"/>
+        <entry id="2" module="true" symbol="globals/Rez"/>
+        <entry id="33" method="true" symbol="drawLoopNumberLabels"/>
+        <entry id="5" symbol="FICTIVE_PACES_SEC_PER_KM"/>
+        <entry field="true" id="28" symbol="&lt;globals/UltraLoopTimerView/&lt;&gt;_totalDistanceM&gt;"/>
+        <entry id="8389124" method="true" symbol="onUpdate"/>
+        <entry field="true" id="15" symbol="&lt;globals/UltraLoopTimerView/&lt;&gt;_done&gt;"/>
+        <entry id="8388771" module="true" object="true" symbol="Drawables"/>
+        <entry field="true" id="62" symbol="RaceHoursTitle"/>
+        <entry id="47" method="true" symbol="ringBell"/>
+        <entry id="43" method="true" symbol="readNumber"/>
+        <entry id="8389122" method="true" symbol="onLayout"/>
+        <entry field="true" id="61" symbol="RaceHoursPrompt"/>
+        <entry id="38" method="true" symbol="fmtMmSs"/>
+        <entry id="8389137" method="true" symbol="compute"/>
+        <entry id="8388987" method="true" symbol="vibrate"/>
+        <entry id="3" module="true" symbol="globals/Rez/Drawables"/>
+        <entry field="true" id="20" symbol="&lt;globals/UltraLoopTimerView/&lt;&gt;_loopMeters&gt;"/>
+        <entry field="true" id="11" symbol="&lt;globals/UltraLoopTimerView/&lt;&gt;_burstCount&gt;"/>
+        <entry field="true" id="9" symbol="&lt;globals/UltraLoopTimerView/&lt;&gt;_avgLoopSec&gt;"/>
+        <entry id="8389752" method="true" symbol="onTimerReset"/>
+        <entry field="true" id="24" symbol="&lt;globals/UltraLoopTimerView/&lt;&gt;_projectedKm&gt;"/>
+        <entry id="8388985" method="true" symbol="playTone"/>
+        <entry id="30" method="true" symbol="drawActualRunnerDot"/>
+        <entry id="42" method="true" symbol="readFloat"/>
+        <entry id="8388644" module="true" symbol="System"/>
+        <entry id="6" symbol="FICTIVE_PACE_LABELS"/>
+        <entry id="8388769" module="true" object="true" symbol="Rez"/>
+        <entry field="true" id="54" symbol="CorrectionWindowTitle"/>
+        <entry id="34" method="true" symbol="drawRunnerDot"/>
+        <entry id="8388640" module="true" symbol="Lang"/>
+        <entry id="46" method="true" symbol="renderRunnerHero"/>
+        <entry field="true" id="50" symbol="LauncherIcon"/>
+        <entry id="8388610" symbol="statics"/>
+        <entry field="true" id="58" symbol="LoopsPerCircleTitle"/>
+        <entry id="8" object="true" symbol="UltraLoopTimerView"/>
+        <entry field="true" id="17" symbol="&lt;globals/UltraLoopTimerView/&lt;&gt;_lastLoopElapsedSec&gt;"/>
+        <entry id="8389350" module="true" symbol="globals"/>
+        <entry id="8388770" module="true" object="true" symbol="Strings"/>
+        <entry id="8388702" method="true" symbol="initialize"/>
+        <entry id="8389279" method="true" symbol="onStart"/>
+        <entry id="8388641" module="true" symbol="Math"/>
+        <entry id="7" object="true" symbol="UltraLoopTimerApp"/>
+        <entry id="8389751" method="true" symbol="onTimerLap"/>
+        <entry id="8389280" method="true" symbol="getInitialView"/>
+        <entry field="true" id="21" symbol="&lt;globals/UltraLoopTimerView/&lt;&gt;_loopsPerCircle&gt;"/>
+        <entry id="8389281" method="true" symbol="onStop"/>
+        <entry id="40" method="true" symbol="loopSecToPaceMinPerKm"/>
+        <entry field="true" id="25" symbol="&lt;globals/UltraLoopTimerView/&lt;&gt;_raceSec&gt;"/>
+        <entry field="true" id="22" symbol="&lt;globals/UltraLoopTimerView/&lt;&gt;_prevLoopElapsedSec&gt;"/>
+        <entry field="true" id="27" symbol="&lt;globals/UltraLoopTimerView/&lt;&gt;_timeToFinish&gt;"/>
+        <entry field="true" id="56" symbol="LoopMetersTitle"/>
+        <entry id="37" method="true" symbol="fmtHmsAlways"/>
+        <entry id="8388636" module="true" symbol="Attention"/>
+        <entry id="45" method="true" symbol="rebuildSchedule"/>
+        <entry field="true" id="60" symbol="ModeTitle"/>
+        <entry field="true" id="14" symbol="&lt;globals/UltraLoopTimerView/&lt;&gt;_correctionWindowSec&gt;"/>
+        <entry id="8388635" module="true" symbol="Application"/>
+        <entry id="39" method="true" symbol="formatPace"/>
+        <entry field="true" id="19" symbol="&lt;globals/UltraLoopTimerView/&lt;&gt;_liveLoopSec&gt;"/>
+        <entry id="32" method="true" symbol="drawLapMarkers"/>
+        <entry field="true" id="16" symbol="&lt;globals/UltraLoopTimerView/&lt;&gt;_elapsedSec&gt;"/>
+    </symbolTable>
+    <localVars>
+        <entry endPc="268435611" name="now" stackId="1" startPc="268435507"/>
+        <entry arg="true" endPc="268435997" name="dc" stackId="1" startPc="268435613"/>
+        <entry arg="true" endPc="268435997" name="w" stackId="2" startPc="268435613"/>
+        <entry arg="true" endPc="268435997" name="h" stackId="3" startPc="268435613"/>
+        <entry arg="true" endPc="268435997" name="ringPen" stackId="4" startPc="268435613"/>
+        <entry arg="true" endPc="268435997" name="ringCx" stackId="5" startPc="268435613"/>
+        <entry arg="true" endPc="268435997" name="ringCy" stackId="6" startPc="268435613"/>
+        <entry arg="true" endPc="268435997" name="fg" stackId="7" startPc="268435613"/>
+        <entry endPc="268435996" name="windowM" stackId="8" startPc="268435616"/>
+        <entry endPc="268435996" name="distInWindow" stackId="9" startPc="268435616"/>
+        <entry endPc="268435996" name="frac" stackId="10" startPc="268435616"/>
+        <entry endPc="268435996" name="theta" stackId="11" startPc="268435616"/>
+        <entry endPc="268435996" name="dotRad" stackId="12" startPc="268435616"/>
+        <entry endPc="268435996" name="runnerR" stackId="13" startPc="268435616"/>
+        <entry endPc="268435996" name="gx" stackId="14" startPc="268435616"/>
+        <entry endPc="268435996" name="gy" stackId="15" startPc="268435616"/>
+        <entry endPc="268435996" name="fCount" stackId="16" startPc="268435616"/>
+        <entry endPc="268435996" name="hCount" stackId="17" startPc="268435616"/>
+        <entry endPc="268436279" name="hours" stackId="1" startPc="268436001"/>
+        <entry arg="true" endPc="268436508" name="dc" stackId="1" startPc="268436281"/>
+        <entry arg="true" endPc="268436508" name="w" stackId="2" startPc="268436281"/>
+        <entry arg="true" endPc="268436508" name="yRow" stackId="3" startPc="268436281"/>
+        <entry arg="true" endPc="268436508" name="fStat" stackId="4" startPc="268436281"/>
+        <entry arg="true" endPc="268436508" name="fg" stackId="5" startPc="268436281"/>
+        <entry endPc="268436507" name="loopPaceStr" stackId="6" startPc="268436284"/>
+        <entry endPc="268436507" name="avgPaceStr" stackId="7" startPc="268436284"/>
+        <entry endPc="268436507" name="gap" stackId="8" startPc="268436284"/>
+        <entry endPc="268436507" name="wL" stackId="9" startPc="268436284"/>
+        <entry endPc="268436507" name="wA" stackId="10" startPc="268436284"/>
+        <entry endPc="268436507" name="total" stackId="11" startPc="268436284"/>
+        <entry endPc="268436507" name="x0" stackId="12" startPc="268436284"/>
+        <entry arg="true" endPc="268436687" name="key" stackId="1" startPc="268436509"/>
+        <entry arg="true" endPc="268436687" name="fallback" stackId="2" startPc="268436509"/>
+        <entry endPc="268436687" name="v" stackId="3" startPc="268436512"/>
+        <entry endPc="268436560" name="ex" stackId="4" startPc="268436543"/>
+        <entry endPc="268436676" name="ex2" stackId="5" startPc="268436659"/>
+        <entry arg="true" endPc="268436796" name="secs" stackId="1" startPc="268436688"/>
+        <entry endPc="268436796" name="s" stackId="2" startPc="268436691"/>
+        <entry endPc="268436796" name="m" stackId="3" startPc="268436691"/>
+        <entry endPc="268436796" name="ss" stackId="4" startPc="268436691"/>
+        <entry arg="true" endPc="268437823" name="info" stackId="1" startPc="268436797"/>
+        <entry endPc="268437822" name="elapsedMs" stackId="2" startPc="268436800"/>
+        <entry endPc="268437822" name="elapsed" stackId="3" startPc="268436800"/>
+        <entry endPc="268437013" name="yellowLoopSec" stackId="4" startPc="268436919"/>
+        <entry endPc="268437010" name="yellowLoops" stackId="5" startPc="268436955"/>
+        <entry endPc="268437187" name="simLoopSec" stackId="6" startPc="268437045"/>
+        <entry endPc="268437184" name="simLoops" stackId="7" startPc="268437081"/>
+        <entry endPc="268437360" name="distM" stackId="8" startPc="268437212"/>
+        <entry endPc="268437360" name="d" stackId="9" startPc="268437212"/>
+        <entry endPc="268437357" name="sp" stackId="10" startPc="268437268"/>
+        <entry endPc="268437822" name="remaining" stackId="11" startPc="268436800"/>
+        <entry endPc="268437702" name="curLoopSec" stackId="12" startPc="268437549"/>
+        <entry endPc="268437702" name="doneKm" stackId="13" startPc="268437549"/>
+        <entry endPc="268437702" name="futureLoops" stackId="14" startPc="268437549"/>
+        <entry arg="true" endPc="268437884" name="loopSec" stackId="1" startPc="268437824"/>
+        <entry endPc="268437884" name="secPerKm" stackId="2" startPc="268437827"/>
+        <entry arg="true" endPc="268438063" name="key" stackId="1" startPc="268437885"/>
+        <entry arg="true" endPc="268438063" name="fallback" stackId="2" startPc="268437885"/>
+        <entry endPc="268438063" name="v" stackId="3" startPc="268437888"/>
+        <entry endPc="268437936" name="ex" stackId="4" startPc="268437919"/>
+        <entry endPc="268438052" name="ex2" stackId="5" startPc="268438035"/>
+        <entry arg="true" endPc="268438514" name="dc" stackId="1" startPc="268438064"/>
+        <entry arg="true" endPc="268438514" name="w" stackId="2" startPc="268438064"/>
+        <entry arg="true" endPc="268438514" name="h" stackId="3" startPc="268438064"/>
+        <entry arg="true" endPc="268438514" name="ringPen" stackId="4" startPc="268438064"/>
+        <entry arg="true" endPc="268438514" name="ringCx" stackId="5" startPc="268438064"/>
+        <entry arg="true" endPc="268438514" name="ringCy" stackId="6" startPc="268438064"/>
+        <entry arg="true" endPc="268438514" name="fg" stackId="7" startPc="268438064"/>
+        <entry endPc="268438513" name="loopKm" stackId="8" startPc="268438067"/>
+        <entry endPc="268438513" name="maxLoops" stackId="9" startPc="268438067"/>
+        <entry endPc="268438192" name="greenLoopSec" stackId="10" startPc="268438134"/>
+        <entry endPc="268438189" name="greenLoops" stackId="11" startPc="268438153"/>
+        <entry endPc="268438513" name="window" stackId="12" startPc="268438067"/>
+        <entry endPc="268438513" name="base" stackId="13" startPc="268438067"/>
+        <entry endPc="268438513" name="n" stackId="14" startPc="268438067"/>
+        <entry endPc="268438513" name="screenR" stackId="15" startPc="268438067"/>
+        <entry endPc="268438513" name="bandR" stackId="16" startPc="268438067"/>
+        <entry endPc="268438513" name="mkR" stackId="17" startPc="268438067"/>
+        <entry endPc="268438499" name="i" stackId="18" startPc="268438317"/>
+        <entry endPc="268438489" name="frac" stackId="19" startPc="268438317"/>
+        <entry endPc="268438489" name="degCcw" stackId="20" startPc="268438317"/>
+        <entry endPc="268438489" name="tTheta" stackId="21" startPc="268438317"/>
+        <entry endPc="268438489" name="mx" stackId="22" startPc="268438317"/>
+        <entry endPc="268438489" name="my" stackId="23" startPc="268438317"/>
+        <entry arg="true" endPc="268438728" name="count" stackId="1" startPc="268438515"/>
+        <entry endPc="268438702" name="pattern" stackId="2" startPc="268438563"/>
+        <entry endPc="268438687" name="j" stackId="3" startPc="268438585"/>
+        <entry endPc="268438719" name="e" stackId="4" startPc="268438709"/>
+        <entry arg="true" endPc="268438827" name="decimalMinutes" stackId="1" startPc="268438729"/>
+        <entry endPc="268438827" name="totalSec" stackId="2" startPc="268438732"/>
+        <entry endPc="268438827" name="m" stackId="3" startPc="268438732"/>
+        <entry endPc="268438827" name="s" stackId="4" startPc="268438732"/>
+        <entry arg="true" endPc="268438998" name="key" stackId="1" startPc="268438828"/>
+        <entry arg="true" endPc="268438998" name="fallback" stackId="2" startPc="268438828"/>
+        <entry endPc="268438998" name="v" stackId="3" startPc="268438831"/>
+        <entry endPc="268438879" name="ex" stackId="4" startPc="268438862"/>
+        <entry arg="true" endPc="268439411" name="dc" stackId="1" startPc="268438999"/>
+        <entry arg="true" endPc="268439411" name="w" stackId="2" startPc="268438999"/>
+        <entry arg="true" endPc="268439411" name="h" stackId="3" startPc="268438999"/>
+        <entry arg="true" endPc="268439411" name="ringPen" stackId="4" startPc="268438999"/>
+        <entry arg="true" endPc="268439411" name="ringCx" stackId="5" startPc="268438999"/>
+        <entry arg="true" endPc="268439411" name="ringCy" stackId="6" startPc="268438999"/>
+        <entry arg="true" endPc="268439411" name="fg" stackId="7" startPc="268438999"/>
+        <entry endPc="268439410" name="maxLoops" stackId="8" startPc="268439002"/>
+        <entry endPc="268439128" name="loopKm" stackId="9" startPc="268439031"/>
+        <entry endPc="268439125" name="greenLoopSec" stackId="10" startPc="268439067"/>
+        <entry endPc="268439122" name="greenLoops" stackId="11" startPc="268439086"/>
+        <entry endPc="268439410" name="window" stackId="12" startPc="268439002"/>
+        <entry endPc="268439410" name="base" stackId="13" startPc="268439002"/>
+        <entry endPc="268439410" name="screenR" stackId="14" startPc="268439002"/>
+        <entry endPc="268439410" name="labelR" stackId="15" startPc="268439002"/>
+        <entry endPc="268439410" name="fLabel" stackId="16" startPc="268439002"/>
+        <entry endPc="268439410" name="hLabel" stackId="17" startPc="268439002"/>
+        <entry endPc="268439396" name="i" stackId="18" startPc="268439229"/>
+        <entry endPc="268439386" name="frac" stackId="19" startPc="268439229"/>
+        <entry endPc="268439386" name="degCcw" stackId="20" startPc="268439229"/>
+        <entry endPc="268439386" name="tTheta" stackId="21" startPc="268439229"/>
+        <entry endPc="268439386" name="lx" stackId="22" startPc="268439229"/>
+        <entry endPc="268439386" name="ly" stackId="23" startPc="268439229"/>
+        <entry arg="true" endPc="268439984" name="dc" stackId="1" startPc="268439415"/>
+        <entry arg="true" endPc="268439984" name="w" stackId="2" startPc="268439415"/>
+        <entry arg="true" endPc="268439984" name="h" stackId="3" startPc="268439415"/>
+        <entry arg="true" endPc="268439984" name="ringPen" stackId="4" startPc="268439415"/>
+        <entry arg="true" endPc="268439984" name="ringCx" stackId="5" startPc="268439415"/>
+        <entry arg="true" endPc="268439984" name="ringCy" stackId="6" startPc="268439415"/>
+        <entry arg="true" endPc="268439984" name="fg" stackId="7" startPc="268439415"/>
+        <entry endPc="268439983" name="colors" stackId="8" startPc="268439418"/>
+        <entry endPc="268439983" name="loopKm" stackId="9" startPc="268439418"/>
+        <entry endPc="268439983" name="screenR" stackId="10" startPc="268439418"/>
+        <entry endPc="268439983" name="dotRad" stackId="11" startPc="268439418"/>
+        <entry endPc="268439983" name="runnerR" stackId="12" startPc="268439418"/>
+        <entry endPc="268439983" name="labelR" stackId="13" startPc="268439418"/>
+        <entry endPc="268439983" name="fLabel" stackId="14" startPc="268439418"/>
+        <entry endPc="268439983" name="hLabel" stackId="15" startPc="268439418"/>
+        <entry endPc="268439983" name="fCount" stackId="16" startPc="268439418"/>
+        <entry endPc="268439983" name="hCount" stackId="17" startPc="268439418"/>
+        <entry endPc="268439969" name="i" stackId="18" startPc="268439573"/>
+        <entry endPc="268439959" name="loopSec" stackId="19" startPc="268439573"/>
+        <entry endPc="268439959" name="revPerSec" stackId="20" startPc="268439573"/>
+        <entry endPc="268439959" name="frac" stackId="21" startPc="268439573"/>
+        <entry endPc="268439959" name="theta" stackId="22" startPc="268439573"/>
+        <entry endPc="268439959" name="cosT" stackId="23" startPc="268439573"/>
+        <entry endPc="268439959" name="sinT" stackId="24" startPc="268439573"/>
+        <entry endPc="268439959" name="gx" stackId="25" startPc="268439573"/>
+        <entry endPc="268439959" name="gy" stackId="26" startPc="268439573"/>
+        <entry endPc="268439959" name="doneLoops" stackId="27" startPc="268439573"/>
+        <entry endPc="268439959" name="lx" stackId="28" startPc="268439573"/>
+        <entry endPc="268439959" name="ly" stackId="29" startPc="268439573"/>
+        <entry arg="true" endPc="268440278" name="count" stackId="1" startPc="268439985"/>
+        <entry endPc="268440068" name="i" stackId="2" startPc="268440044"/>
+        <entry endPc="268440085" name="e" stackId="3" startPc="268440075"/>
+        <entry endPc="268440249" name="pattern" stackId="4" startPc="268440109"/>
+        <entry endPc="268440234" name="j" stackId="5" startPc="268440131"/>
+        <entry endPc="268440266" name="e" stackId="6" startPc="268440256"/>
+        <entry arg="true" endPc="268440376" name="key" stackId="1" startPc="268440279"/>
+        <entry arg="true" endPc="268440376" name="fallback" stackId="2" startPc="268440279"/>
+        <entry endPc="268440376" name="v" stackId="3" startPc="268440282"/>
+        <entry endPc="268440330" name="ex" stackId="4" startPc="268440313"/>
+        <entry endPc="268440583" name="n" stackId="1" startPc="268440380"/>
+        <entry endPc="268440583" name="startSec" stackId="2" startPc="268440380"/>
+        <entry endPc="268440521" name="loopSec" stackId="3" startPc="268440430"/>
+        <entry arg="true" endPc="268441037" name="dc" stackId="1" startPc="268440585"/>
+        <entry arg="true" endPc="268441037" name="w" stackId="2" startPc="268440585"/>
+        <entry arg="true" endPc="268441037" name="h" stackId="3" startPc="268440585"/>
+        <entry arg="true" endPc="268441037" name="ringPen" stackId="4" startPc="268440585"/>
+        <entry arg="true" endPc="268441037" name="fg" stackId="5" startPc="268440585"/>
+        <entry endPc="268441036" name="cx" stackId="6" startPc="268440588"/>
+        <entry endPc="268441036" name="timeStr" stackId="7" startPc="268440588"/>
+        <entry endPc="268441036" name="distKm" stackId="8" startPc="268440588"/>
+        <entry endPc="268441036" name="distStr" stackId="9" startPc="268440588"/>
+        <entry endPc="268441036" name="avgPaceStr" stackId="10" startPc="268440588"/>
+        <entry endPc="268441036" name="loopStr" stackId="11" startPc="268440588"/>
+        <entry endPc="268441036" name="avgLoopStr" stackId="12" startPc="268440588"/>
+        <entry endPc="268441036" name="fSmall" stackId="13" startPc="268440588"/>
+        <entry endPc="268441036" name="fBig" stackId="14" startPc="268440588"/>
+        <entry endPc="268441036" name="hS" stackId="15" startPc="268440588"/>
+        <entry endPc="268441036" name="hB" stackId="16" startPc="268440588"/>
+        <entry endPc="268441036" name="tightGap" stackId="17" startPc="268440588"/>
+        <entry endPc="268441036" name="inset" stackId="18" startPc="268440588"/>
+        <entry endPc="268441036" name="groupH" stackId="19" startPc="268440588"/>
+        <entry endPc="268441036" name="yPace" stackId="20" startPc="268440588"/>
+        <entry endPc="268441036" name="yLoop" stackId="21" startPc="268440588"/>
+        <entry endPc="268441036" name="yAvgLoop" stackId="22" startPc="268440588"/>
+        <entry arg="true" endPc="268442190" name="dc" stackId="1" startPc="268441258"/>
+        <entry endPc="268442189" name="bg" stackId="2" startPc="268441261"/>
+        <entry endPc="268442189" name="fg" stackId="3" startPc="268441261"/>
+        <entry endPc="268442189" name="w" stackId="4" startPc="268441261"/>
+        <entry endPc="268442189" name="h" stackId="5" startPc="268441261"/>
+        <entry endPc="268442189" name="cx" stackId="6" startPc="268441261"/>
+        <entry endPc="268442189" name="ringPen" stackId="7" startPc="268441261"/>
+        <entry endPc="268442189" name="ringCx" stackId="8" startPc="268441261"/>
+        <entry endPc="268442189" name="ringCy" stackId="9" startPc="268441261"/>
+        <entry endPc="268442189" name="loopsStr" stackId="10" startPc="268441261"/>
+        <entry endPc="268442189" name="timeStr" stackId="11" startPc="268441261"/>
+        <entry endPc="268442189" name="projStr" stackId="12" startPc="268441261"/>
+        <entry endPc="268441628" name="doneKm" stackId="13" startPc="268441549"/>
+        <entry endPc="268442189" name="clock" stackId="14" startPc="268441261"/>
+        <entry endPc="268442189" name="clockStr" stackId="15" startPc="268441261"/>
+        <entry endPc="268442189" name="fSmall" stackId="16" startPc="268441261"/>
+        <entry endPc="268442189" name="fLoops" stackId="17" startPc="268441261"/>
+        <entry endPc="268442189" name="fClock" stackId="18" startPc="268441261"/>
+        <entry endPc="268442189" name="fHero" stackId="19" startPc="268441261"/>
+        <entry endPc="268442189" name="fProj" stackId="20" startPc="268441261"/>
+        <entry endPc="268442189" name="hLoops" stackId="21" startPc="268441261"/>
+        <entry endPc="268442189" name="hClock" stackId="22" startPc="268441261"/>
+        <entry endPc="268442189" name="hHero" stackId="23" startPc="268441261"/>
+        <entry endPc="268442189" name="hProj" stackId="24" startPc="268441261"/>
+        <entry endPc="268442189" name="hStat" stackId="25" startPc="268441261"/>
+        <entry endPc="268442189" name="donutInset" stackId="26" startPc="268441261"/>
+        <entry endPc="268442189" name="sumRows" stackId="27" startPc="268441261"/>
+        <entry endPc="268442189" name="avail" stackId="28" startPc="268441261"/>
+        <entry endPc="268442189" name="gap" stackId="29" startPc="268441261"/>
+        <entry endPc="268442189" name="yTop" stackId="30" startPc="268441261"/>
+        <entry endPc="268442189" name="yHero" stackId="31" startPc="268441261"/>
+        <entry endPc="268442189" name="yStat" stackId="32" startPc="268441261"/>
+        <entry endPc="268442189" name="yProj" stackId="33" startPc="268441261"/>
+        <entry endPc="268442189" name="yClock" stackId="34" startPc="268441261"/>
+        <entry endPc="268442189" name="loopsColor" stackId="35" startPc="268441261"/>
+        <entry arg="true" endPc="268442514" name="dc" stackId="1" startPc="268442191"/>
+        <entry arg="true" endPc="268442514" name="w" stackId="2" startPc="268442191"/>
+        <entry arg="true" endPc="268442514" name="h" stackId="3" startPc="268442191"/>
+        <entry arg="true" endPc="268442514" name="ringPen" stackId="4" startPc="268442191"/>
+        <entry arg="true" endPc="268442514" name="ringCx" stackId="5" startPc="268442191"/>
+        <entry arg="true" endPc="268442514" name="ringCy" stackId="6" startPc="268442191"/>
+        <entry arg="true" endPc="268442514" name="fg" stackId="7" startPc="268442191"/>
+        <entry endPc="268442513" name="frac" stackId="8" startPc="268442194"/>
+        <entry endPc="268442513" name="theta" stackId="9" startPc="268442194"/>
+        <entry endPc="268442513" name="dotRad" stackId="10" startPc="268442194"/>
+        <entry endPc="268442513" name="runnerR" stackId="11" startPc="268442194"/>
+        <entry endPc="268442513" name="gx" stackId="12" startPc="268442194"/>
+        <entry endPc="268442513" name="gy" stackId="13" startPc="268442194"/>
+        <entry endPc="268442513" name="fCount" stackId="14" startPc="268442194"/>
+        <entry endPc="268442513" name="hCount" stackId="15" startPc="268442194"/>
+        <entry arg="true" endPc="268442655" name="secondsArg" stackId="1" startPc="268442515"/>
+        <entry endPc="268442655" name="s" stackId="2" startPc="268442518"/>
+        <entry endPc="268442655" name="hh" stackId="3" startPc="268442518"/>
+        <entry endPc="268442655" name="mm" stackId="4" startPc="268442518"/>
+        <entry endPc="268442655" name="ss" stackId="5" startPc="268442518"/>
+    </localVars>
+    <deviceInfo deviceVersion="45fe3cbb0de8ea0a70e12628d2697915f1272301" partNumber="006-B4315-00"/>
+    <annotations>
+        <annotationEntry annotation="initialized" class="Drawables" module="globals/Rez" symbol="LauncherIcon"/>
+        <annotationEntry annotation="initialized" class="Strings" module="globals/Rez" symbol="LoopMetersTitle"/>
+        <annotationEntry annotation="initialized" class="Strings" module="globals/Rez" symbol="LoopMetersPrompt"/>
+        <annotationEntry annotation="initialized" class="Strings" module="globals/Rez" symbol="AppNameSupport"/>
+        <annotationEntry annotation="initialized" class="Strings" module="globals/Rez" symbol="RaceHoursTitle"/>
+        <annotationEntry annotation="initialized" class="Strings" module="globals/Rez" symbol="AppName"/>
+        <annotationEntry annotation="initialized" class="Strings" module="globals/Rez" symbol="CorrectionWindowTitle"/>
+        <annotationEntry annotation="initialized" class="Strings" module="globals/Rez" symbol="LoopsPerCircleTitle"/>
+        <annotationEntry annotation="initialized" class="Strings" module="globals/Rez" symbol="LoopsPerCirclePrompt"/>
+        <annotationEntry annotation="initialized" class="Strings" module="globals/Rez" symbol="ModePrompt"/>
+        <annotationEntry annotation="initialized" class="Strings" module="globals/Rez" symbol="ModeTitle"/>
+        <annotationEntry annotation="initialized" class="Strings" module="globals/Rez" symbol="CorrectionWindowPrompt"/>
+        <annotationEntry annotation="initialized" class="Strings" module="globals/Rez" symbol="RaceHoursPrompt"/>
+    </annotations>
+    <dataEntryOffsetMappings>
+        <dataEntry label="globals" offset="49" parentId="" symbolId="globals" type="module"/>
+        <dataEntry label="globals/UltraLoopTimerView" offset="205" parentId="globals" symbolId="UltraLoopTimerView" type="class"/>
+        <dataEntry label="globals/UltraLoopTimerApp" offset="654" parentId="globals" symbolId="UltraLoopTimerApp" type="class"/>
+        <dataEntry label="globals/Rez" offset="743" parentId="globals" symbolId="Rez" type="module"/>
+        <dataEntry label="globals/Rez/Drawables" offset="787" parentId="Rez" symbolId="Drawables" type="module"/>
+        <dataEntry label="globals/Rez/Strings" offset="822" parentId="Rez" symbolId="Strings" type="module"/>
+    </dataEntryOffsetMappings>
+    <functions>
+        <functionEntry accessMode="public" endPc="268435471" name="&lt;init&gt;" parent="UltraLoopTimerView" startPc="268435460">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268435483" name="&lt;init&gt;" parent="UltraLoopTimerApp" startPc="268435472">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268435503" name="&lt;init&gt;" parent="Rez" startPc="268435484">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268435612" name="onTimerLap" parent="UltraLoopTimerView" startPc="268435504">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268435997" name="drawRunnerDot" parent="UltraLoopTimerView" startPc="268435613">
+            <param id="dc"/>
+            <param id="w"/>
+            <param id="h"/>
+            <param id="ringPen"/>
+            <param id="ringCx"/>
+            <param id="ringCy"/>
+            <param id="fg"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268436280" name="rebuildSchedule" parent="UltraLoopTimerView" startPc="268435998">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268436508" name="drawStatRow" parent="UltraLoopTimerView" startPc="268436281">
+            <param id="dc"/>
+            <param id="w"/>
+            <param id="yRow"/>
+            <param id="fStat"/>
+            <param id="fg"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268436687" name="readNumber" parent="UltraLoopTimerView" startPc="268436509">
+            <param id="key"/>
+            <param id="fallback"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268436796" name="fmtMmSs" parent="UltraLoopTimerView" startPc="268436688">
+            <param id="secs"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268437823" name="compute" parent="UltraLoopTimerView" startPc="268436797">
+            <param id="info"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268437884" name="loopSecToPaceMinPerKm" parent="UltraLoopTimerView" startPc="268437824">
+            <param id="loopSec"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268438063" name="readFloat" parent="UltraLoopTimerView" startPc="268437885">
+            <param id="key"/>
+            <param id="fallback"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268438514" name="drawLapMarkers" parent="UltraLoopTimerView" startPc="268438064">
+            <param id="dc"/>
+            <param id="w"/>
+            <param id="h"/>
+            <param id="ringPen"/>
+            <param id="ringCx"/>
+            <param id="ringCy"/>
+            <param id="fg"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268438728" name="vibrateOnly" parent="UltraLoopTimerView" startPc="268438515">
+            <param id="count"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268438827" name="formatPace" parent="UltraLoopTimerView" startPc="268438729">
+            <param id="decimalMinutes"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268438998" name="readBool" parent="UltraLoopTimerView" startPc="268438828">
+            <param id="key"/>
+            <param id="fallback"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268439411" name="drawLoopNumberLabels" parent="UltraLoopTimerView" startPc="268438999">
+            <param id="dc"/>
+            <param id="w"/>
+            <param id="h"/>
+            <param id="ringPen"/>
+            <param id="ringCx"/>
+            <param id="ringCy"/>
+            <param id="fg"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268439414" name="onLayout" parent="UltraLoopTimerView" startPc="268439412">
+            <param id="dc"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268439984" name="drawFictiveRunners" parent="UltraLoopTimerView" startPc="268439415">
+            <param id="dc"/>
+            <param id="w"/>
+            <param id="h"/>
+            <param id="ringPen"/>
+            <param id="ringCx"/>
+            <param id="ringCy"/>
+            <param id="fg"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268440278" name="ringBell" parent="UltraLoopTimerView" startPc="268439985">
+            <param id="count"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268440376" name="readString" parent="UltraLoopTimerView" startPc="268440279">
+            <param id="key"/>
+            <param id="fallback"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268440584" name="finalizeBurst" parent="UltraLoopTimerView" startPc="268440377">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268441037" name="renderRunnerHero" parent="UltraLoopTimerView" startPc="268440585">
+            <param id="dc"/>
+            <param id="w"/>
+            <param id="h"/>
+            <param id="ringPen"/>
+            <param id="fg"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268441097" name="onTimerReset" parent="UltraLoopTimerView" startPc="268441038">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268441257" name="initialize" parent="UltraLoopTimerView" startPc="268441098">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268442190" name="onUpdate" parent="UltraLoopTimerView" startPc="268441258">
+            <param id="dc"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268442514" name="drawActualRunnerDot" parent="UltraLoopTimerView" startPc="268442191">
+            <param id="dc"/>
+            <param id="w"/>
+            <param id="h"/>
+            <param id="ringPen"/>
+            <param id="ringCx"/>
+            <param id="ringCy"/>
+            <param id="fg"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268442655" name="fmtHmsAlways" parent="UltraLoopTimerView" startPc="268442515">
+            <param id="secondsArg"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268442658" name="onStart" parent="UltraLoopTimerApp" startPc="268442656">
+            <param id="state"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268442696" name="onSettingsChanged" parent="UltraLoopTimerApp" startPc="268442659">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268442736" name="getInitialView" parent="UltraLoopTimerApp" startPc="268442697">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268442751" name="initialize" parent="UltraLoopTimerApp" startPc="268442737">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" endPc="268442754" name="onStop" parent="UltraLoopTimerApp" startPc="268442752">
+            <param id="state"/>
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="&lt;init&gt;" parent="Drawables">
+            <documentation/>
+        </functionEntry>
+        <functionEntry accessMode="public" name="&lt;init&gt;" parent="Strings">
+            <documentation/>
+        </functionEntry>
+    </functions>
+</debugInfo>

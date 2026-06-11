@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+    <property id="raceHours"           type="number">6</property>
+    <property id="loopMeters"          type="float">1185.6</property>
+    <property id="loopsPerCircle"      type="number">8</property>
+    <property id="correctionWindowSec" type="number">5</property>
+</properties>

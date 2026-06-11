@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<strings>
+    <string id="AppName">UltraLoopTimer</string>
+    <string id="AppNameSupport">UltraLoop Support</string>
+
+    <string id="ModeTitle">Support mode</string>
+    <string id="ModePrompt">ON = crew view (no HR / pace). OFF = runner view.</string>
+
+    <string id="RaceHoursTitle">Race duration</string>
+    <string id="RaceHoursPrompt">Total race duration in hours (6, 12 or 24).</string>
+
+    <string id="LoopMetersTitle">Loop distance (m)</string>
+    <string id="LoopMetersPrompt">Length of one loop in meters (default 1185.6).</string>
+
+    <string id="LoopsPerCircleTitle">Loops per circle</string>
+    <string id="LoopsPerCirclePrompt">How many loops by the fastest fictive runner fill one full revolution of the display ring (default 6).</string>
+
+    <string id="CorrectionWindowTitle">Lap correction window (s)</string>
+    <string id="CorrectionWindowPrompt">Within this window after a lap press: 2nd quick press = caught a missed lap (+1 extra). 3+ quick presses = undo last lap. Default 5 s.</string>
+</strings>

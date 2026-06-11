@@ -1,0 +1,85 @@
+[ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\source\UltraLoopTimerApp.mc"; @line = 1; @symbol_usingdef<0> = [Toybox,1,6,12]; @symbol_usingdef<1> = [Application,1,13,24]; ]
+using Toybox.Application;
+[ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\source\UltraLoopTimerApp.mc"; @line = 2; @symbol_usingdef<0> = [Toybox,2,6,12]; @symbol_usingdef<1> = [WatchUi,2,13,20]; ]
+using Toybox.WatchUi;
+[ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\source\UltraLoopTimerApp.mc"; @line = 4; @symbol_classdef = [UltraLoopTimerApp,4,6,23]; @symbol_extends<0> = [Application,4,32,43]; @symbol_extends<1> = [AppBase,4,44,51]; ]
+class UltraLoopTimerApp extends Application.AppBase {
+    [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\source\UltraLoopTimerApp.mc"; @line = 4; ]
+    <init> {
+    }
+    [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\source\UltraLoopTimerApp.mc"; @line = 4; ]
+    static
+    <init> {
+    }
+    [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\source\UltraLoopTimerApp.mc"; @line = 6; @position = 16; @symbol_vardef = [_view,6,16,21]; ]
+    private
+    var _view;
+    [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\source\UltraLoopTimerApp.mc"; @line = 8; @symbol_functiondef = [initialize,8,13,23]; ]
+    function initialize() as Void {
+C__Users_TAGR_Documents_rotvollfjaerafrontyardultra_UltraLoopTimer_source_UltraLoopTimerApp_mc_8_26_10_4_start:
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\source\UltraLoopTimerApp.mc" 9 8 ]
+        symbol [ AppBase %tmp.2 9 8 15 ];
+        %tmp.2 = getv ? :AppBase;
+        symbol [ initialize %tmp.3 9 16 26 ];
+        %tmp.3 = getv function %tmp.2 :initialize;
+        invoke %tmp.2 %tmp.3();
+C__Users_TAGR_Documents_rotvollfjaerafrontyardultra_UltraLoopTimer_source_UltraLoopTimerApp_mc_8_26_10_4_stop:
+    }
+    [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\source\UltraLoopTimerApp.mc"; @line = 12; @symbol_functiondef = [onStart,12,13,20]; @symbol_param<0> = [state,12,21,26]; ]
+    function onStart(state) {
+    }
+    [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\source\UltraLoopTimerApp.mc"; @line = 15; @symbol_functiondef = [onStop,15,13,19]; @symbol_param<0> = [state,15,20,25]; ]
+    function onStop(state) {
+    }
+    [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\source\UltraLoopTimerApp.mc"; @line = 18; @symbol_functiondef = [getInitialView,18,13,27]; ]
+    function getInitialView() {
+C__Users_TAGR_Documents_rotvollfjaerafrontyardultra_UltraLoopTimer_source_UltraLoopTimerApp_mc_18_30_21_4_start:
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\source\UltraLoopTimerApp.mc" 19 8 ]
+        symbol [ UltraLoopTimerView %tmp.4 19 20 38 ];
+        %tmp.4 = getv ? :UltraLoopTimerView;
+        %tmp.1 = newc %tmp.4 ();
+        symbol [ _view ? 19 8 13 ];
+        putv self :_view %tmp.1;
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\source\UltraLoopTimerApp.mc" 20 8 ]
+        %tmp.5 = newa 1;
+        symbol [ _view %tmp.7 20 17 22 ];
+        %tmp.7 = getv ? :_view;
+        %tmp.8 = dup %tmp.5;
+        %tmp.9 = aputv %tmp.8 0 %tmp.7;
+        ret %tmp.9;
+C__Users_TAGR_Documents_rotvollfjaerafrontyardultra_UltraLoopTimer_source_UltraLoopTimerApp_mc_18_30_21_4_stop:
+    }
+    [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\source\UltraLoopTimerApp.mc"; @line = 23; @symbol_functiondef = [onSettingsChanged,23,13,30]; ]
+    function onSettingsChanged() {
+C__Users_TAGR_Documents_rotvollfjaerafrontyardultra_UltraLoopTimer_source_UltraLoopTimerApp_mc_23_33_28_4_start:
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\source\UltraLoopTimerApp.mc" 24 8 ]
+C__Users_TAGR_Documents_rotvollfjaerafrontyardultra_UltraLoopTimer_source_UltraLoopTimerApp_mc_24_8_26_8_if_stmt:
+        symbol [ _view %tmp.2 24 12 17 ];
+        %tmp.2 = getv ? :_view;
+        %tmp.3 = null;
+        %tmp.4 = ne %tmp.2 %tmp.3;
+        bf %tmp.4 @C__Users_TAGR_Documents_rotvollfjaerafrontyardultra_UltraLoopTimer_source_UltraLoopTimerApp_mc_24_8_26_8_if_end;
+C__Users_TAGR_Documents_rotvollfjaerafrontyardultra_UltraLoopTimer_source_UltraLoopTimerApp_mc_24_8_26_8_if_true:
+C__Users_TAGR_Documents_rotvollfjaerafrontyardultra_UltraLoopTimer_source_UltraLoopTimerApp_mc_24_27_26_8_start:
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\source\UltraLoopTimerApp.mc" 25 12 ]
+        symbol [ _view %tmp.6 25 12 17 ];
+        %tmp.6 = getv ? :_view;
+        %tmp.7 = as %tmp.6 { (!Null) };
+        symbol [ rebuildSchedule %tmp.8 25 18 33 ];
+        %tmp.8 = getv function %tmp.7 :rebuildSchedule;
+        invoke %tmp.7 %tmp.8();
+C__Users_TAGR_Documents_rotvollfjaerafrontyardultra_UltraLoopTimer_source_UltraLoopTimerApp_mc_24_27_26_8_stop:
+        goto @C__Users_TAGR_Documents_rotvollfjaerafrontyardultra_UltraLoopTimer_source_UltraLoopTimerApp_mc_24_8_26_8_if_end;
+C__Users_TAGR_Documents_rotvollfjaerafrontyardultra_UltraLoopTimer_source_UltraLoopTimerApp_mc_24_8_26_8_if_end:
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\source\UltraLoopTimerApp.mc" 27 8 ]
+        symbol [ WatchUi %tmp.9 27 8 15 ];
+        %tmp.9 = getm $.Toybox.WatchUi;
+        symbol [ requestUpdate %tmp.10 27 16 29 ];
+        %tmp.10 = getv function %tmp.9 :requestUpdate;
+        invoke %tmp.9 %tmp.10();
+C__Users_TAGR_Documents_rotvollfjaerafrontyardultra_UltraLoopTimer_source_UltraLoopTimerApp_mc_23_33_28_4_stop:
+    }
+}
+[ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\source\UltraLoopTimerApp.mc"; @line = 1; ]
+<init> {
+}

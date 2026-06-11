@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+    <setting propertyKey="@Properties.supportMode" title="@Strings.ModeTitle" prompt="@Strings.ModePrompt">
+        <settingConfig type="boolean"/>
+    </setting>
+    <setting propertyKey="@Properties.raceHours" title="@Strings.RaceHoursTitle" prompt="@Strings.RaceHoursPrompt">
+        <settingConfig type="list">
+            <listEntry value="6">6 hours</listEntry>
+            <listEntry value="12">12 hours</listEntry>
+            <listEntry value="24">24 hours</listEntry>
+        </settingConfig>
+    </setting>
+    <setting propertyKey="@Properties.loopMeters" title="@Strings.LoopMetersTitle" prompt="@Strings.LoopMetersPrompt">
+        <settingConfig type="numeric" min="1" max="100000"/>
+    </setting>
+    <setting propertyKey="@Properties.loopsPerCircle" title="@Strings.LoopsPerCircleTitle" prompt="@Strings.LoopsPerCirclePrompt">
+        <settingConfig type="numeric" min="1" max="50"/>
+    </setting>
+    <setting propertyKey="@Properties.correctionWindowSec" title="@Strings.CorrectionWindowTitle" prompt="@Strings.CorrectionWindowPrompt">
+        <settingConfig type="numeric" min="1" max="10"/>
+    </setting>
+</settings>

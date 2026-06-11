@@ -1,0 +1,1608 @@
+[ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 1; @symbol_importdef<0> = [Toybox,1,7,13]; @symbol_importdef<1> = [Lang,1,14,18]; ]
+import Toybox.Lang;
+[ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 2; @symbol_usingdef<0> = [Toybox,2,6,12]; @symbol_usingdef<1> = [WatchUi,2,13,20]; ]
+using Toybox.WatchUi;
+[ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 3; @symbol_usingdef<0> = [Toybox,3,6,12]; @symbol_usingdef<1> = [WatchUi,3,13,20]; @symbol_usingAlias = [Ui,3,24,26]; ]
+using Toybox.WatchUi as :Ui;
+[ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 4; @symbol_usingdef<0> = [Toybox,4,6,12]; @symbol_usingdef<1> = [Graphics,4,13,21]; ]
+using Toybox.Graphics;
+[ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 5; @symbol_usingdef<0> = [Toybox,5,6,12]; @symbol_usingdef<1> = [Graphics,5,13,21]; @symbol_usingAlias = [Gfx,5,25,28]; ]
+using Toybox.Graphics as :Gfx;
+[ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 7; @symbol_moduledef = [Rez,7,7,10]; ]
+module Rez {
+    [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 7; ]
+    <init> {
+    }
+    [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 8; @symbol_moduledef = [Drawables,8,11,20]; ]
+    module Drawables {
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 8; ]
+        <init> {
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 9; @position = 27; initialized = true; @symbol_vardef = [LauncherIcon,9,27,39]; @symbol_type<0> = [ResourceId,9,43,53]; ]
+        var LauncherIcon as ResourceId;
+    }
+    [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 12; @symbol_moduledef = [Strings,12,11,18]; ]
+    module Strings {
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 12; ]
+        <init> {
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 13; @position = 27; initialized = true; @symbol_vardef = [AppNameSupport,13,27,41]; @symbol_type<0> = [ResourceId,13,45,55]; ]
+        var AppNameSupport as ResourceId;
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 14; @position = 27; initialized = true; @symbol_vardef = [CorrectionWindowTitle,14,27,48]; @symbol_type<0> = [ResourceId,14,52,62]; ]
+        var CorrectionWindowTitle as ResourceId;
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 15; @position = 27; initialized = true; @symbol_vardef = [ModeTitle,15,27,36]; @symbol_type<0> = [ResourceId,15,40,50]; ]
+        var ModeTitle as ResourceId;
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 16; @position = 27; initialized = true; @symbol_vardef = [LoopsPerCircleTitle,16,27,46]; @symbol_type<0> = [ResourceId,16,50,60]; ]
+        var LoopsPerCircleTitle as ResourceId;
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 17; @position = 27; initialized = true; @symbol_vardef = [RaceHoursTitle,17,27,41]; @symbol_type<0> = [ResourceId,17,45,55]; ]
+        var RaceHoursTitle as ResourceId;
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 18; @position = 27; initialized = true; @symbol_vardef = [RaceHoursPrompt,18,27,42]; @symbol_type<0> = [ResourceId,18,46,56]; ]
+        var RaceHoursPrompt as ResourceId;
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 19; @position = 27; initialized = true; @symbol_vardef = [LoopsPerCirclePrompt,19,27,47]; @symbol_type<0> = [ResourceId,19,51,61]; ]
+        var LoopsPerCirclePrompt as ResourceId;
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 20; @position = 27; initialized = true; @symbol_vardef = [ModePrompt,20,27,37]; @symbol_type<0> = [ResourceId,20,41,51]; ]
+        var ModePrompt as ResourceId;
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 21; @position = 27; initialized = true; @symbol_vardef = [LoopMetersTitle,21,27,42]; @symbol_type<0> = [ResourceId,21,46,56]; ]
+        var LoopMetersTitle as ResourceId;
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 22; @position = 27; initialized = true; @symbol_vardef = [LoopMetersPrompt,22,27,43]; @symbol_type<0> = [ResourceId,22,47,57]; ]
+        var LoopMetersPrompt as ResourceId;
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 23; @position = 27; initialized = true; @symbol_vardef = [AppName,23,27,34]; @symbol_type<0> = [ResourceId,23,38,48]; ]
+        var AppName as ResourceId;
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 24; @position = 27; initialized = true; @symbol_vardef = [CorrectionWindowPrompt,24,27,49]; @symbol_type<0> = [ResourceId,24,53,63]; ]
+        var CorrectionWindowPrompt as ResourceId;
+    }
+    [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 27; @symbol_moduledef = [Styles,27,11,17]; ]
+    module Styles {
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 27; ]
+        <init> {
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 28; @symbol_moduledef = [prompt_font_enhanced_readability__body_with_title,28,15,64]; ]
+        module prompt_font_enhanced_readability__body_with_title {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 28; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 29; @position = 18; @symbol_constdef = [exclude,29,18,25]; @symbol_type<0> = [Boolean,29,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 32; @symbol_moduledef = [system_size__menu_header,32,15,39]; ]
+        module system_size__menu_header {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 32; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 33; @position = 18; @symbol_constdef = [width,33,18,23]; @symbol_type<0> = [Number,33,27,33]; ]
+            const width as Number = 454;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 34; @position = 18; @symbol_constdef = [height,34,18,24]; @symbol_type<0> = [Number,34,28,34]; ]
+            const height as Number = 172;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 37; @symbol_moduledef = [system_loc__hint_button_left_bottom,37,15,50]; ]
+        module system_loc__hint_button_left_bottom {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 37; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 38; @position = 18; @symbol_constdef = [x,38,18,19]; @symbol_type<0> = [Number,38,23,29]; ]
+            const x as Number = 16;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 39; @position = 18; @symbol_constdef = [y,39,18,19]; @symbol_type<0> = [Number,39,23,29]; ]
+            const y as Number = 284;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 42; @symbol_moduledef = [prompt_font_enhanced_readability__body_no_title,42,15,62]; ]
+        module prompt_font_enhanced_readability__body_no_title {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 42; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 43; @position = 18; @symbol_constdef = [exclude,43,18,25]; @symbol_type<0> = [Boolean,43,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 46; @symbol_moduledef = [prompt_loc__body_no_title,46,15,40]; ]
+        module prompt_loc__body_no_title {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 46; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 47; @position = 18; @symbol_constdef = [x,47,18,19]; @symbol_type<0> = [Number,47,23,29]; ]
+            const x as Number = 76;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 48; @position = 18; @symbol_constdef = [y,48,18,19]; @symbol_type<0> = [Number,48,23,29]; ]
+            const y as Number = 70;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 51; @symbol_moduledef = [system_icon_dark__about,51,15,38]; ]
+        module system_icon_dark__about {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 51; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 52; @position = 18; @symbol_constdef = [filename,52,18,26]; @symbol_type<0> = [String,52,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_dark__about.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 53; @position = 18; @symbol_constdef = [compress,53,18,26]; @symbol_type<0> = [String,53,30,36]; ]
+            const compress as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 54; @position = 18; @symbol_constdef = [dithering,54,18,27]; @symbol_type<0> = [String,54,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 55; @position = 18; @symbol_constdef = [automaticPalette,55,18,34]; @symbol_type<0> = [String,55,38,44]; ]
+            const automaticPalette as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 56; @position = 18; @symbol_constdef = [packingFormat,56,18,31]; @symbol_type<0> = [String,56,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 59; @symbol_moduledef = [system_icon_light__question,59,15,42]; ]
+        module system_icon_light__question {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 59; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 60; @position = 18; @symbol_constdef = [filename,60,18,26]; @symbol_type<0> = [String,60,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_light__question.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 61; @position = 18; @symbol_constdef = [compress,61,18,26]; @symbol_type<0> = [String,61,30,36]; ]
+            const compress as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 62; @position = 18; @symbol_constdef = [dithering,62,18,27]; @symbol_type<0> = [String,62,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 63; @position = 18; @symbol_constdef = [automaticPalette,63,18,34]; @symbol_type<0> = [String,63,38,44]; ]
+            const automaticPalette as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 64; @position = 18; @symbol_constdef = [packingFormat,64,18,31]; @symbol_type<0> = [String,64,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 67; @symbol_moduledef = [system_loc__hint_button_left_top,67,15,47]; ]
+        module system_loc__hint_button_left_top {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 67; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 68; @position = 18; @symbol_constdef = [exclude,68,18,25]; @symbol_type<0> = [Boolean,68,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 71; @symbol_moduledef = [prompt_font__title,71,15,33]; ]
+        module prompt_font__title {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 71; ]
+            <init> {
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen" 72 18 ]
+                symbol [ Graphics %tmp.1 72 34 42 ];
+                %tmp.1 = getm $.Toybox.Graphics;
+                symbol [ TEXT_JUSTIFY_CENTER %tmp.2 72 43 62 ];
+                %tmp.2 = getv %tmp.1 :TEXT_JUSTIFY_CENTER;
+                symbol [ Graphics %tmp.3 72 63 71 ];
+                %tmp.3 = getm $.Toybox.Graphics;
+                symbol [ TEXT_JUSTIFY_VCENTER %tmp.4 72 72 92 ];
+                %tmp.4 = getv %tmp.3 :TEXT_JUSTIFY_VCENTER;
+                %tmp.5 = bitor %tmp.2 %tmp.4;
+                putv self :justification %tmp.5;
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen" 73 18 ]
+                symbol [ Graphics %tmp.6 73 25 33 ];
+                %tmp.6 = getm $.Toybox.Graphics;
+                symbol [ FONT_TINY %tmp.7 73 34 43 ];
+                %tmp.7 = getv %tmp.6 :FONT_TINY;
+                putv self :font %tmp.7;
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 72; @position = 18; @symbol_constdef = [justification,72,18,31]; ]
+            const justification;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 73; @position = 18; @symbol_constdef = [font,73,18,22]; ]
+            const font;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 76; @symbol_moduledef = [system_icon_dark__discard,76,15,40]; ]
+        module system_icon_dark__discard {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 76; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 77; @position = 18; @symbol_constdef = [filename,77,18,26]; @symbol_type<0> = [String,77,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_dark__discard.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 78; @position = 18; @symbol_constdef = [compress,78,18,26]; @symbol_type<0> = [String,78,30,36]; ]
+            const compress as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 79; @position = 18; @symbol_constdef = [dithering,79,18,27]; @symbol_type<0> = [String,79,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 80; @position = 18; @symbol_constdef = [automaticPalette,80,18,34]; @symbol_type<0> = [String,80,38,44]; ]
+            const automaticPalette as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 81; @position = 18; @symbol_constdef = [packingFormat,81,18,31]; @symbol_type<0> = [String,81,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 84; @symbol_moduledef = [system_size__menu_item,84,15,37]; ]
+        module system_size__menu_item {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 84; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 85; @position = 18; @symbol_constdef = [width,85,18,23]; @symbol_type<0> = [Number,85,27,33]; ]
+            const width as Number = 454;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 86; @position = 18; @symbol_constdef = [height,86,18,24]; @symbol_type<0> = [Number,86,28,34]; ]
+            const height as Number = 108;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 89; @symbol_moduledef = [system_color_dark__text,89,15,38]; ]
+        module system_color_dark__text {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 89; ]
+            <init> {
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen" 91 18 ]
+                symbol [ Graphics %tmp.8 91 31 39 ];
+                %tmp.8 = getm $.Toybox.Graphics;
+                symbol [ COLOR_TRANSPARENT %tmp.9 91 40 57 ];
+                %tmp.9 = getv %tmp.8 :COLOR_TRANSPARENT;
+                putv self :background %tmp.9;
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 90; @position = 18; @symbol_constdef = [color,90,18,23]; @symbol_type<0> = [Number,90,27,33]; ]
+            const color as Number = 0xFFFFFF;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 91; @position = 18; @symbol_constdef = [background,91,18,28]; ]
+            const background;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 94; @symbol_moduledef = [system_icon_destructive__discard,94,15,47]; ]
+        module system_icon_destructive__discard {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 94; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 95; @position = 18; @symbol_constdef = [filename,95,18,26]; @symbol_type<0> = [String,95,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_destructive__discard.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 96; @position = 18; @symbol_constdef = [dithering,96,18,27]; @symbol_type<0> = [String,96,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 97; @position = 18; @symbol_constdef = [packingFormat,97,18,31]; @symbol_type<0> = [String,97,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 100; @symbol_moduledef = [system_icon_dark__hint_action_menu,100,15,49]; ]
+        module system_icon_dark__hint_action_menu {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 100; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 101; @position = 18; @symbol_constdef = [filename,101,18,26]; @symbol_type<0> = [String,101,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_dark__hint_button_right_top.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 102; @position = 18; @symbol_constdef = [dithering,102,18,27]; @symbol_type<0> = [String,102,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 103; @position = 18; @symbol_constdef = [packingFormat,103,18,31]; @symbol_type<0> = [String,103,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 106; @symbol_moduledef = [prompt_size__title,106,15,33]; ]
+        module prompt_size__title {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 106; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 107; @position = 18; @symbol_constdef = [width,107,18,23]; @symbol_type<0> = [Number,107,27,33]; ]
+            const width as Number = 287;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 108; @position = 18; @symbol_constdef = [height,108,18,24]; @symbol_type<0> = [Number,108,28,34]; ]
+            const height as Number = 97;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 111; @symbol_moduledef = [confirmation_font__body,111,15,38]; ]
+        module confirmation_font__body {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 111; ]
+            <init> {
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen" 112 18 ]
+                symbol [ Graphics %tmp.10 112 34 42 ];
+                %tmp.10 = getm $.Toybox.Graphics;
+                symbol [ TEXT_JUSTIFY_CENTER %tmp.11 112 43 62 ];
+                %tmp.11 = getv %tmp.10 :TEXT_JUSTIFY_CENTER;
+                symbol [ Graphics %tmp.12 112 63 71 ];
+                %tmp.12 = getm $.Toybox.Graphics;
+                symbol [ TEXT_JUSTIFY_VCENTER %tmp.13 112 72 92 ];
+                %tmp.13 = getv %tmp.12 :TEXT_JUSTIFY_VCENTER;
+                %tmp.14 = bitor %tmp.11 %tmp.13;
+                putv self :justification %tmp.14;
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen" 113 18 ]
+                symbol [ Graphics %tmp.15 113 25 33 ];
+                %tmp.15 = getm $.Toybox.Graphics;
+                symbol [ FONT_TINY %tmp.16 113 34 43 ];
+                %tmp.16 = getv %tmp.15 :FONT_TINY;
+                putv self :font %tmp.16;
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 112; @position = 18; @symbol_constdef = [justification,112,18,31]; ]
+            const justification;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 113; @position = 18; @symbol_constdef = [font,113,18,22]; ]
+            const font;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 116; @symbol_moduledef = [system_color_dark__background,116,15,44]; ]
+        module system_color_dark__background {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 116; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 117; @position = 18; @symbol_constdef = [color,117,18,23]; @symbol_type<0> = [Number,117,27,33]; ]
+            const color as Number = 0x000000;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 118; @position = 18; @symbol_constdef = [background,118,18,28]; @symbol_type<0> = [Number,118,32,38]; ]
+            const background as Number = 0x000000;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 121; @symbol_moduledef = [system_icon_destructive__hint_button_left_top,121,15,60]; ]
+        module system_icon_destructive__hint_button_left_top {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 121; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 122; @position = 18; @symbol_constdef = [filename,122,18,26]; @symbol_type<0> = [String,122,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_destructive__hint_button_left_top.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 123; @position = 18; @symbol_constdef = [dithering,123,18,27]; @symbol_type<0> = [String,123,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 124; @position = 18; @symbol_constdef = [packingFormat,124,18,31]; @symbol_type<0> = [String,124,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 127; @symbol_moduledef = [system_size__launch_icon,127,15,39]; ]
+        module system_size__launch_icon {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 127; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 128; @position = 18; @symbol_constdef = [scaleX,128,18,24]; @symbol_type<0> = [Number,128,28,34]; ]
+            const scaleX as Number = 65;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 129; @position = 18; @symbol_constdef = [scaleY,129,18,24]; @symbol_type<0> = [Number,129,28,34]; ]
+            const scaleY as Number = 65;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 130; @position = 18; @symbol_constdef = [scaleRelativeTo,130,18,33]; @symbol_type<0> = [String,130,37,43]; ]
+            const scaleRelativeTo as String = "screen";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 133; @symbol_moduledef = [confirmation_input__confirm,133,15,42]; ]
+        module confirmation_input__confirm {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 133; ]
+            <init> {
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen" 134 18 ]
+                symbol [ WatchUi %tmp.17 134 27 34 ];
+                %tmp.17 = getm $.Toybox.WatchUi;
+                symbol [ KEY_ENTER %tmp.18 134 35 44 ];
+                %tmp.18 = getv %tmp.17 :KEY_ENTER;
+                putv self :button %tmp.18;
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 134; @position = 18; @symbol_constdef = [button,134,18,24]; ]
+            const button;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 137; @symbol_moduledef = [prompt_font__body_with_title,137,15,43]; ]
+        module prompt_font__body_with_title {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 137; ]
+            <init> {
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen" 138 18 ]
+                symbol [ Graphics %tmp.19 138 34 42 ];
+                %tmp.19 = getm $.Toybox.Graphics;
+                symbol [ TEXT_JUSTIFY_CENTER %tmp.20 138 43 62 ];
+                %tmp.20 = getv %tmp.19 :TEXT_JUSTIFY_CENTER;
+                putv self :justification %tmp.20;
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen" 139 18 ]
+                symbol [ Graphics %tmp.21 139 25 33 ];
+                %tmp.21 = getm $.Toybox.Graphics;
+                symbol [ FONT_XTINY %tmp.22 139 34 44 ];
+                %tmp.22 = getv %tmp.21 :FONT_XTINY;
+                putv self :font %tmp.22;
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 138; @position = 18; @symbol_constdef = [justification,138,18,31]; ]
+            const justification;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 139; @position = 18; @symbol_constdef = [font,139,18,22]; ]
+            const font;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 142; @symbol_moduledef = [confirmation_loc__body,142,15,37]; ]
+        module confirmation_loc__body {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 142; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 143; @position = 18; @symbol_constdef = [x,143,18,19]; @symbol_type<0> = [Number,143,23,29]; ]
+            const x as Number = 70;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 144; @position = 18; @symbol_constdef = [y,144,18,19]; @symbol_type<0> = [Number,144,23,29]; ]
+            const y as Number = 104;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 147; @symbol_moduledef = [system_icon_destructive__hint_button_left_bottom,147,15,63]; ]
+        module system_icon_destructive__hint_button_left_bottom {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 147; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 148; @position = 18; @symbol_constdef = [filename,148,18,26]; @symbol_type<0> = [String,148,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_destructive__hint_button_left_bottom.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 149; @position = 18; @symbol_constdef = [dithering,149,18,27]; @symbol_type<0> = [String,149,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 150; @position = 18; @symbol_constdef = [packingFormat,150,18,31]; @symbol_type<0> = [String,150,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 153; @symbol_moduledef = [prompt_color_dark__background,153,15,44]; ]
+        module prompt_color_dark__background {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 153; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 154; @position = 18; @symbol_constdef = [color,154,18,23]; @symbol_type<0> = [Number,154,27,33]; ]
+            const color as Number = 0x000000;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 155; @position = 18; @symbol_constdef = [background,155,18,28]; @symbol_type<0> = [Number,155,32,38]; ]
+            const background as Number = 0x000000;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 158; @symbol_moduledef = [system_icon_destructive__hint_action_menu,158,15,56]; ]
+        module system_icon_destructive__hint_action_menu {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 158; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 159; @position = 18; @symbol_constdef = [filename,159,18,26]; @symbol_type<0> = [String,159,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_destructive__hint_button_right_top.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 160; @position = 18; @symbol_constdef = [dithering,160,18,27]; @symbol_type<0> = [String,160,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 161; @position = 18; @symbol_constdef = [packingFormat,161,18,31]; @symbol_type<0> = [String,161,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 164; @symbol_moduledef = [system_loc__hint_action_menu,164,15,43]; ]
+        module system_loc__hint_action_menu {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 164; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 165; @position = 18; @symbol_constdef = [x,165,18,19]; @symbol_type<0> = [Number,165,23,29]; ]
+            const x as Number = 379;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 166; @position = 18; @symbol_constdef = [y,166,18,19]; @symbol_type<0> = [Number,166,23,29]; ]
+            const y as Number = 89;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 169; @symbol_moduledef = [confirmation_icon__hint_confirm,169,15,46]; ]
+        module confirmation_icon__hint_confirm {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 169; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 170; @position = 18; @symbol_constdef = [filename,170,18,26]; @symbol_type<0> = [String,170,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\confirmation_icon__hint_completion.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 171; @position = 18; @symbol_constdef = [dithering,171,18,27]; @symbol_type<0> = [String,171,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 172; @position = 18; @symbol_constdef = [packingFormat,172,18,31]; @symbol_type<0> = [String,172,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 175; @symbol_moduledef = [system_loc__hint_button_left_middle,175,15,50]; ]
+        module system_loc__hint_button_left_middle {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 175; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 176; @position = 18; @symbol_constdef = [x,176,18,19]; @symbol_type<0> = [Number,176,23,29]; ]
+            const x as Number = 3;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 177; @position = 18; @symbol_constdef = [y,177,18,19]; @symbol_type<0> = [Number,177,23,29]; ]
+            const y as Number = 184;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 180; @symbol_moduledef = [prompt_size__body_no_title,180,15,41]; ]
+        module prompt_size__body_no_title {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 180; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 181; @position = 18; @symbol_constdef = [width,181,18,23]; @symbol_type<0> = [Number,181,27,33]; ]
+            const width as Number = 302;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 182; @position = 18; @symbol_constdef = [height,182,18,24]; @symbol_type<0> = [Number,182,28,34]; ]
+            const height as Number = 315;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 185; @symbol_moduledef = [system_icon_light__hint_button_left_top,185,15,54]; ]
+        module system_icon_light__hint_button_left_top {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 185; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 186; @position = 18; @symbol_constdef = [filename,186,18,26]; @symbol_type<0> = [String,186,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_light__hint_button_left_top.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 187; @position = 18; @symbol_constdef = [dithering,187,18,27]; @symbol_type<0> = [String,187,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 188; @position = 18; @symbol_constdef = [packingFormat,188,18,31]; @symbol_type<0> = [String,188,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 191; @symbol_moduledef = [prompt_color_light__background,191,15,45]; ]
+        module prompt_color_light__background {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 191; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 192; @position = 18; @symbol_constdef = [color,192,18,23]; @symbol_type<0> = [Number,192,27,33]; ]
+            const color as Number = 0x000000;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 193; @position = 18; @symbol_constdef = [background,193,18,28]; @symbol_type<0> = [Number,193,32,38]; ]
+            const background as Number = 0x000000;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 196; @symbol_moduledef = [confirmation_input__delete,196,15,41]; ]
+        module confirmation_input__delete {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 196; ]
+            <init> {
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen" 197 18 ]
+                symbol [ WatchUi %tmp.23 197 27 34 ];
+                %tmp.23 = getm $.Toybox.WatchUi;
+                symbol [ KEY_DOWN %tmp.24 197 35 43 ];
+                %tmp.24 = getv %tmp.23 :KEY_DOWN;
+                putv self :button %tmp.24;
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 197; @position = 18; @symbol_constdef = [button,197,18,24]; ]
+            const button;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 200; @symbol_moduledef = [system_icon_dark__hint_button_left_top,200,15,53]; ]
+        module system_icon_dark__hint_button_left_top {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 200; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 201; @position = 18; @symbol_constdef = [filename,201,18,26]; @symbol_type<0> = [String,201,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_dark__hint_button_left_top.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 202; @position = 18; @symbol_constdef = [dithering,202,18,27]; @symbol_type<0> = [String,202,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 203; @position = 18; @symbol_constdef = [packingFormat,203,18,31]; @symbol_type<0> = [String,203,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 206; @symbol_moduledef = [system_input__action_menu,206,15,40]; ]
+        module system_input__action_menu {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 206; ]
+            <init> {
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen" 207 18 ]
+                symbol [ WatchUi %tmp.25 207 27 34 ];
+                %tmp.25 = getm $.Toybox.WatchUi;
+                symbol [ KEY_ENTER %tmp.26 207 35 44 ];
+                %tmp.26 = getv %tmp.25 :KEY_ENTER;
+                putv self :button %tmp.26;
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 207; @position = 18; @symbol_constdef = [button,207,18,24]; ]
+            const button;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 210; @symbol_moduledef = [system_icon_light__save,210,15,38]; ]
+        module system_icon_light__save {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 210; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 211; @position = 18; @symbol_constdef = [filename,211,18,26]; @symbol_type<0> = [String,211,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_light__save.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 212; @position = 18; @symbol_constdef = [compress,212,18,26]; @symbol_type<0> = [String,212,30,36]; ]
+            const compress as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 213; @position = 18; @symbol_constdef = [dithering,213,18,27]; @symbol_type<0> = [String,213,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 214; @position = 18; @symbol_constdef = [automaticPalette,214,18,34]; @symbol_type<0> = [String,214,38,44]; ]
+            const automaticPalette as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 215; @position = 18; @symbol_constdef = [packingFormat,215,18,31]; @symbol_type<0> = [String,215,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 218; @symbol_moduledef = [prompt_color_light__body,218,15,39]; ]
+        module prompt_color_light__body {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 218; ]
+            <init> {
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen" 220 18 ]
+                symbol [ Graphics %tmp.27 220 31 39 ];
+                %tmp.27 = getm $.Toybox.Graphics;
+                symbol [ COLOR_TRANSPARENT %tmp.28 220 40 57 ];
+                %tmp.28 = getv %tmp.27 :COLOR_TRANSPARENT;
+                putv self :background %tmp.28;
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 219; @position = 18; @symbol_constdef = [color,219,18,23]; @symbol_type<0> = [Number,219,27,33]; ]
+            const color as Number = 0xFFFFFF;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 220; @position = 18; @symbol_constdef = [background,220,18,28]; ]
+            const background;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 223; @symbol_moduledef = [system_loc__subwindow,223,15,36]; ]
+        module system_loc__subwindow {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 223; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 224; @position = 18; @symbol_constdef = [exclude,224,18,25]; @symbol_type<0> = [Boolean,224,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 227; @symbol_moduledef = [system_icon_light__warning,227,15,41]; ]
+        module system_icon_light__warning {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 227; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 228; @position = 18; @symbol_constdef = [filename,228,18,26]; @symbol_type<0> = [String,228,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_light__warning.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 229; @position = 18; @symbol_constdef = [compress,229,18,26]; @symbol_type<0> = [String,229,30,36]; ]
+            const compress as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 230; @position = 18; @symbol_constdef = [dithering,230,18,27]; @symbol_type<0> = [String,230,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 231; @position = 18; @symbol_constdef = [automaticPalette,231,18,34]; @symbol_type<0> = [String,231,38,44]; ]
+            const automaticPalette as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 232; @position = 18; @symbol_constdef = [packingFormat,232,18,31]; @symbol_type<0> = [String,232,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 235; @symbol_moduledef = [confirmation_color_light__body,235,15,45]; ]
+        module confirmation_color_light__body {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 235; ]
+            <init> {
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen" 237 18 ]
+                symbol [ Graphics %tmp.29 237 31 39 ];
+                %tmp.29 = getm $.Toybox.Graphics;
+                symbol [ COLOR_TRANSPARENT %tmp.30 237 40 57 ];
+                %tmp.30 = getv %tmp.29 :COLOR_TRANSPARENT;
+                putv self :background %tmp.30;
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 236; @position = 18; @symbol_constdef = [color,236,18,23]; @symbol_type<0> = [Number,236,27,33]; ]
+            const color as Number = 0xFFFFFF;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 237; @position = 18; @symbol_constdef = [background,237,18,28]; ]
+            const background;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 240; @symbol_moduledef = [confirmation_icon_light__hint_keep,240,15,49]; ]
+        module confirmation_icon_light__hint_keep {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 240; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 241; @position = 18; @symbol_constdef = [filename,241,18,26]; @symbol_type<0> = [String,241,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\confirmation_icon__hint_keep.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 242; @position = 18; @symbol_constdef = [dithering,242,18,27]; @symbol_type<0> = [String,242,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 243; @position = 18; @symbol_constdef = [packingFormat,243,18,31]; @symbol_type<0> = [String,243,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 246; @symbol_moduledef = [activity_color_light__background,246,15,47]; ]
+        module activity_color_light__background {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 246; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 247; @position = 18; @symbol_constdef = [color,247,18,23]; @symbol_type<0> = [Number,247,27,33]; ]
+            const color as Number = 0x000000;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 248; @position = 18; @symbol_constdef = [background,248,18,28]; @symbol_type<0> = [Number,248,32,38]; ]
+            const background as Number = 0x000000;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 251; @symbol_moduledef = [system_icon_positive__hint_button_right_top,251,15,58]; ]
+        module system_icon_positive__hint_button_right_top {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 251; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 252; @position = 18; @symbol_constdef = [filename,252,18,26]; @symbol_type<0> = [String,252,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_positive__hint_button_right_top.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 253; @position = 18; @symbol_constdef = [dithering,253,18,27]; @symbol_type<0> = [String,253,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 254; @position = 18; @symbol_constdef = [packingFormat,254,18,31]; @symbol_type<0> = [String,254,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 257; @symbol_moduledef = [system_size__screen,257,15,34]; ]
+        module system_size__screen {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 257; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 258; @position = 18; @symbol_constdef = [width,258,18,23]; @symbol_type<0> = [Number,258,27,33]; ]
+            const width as Number = 454;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 259; @position = 18; @symbol_constdef = [height,259,18,24]; @symbol_type<0> = [Number,259,28,34]; ]
+            const height as Number = 454;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 262; @symbol_moduledef = [system_icon_destructive__hint_button_right_bottom,262,15,64]; ]
+        module system_icon_destructive__hint_button_right_bottom {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 262; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 263; @position = 18; @symbol_constdef = [filename,263,18,26]; @symbol_type<0> = [String,263,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_destructive__hint_button_right_bottom.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 264; @position = 18; @symbol_constdef = [dithering,264,18,27]; @symbol_type<0> = [String,264,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 265; @position = 18; @symbol_constdef = [packingFormat,265,18,31]; @symbol_type<0> = [String,265,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 268; @symbol_moduledef = [system_color_light__background,268,15,45]; ]
+        module system_color_light__background {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 268; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 269; @position = 18; @symbol_constdef = [color,269,18,23]; @symbol_type<0> = [Number,269,27,33]; ]
+            const color as Number = 0x000000;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 270; @position = 18; @symbol_constdef = [background,270,18,28]; @symbol_type<0> = [Number,270,32,38]; ]
+            const background as Number = 0x000000;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 273; @symbol_moduledef = [system_icon_destructive__hint_button_right_top,273,15,61]; ]
+        module system_icon_destructive__hint_button_right_top {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 273; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 274; @position = 18; @symbol_constdef = [filename,274,18,26]; @symbol_type<0> = [String,274,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_destructive__hint_button_right_top.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 275; @position = 18; @symbol_constdef = [dithering,275,18,27]; @symbol_type<0> = [String,275,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 276; @position = 18; @symbol_constdef = [packingFormat,276,18,31]; @symbol_type<0> = [String,276,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 279; @symbol_moduledef = [confirmation_loc__hint_confirm,279,15,45]; ]
+        module confirmation_loc__hint_confirm {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 279; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 280; @position = 18; @symbol_constdef = [x,280,18,19]; @symbol_type<0> = [Number,280,23,29]; ]
+            const x as Number = 379;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 281; @position = 18; @symbol_constdef = [y,281,18,19]; @symbol_type<0> = [Number,281,23,29]; ]
+            const y as Number = 89;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 284; @symbol_moduledef = [activity_color_dark__text,284,15,40]; ]
+        module activity_color_dark__text {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 284; ]
+            <init> {
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen" 286 18 ]
+                symbol [ Graphics %tmp.31 286 31 39 ];
+                %tmp.31 = getm $.Toybox.Graphics;
+                symbol [ COLOR_TRANSPARENT %tmp.32 286 40 57 ];
+                %tmp.32 = getv %tmp.31 :COLOR_TRANSPARENT;
+                putv self :background %tmp.32;
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 285; @position = 18; @symbol_constdef = [color,285,18,23]; @symbol_type<0> = [Number,285,27,33]; ]
+            const color as Number = 0xFFFFFF;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 286; @position = 18; @symbol_constdef = [background,286,18,28]; ]
+            const background;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 289; @symbol_moduledef = [confirmation_input__keep,289,15,39]; ]
+        module confirmation_input__keep {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 289; ]
+            <init> {
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen" 290 18 ]
+                symbol [ WatchUi %tmp.33 290 27 34 ];
+                %tmp.33 = getm $.Toybox.WatchUi;
+                symbol [ KEY_ESC %tmp.34 290 35 42 ];
+                %tmp.34 = getv %tmp.33 :KEY_ESC;
+                putv self :button %tmp.34;
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 290; @position = 18; @symbol_constdef = [button,290,18,24]; ]
+            const button;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 293; @symbol_moduledef = [prompt_loc__body_with_title,293,15,42]; ]
+        module prompt_loc__body_with_title {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 293; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 294; @position = 18; @symbol_constdef = [x,294,18,19]; @symbol_type<0> = [Number,294,23,29]; ]
+            const x as Number = 76;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 295; @position = 18; @symbol_constdef = [y,295,18,19]; @symbol_type<0> = [Number,295,23,29]; ]
+            const y as Number = 131;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 298; @symbol_moduledef = [system_icon_dark__search,298,15,39]; ]
+        module system_icon_dark__search {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 298; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 299; @position = 18; @symbol_constdef = [filename,299,18,26]; @symbol_type<0> = [String,299,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_dark__search.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 300; @position = 18; @symbol_constdef = [compress,300,18,26]; @symbol_type<0> = [String,300,30,36]; ]
+            const compress as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 301; @position = 18; @symbol_constdef = [dithering,301,18,27]; @symbol_type<0> = [String,301,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 302; @position = 18; @symbol_constdef = [automaticPalette,302,18,34]; @symbol_type<0> = [String,302,38,44]; ]
+            const automaticPalette as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 303; @position = 18; @symbol_constdef = [packingFormat,303,18,31]; @symbol_type<0> = [String,303,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 306; @symbol_moduledef = [activity_color_light__text,306,15,41]; ]
+        module activity_color_light__text {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 306; ]
+            <init> {
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen" 308 18 ]
+                symbol [ Graphics %tmp.35 308 31 39 ];
+                %tmp.35 = getm $.Toybox.Graphics;
+                symbol [ COLOR_TRANSPARENT %tmp.36 308 40 57 ];
+                %tmp.36 = getv %tmp.35 :COLOR_TRANSPARENT;
+                putv self :background %tmp.36;
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 307; @position = 18; @symbol_constdef = [color,307,18,23]; @symbol_type<0> = [Number,307,27,33]; ]
+            const color as Number = 0xFFFFFF;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 308; @position = 18; @symbol_constdef = [background,308,18,28]; ]
+            const background;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 311; @symbol_moduledef = [confirmation_icon__hint_keep,311,15,43]; ]
+        module confirmation_icon__hint_keep {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 311; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 312; @position = 18; @symbol_constdef = [filename,312,18,26]; @symbol_type<0> = [String,312,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\confirmation_icon__hint_keep.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 313; @position = 18; @symbol_constdef = [dithering,313,18,27]; @symbol_type<0> = [String,313,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 314; @position = 18; @symbol_constdef = [packingFormat,314,18,31]; @symbol_type<0> = [String,314,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 317; @symbol_moduledef = [system_icon_dark__save,317,15,37]; ]
+        module system_icon_dark__save {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 317; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 318; @position = 18; @symbol_constdef = [filename,318,18,26]; @symbol_type<0> = [String,318,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_dark__save.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 319; @position = 18; @symbol_constdef = [compress,319,18,26]; @symbol_type<0> = [String,319,30,36]; ]
+            const compress as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 320; @position = 18; @symbol_constdef = [dithering,320,18,27]; @symbol_type<0> = [String,320,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 321; @position = 18; @symbol_constdef = [automaticPalette,321,18,34]; @symbol_type<0> = [String,321,38,44]; ]
+            const automaticPalette as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 322; @position = 18; @symbol_constdef = [packingFormat,322,18,31]; @symbol_type<0> = [String,322,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 325; @symbol_moduledef = [system_icon_destructive__hint_button_left_middle,325,15,63]; ]
+        module system_icon_destructive__hint_button_left_middle {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 325; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 326; @position = 18; @symbol_constdef = [filename,326,18,26]; @symbol_type<0> = [String,326,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_destructive__hint_button_left_middle.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 327; @position = 18; @symbol_constdef = [dithering,327,18,27]; @symbol_type<0> = [String,327,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 328; @position = 18; @symbol_constdef = [packingFormat,328,18,31]; @symbol_type<0> = [String,328,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 331; @symbol_moduledef = [system_icon_light__search,331,15,40]; ]
+        module system_icon_light__search {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 331; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 332; @position = 18; @symbol_constdef = [filename,332,18,26]; @symbol_type<0> = [String,332,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_light__search.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 333; @position = 18; @symbol_constdef = [compress,333,18,26]; @symbol_type<0> = [String,333,30,36]; ]
+            const compress as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 334; @position = 18; @symbol_constdef = [dithering,334,18,27]; @symbol_type<0> = [String,334,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 335; @position = 18; @symbol_constdef = [automaticPalette,335,18,34]; @symbol_type<0> = [String,335,38,44]; ]
+            const automaticPalette as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 336; @position = 18; @symbol_constdef = [packingFormat,336,18,31]; @symbol_type<0> = [String,336,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 339; @symbol_moduledef = [system_icon_dark__hint_button_left_bottom,339,15,56]; ]
+        module system_icon_dark__hint_button_left_bottom {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 339; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 340; @position = 18; @symbol_constdef = [filename,340,18,26]; @symbol_type<0> = [String,340,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_dark__hint_button_left_bottom.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 341; @position = 18; @symbol_constdef = [dithering,341,18,27]; @symbol_type<0> = [String,341,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 342; @position = 18; @symbol_constdef = [packingFormat,342,18,31]; @symbol_type<0> = [String,342,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 345; @symbol_moduledef = [system_icon_positive__hint_button_left_top,345,15,57]; ]
+        module system_icon_positive__hint_button_left_top {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 345; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 346; @position = 18; @symbol_constdef = [filename,346,18,26]; @symbol_type<0> = [String,346,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_positive__hint_button_left_top.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 347; @position = 18; @symbol_constdef = [dithering,347,18,27]; @symbol_type<0> = [String,347,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 348; @position = 18; @symbol_constdef = [packingFormat,348,18,31]; @symbol_type<0> = [String,348,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 351; @symbol_moduledef = [system_loc__hint_button_right_bottom,351,15,51]; ]
+        module system_loc__hint_button_right_bottom {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 351; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 352; @position = 18; @symbol_constdef = [x,352,18,19]; @symbol_type<0> = [Number,352,23,29]; ]
+            const x as Number = 369;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 353; @position = 18; @symbol_constdef = [y,353,18,19]; @symbol_type<0> = [Number,353,23,29]; ]
+            const y as Number = 283;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 356; @symbol_moduledef = [confirmation_icon_dark__hint_reject,356,15,50]; ]
+        module confirmation_icon_dark__hint_reject {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 356; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 357; @position = 18; @symbol_constdef = [filename,357,18,26]; @symbol_type<0> = [String,357,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\confirmation_icon__hint_reject.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 358; @position = 18; @symbol_constdef = [dithering,358,18,27]; @symbol_type<0> = [String,358,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 359; @position = 18; @symbol_constdef = [packingFormat,359,18,31]; @symbol_type<0> = [String,359,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 362; @symbol_moduledef = [confirmation_color_dark__body,362,15,44]; ]
+        module confirmation_color_dark__body {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 362; ]
+            <init> {
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen" 364 18 ]
+                symbol [ Graphics %tmp.37 364 31 39 ];
+                %tmp.37 = getm $.Toybox.Graphics;
+                symbol [ COLOR_TRANSPARENT %tmp.38 364 40 57 ];
+                %tmp.38 = getv %tmp.37 :COLOR_TRANSPARENT;
+                putv self :background %tmp.38;
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 363; @position = 18; @symbol_constdef = [color,363,18,23]; @symbol_type<0> = [Number,363,27,33]; ]
+            const color as Number = 0xFFFFFF;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 364; @position = 18; @symbol_constdef = [background,364,18,28]; ]
+            const background;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 367; @symbol_moduledef = [confirmation_icon_light__hint_confirm,367,15,52]; ]
+        module confirmation_icon_light__hint_confirm {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 367; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 368; @position = 18; @symbol_constdef = [filename,368,18,26]; @symbol_type<0> = [String,368,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\confirmation_icon__hint_completion.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 369; @position = 18; @symbol_constdef = [dithering,369,18,27]; @symbol_type<0> = [String,369,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 370; @position = 18; @symbol_constdef = [packingFormat,370,18,31]; @symbol_type<0> = [String,370,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 373; @symbol_moduledef = [prompt_color_dark__title,373,15,39]; ]
+        module prompt_color_dark__title {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 373; ]
+            <init> {
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen" 375 18 ]
+                symbol [ Graphics %tmp.39 375 31 39 ];
+                %tmp.39 = getm $.Toybox.Graphics;
+                symbol [ COLOR_TRANSPARENT %tmp.40 375 40 57 ];
+                %tmp.40 = getv %tmp.39 :COLOR_TRANSPARENT;
+                putv self :background %tmp.40;
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 374; @position = 18; @symbol_constdef = [color,374,18,23]; @symbol_type<0> = [Number,374,27,33]; ]
+            const color as Number = 0xFFFFFF;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 375; @position = 18; @symbol_constdef = [background,375,18,28]; ]
+            const background;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 378; @symbol_moduledef = [system_icon_destructive__cancel,378,15,46]; ]
+        module system_icon_destructive__cancel {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 378; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 379; @position = 18; @symbol_constdef = [filename,379,18,26]; @symbol_type<0> = [String,379,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_destructive__cancel.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 380; @position = 18; @symbol_constdef = [dithering,380,18,27]; @symbol_type<0> = [String,380,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 381; @position = 18; @symbol_constdef = [packingFormat,381,18,31]; @symbol_type<0> = [String,381,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 384; @symbol_moduledef = [system_icon_light__hint_button_right_bottom,384,15,58]; ]
+        module system_icon_light__hint_button_right_bottom {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 384; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 385; @position = 18; @symbol_constdef = [filename,385,18,26]; @symbol_type<0> = [String,385,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_light__hint_button_right_bottom.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 386; @position = 18; @symbol_constdef = [dithering,386,18,27]; @symbol_type<0> = [String,386,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 387; @position = 18; @symbol_constdef = [packingFormat,387,18,31]; @symbol_type<0> = [String,387,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 390; @symbol_moduledef = [prompt_loc__title,390,15,32]; ]
+        module prompt_loc__title {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 390; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 391; @position = 18; @symbol_constdef = [x,391,18,19]; @symbol_type<0> = [Number,391,23,29]; ]
+            const x as Number = 83;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 392; @position = 18; @symbol_constdef = [y,392,18,19]; @symbol_type<0> = [Number,392,23,29]; ]
+            const y as Number = 34;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 395; @symbol_moduledef = [confirmation_font_enhanced_readability__body,395,15,59]; ]
+        module confirmation_font_enhanced_readability__body {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 395; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 396; @position = 18; @symbol_constdef = [exclude,396,18,25]; @symbol_type<0> = [Boolean,396,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 399; @symbol_moduledef = [prompt_color_light__title,399,15,40]; ]
+        module prompt_color_light__title {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 399; ]
+            <init> {
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen" 401 18 ]
+                symbol [ Graphics %tmp.41 401 31 39 ];
+                %tmp.41 = getm $.Toybox.Graphics;
+                symbol [ COLOR_TRANSPARENT %tmp.42 401 40 57 ];
+                %tmp.42 = getv %tmp.41 :COLOR_TRANSPARENT;
+                putv self :background %tmp.42;
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 400; @position = 18; @symbol_constdef = [color,400,18,23]; @symbol_type<0> = [Number,400,27,33]; ]
+            const color as Number = 0xFFFFFF;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 401; @position = 18; @symbol_constdef = [background,401,18,28]; ]
+            const background;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 404; @symbol_moduledef = [system_icon_dark__hint_button_right_top,404,15,54]; ]
+        module system_icon_dark__hint_button_right_top {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 404; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 405; @position = 18; @symbol_constdef = [filename,405,18,26]; @symbol_type<0> = [String,405,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_dark__hint_button_right_top.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 406; @position = 18; @symbol_constdef = [dithering,406,18,27]; @symbol_type<0> = [String,406,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 407; @position = 18; @symbol_constdef = [packingFormat,407,18,31]; @symbol_type<0> = [String,407,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 410; @symbol_moduledef = [system_icon_dark__hint_button_left_middle,410,15,56]; ]
+        module system_icon_dark__hint_button_left_middle {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 410; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 411; @position = 18; @symbol_constdef = [filename,411,18,26]; @symbol_type<0> = [String,411,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_dark__hint_button_left_middle.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 412; @position = 18; @symbol_constdef = [dithering,412,18,27]; @symbol_type<0> = [String,412,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 413; @position = 18; @symbol_constdef = [packingFormat,413,18,31]; @symbol_type<0> = [String,413,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 416; @symbol_moduledef = [confirmation_icon_dark__hint_keep,416,15,48]; ]
+        module confirmation_icon_dark__hint_keep {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 416; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 417; @position = 18; @symbol_constdef = [filename,417,18,26]; @symbol_type<0> = [String,417,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\confirmation_icon__hint_keep.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 418; @position = 18; @symbol_constdef = [dithering,418,18,27]; @symbol_type<0> = [String,418,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 419; @position = 18; @symbol_constdef = [packingFormat,419,18,31]; @symbol_type<0> = [String,419,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 422; @symbol_moduledef = [system_icon_light__cancel,422,15,40]; ]
+        module system_icon_light__cancel {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 422; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 423; @position = 18; @symbol_constdef = [filename,423,18,26]; @symbol_type<0> = [String,423,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_light__cancel.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 424; @position = 18; @symbol_constdef = [compress,424,18,26]; @symbol_type<0> = [String,424,30,36]; ]
+            const compress as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 425; @position = 18; @symbol_constdef = [dithering,425,18,27]; @symbol_type<0> = [String,425,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 426; @position = 18; @symbol_constdef = [automaticPalette,426,18,34]; @symbol_type<0> = [String,426,38,44]; ]
+            const automaticPalette as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 427; @position = 18; @symbol_constdef = [packingFormat,427,18,31]; @symbol_type<0> = [String,427,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 430; @symbol_moduledef = [confirmation_icon_light__hint_reject,430,15,51]; ]
+        module confirmation_icon_light__hint_reject {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 430; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 431; @position = 18; @symbol_constdef = [filename,431,18,26]; @symbol_type<0> = [String,431,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\confirmation_icon__hint_reject.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 432; @position = 18; @symbol_constdef = [dithering,432,18,27]; @symbol_type<0> = [String,432,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 433; @position = 18; @symbol_constdef = [packingFormat,433,18,31]; @symbol_type<0> = [String,433,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 436; @symbol_moduledef = [system_icon_light__about,436,15,39]; ]
+        module system_icon_light__about {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 436; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 437; @position = 18; @symbol_constdef = [filename,437,18,26]; @symbol_type<0> = [String,437,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_light__about.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 438; @position = 18; @symbol_constdef = [compress,438,18,26]; @symbol_type<0> = [String,438,30,36]; ]
+            const compress as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 439; @position = 18; @symbol_constdef = [dithering,439,18,27]; @symbol_type<0> = [String,439,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 440; @position = 18; @symbol_constdef = [automaticPalette,440,18,34]; @symbol_type<0> = [String,440,38,44]; ]
+            const automaticPalette as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 441; @position = 18; @symbol_constdef = [packingFormat,441,18,31]; @symbol_type<0> = [String,441,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 444; @symbol_moduledef = [system_size__toast_icon,444,15,38]; ]
+        module system_size__toast_icon {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 444; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 445; @position = 18; @symbol_constdef = [scaleX,445,18,24]; @symbol_type<0> = [Number,445,28,34]; ]
+            const scaleX as Number = 45;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 446; @position = 18; @symbol_constdef = [scaleY,446,18,24]; @symbol_type<0> = [Number,446,28,34]; ]
+            const scaleY as Number = 45;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 447; @position = 18; @symbol_constdef = [scaleRelativeTo,447,18,33]; @symbol_type<0> = [String,447,37,43]; ]
+            const scaleRelativeTo as String = "screen";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 450; @symbol_moduledef = [system_icon_dark__hint_button_right_middle,450,15,57]; ]
+        module system_icon_dark__hint_button_right_middle {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 450; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 451; @position = 18; @symbol_constdef = [exclude,451,18,25]; @symbol_type<0> = [Boolean,451,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 454; @symbol_moduledef = [confirmation_icon__hint_reject,454,15,45]; ]
+        module confirmation_icon__hint_reject {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 454; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 455; @position = 18; @symbol_constdef = [filename,455,18,26]; @symbol_type<0> = [String,455,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\confirmation_icon__hint_reject.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 456; @position = 18; @symbol_constdef = [dithering,456,18,27]; @symbol_type<0> = [String,456,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 457; @position = 18; @symbol_constdef = [packingFormat,457,18,31]; @symbol_type<0> = [String,457,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 460; @symbol_moduledef = [system_icon_light__hint_action_menu,460,15,50]; ]
+        module system_icon_light__hint_action_menu {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 460; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 461; @position = 18; @symbol_constdef = [filename,461,18,26]; @symbol_type<0> = [String,461,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_light__hint_button_right_top.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 462; @position = 18; @symbol_constdef = [dithering,462,18,27]; @symbol_type<0> = [String,462,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 463; @position = 18; @symbol_constdef = [packingFormat,463,18,31]; @symbol_type<0> = [String,463,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 466; @symbol_moduledef = [system_icon_light__hint_button_right_middle,466,15,58]; ]
+        module system_icon_light__hint_button_right_middle {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 466; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 467; @position = 18; @symbol_constdef = [exclude,467,18,25]; @symbol_type<0> = [Boolean,467,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 470; @symbol_moduledef = [system_icon_destructive__hint_button_right_middle,470,15,64]; ]
+        module system_icon_destructive__hint_button_right_middle {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 470; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 471; @position = 18; @symbol_constdef = [exclude,471,18,25]; @symbol_type<0> = [Boolean,471,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 474; @symbol_moduledef = [confirmation_loc__hint_reject,474,15,44]; ]
+        module confirmation_loc__hint_reject {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 474; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 475; @position = 18; @symbol_constdef = [x,475,18,19]; @symbol_type<0> = [Number,475,23,29]; ]
+            const x as Number = 16;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 476; @position = 18; @symbol_constdef = [y,476,18,19]; @symbol_type<0> = [Number,476,23,29]; ]
+            const y as Number = 284;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 479; @symbol_moduledef = [confirmation_icon_dark__hint_delete,479,15,50]; ]
+        module confirmation_icon_dark__hint_delete {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 479; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 480; @position = 18; @symbol_constdef = [filename,480,18,26]; @symbol_type<0> = [String,480,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\confirmation_icon__hint_delete.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 481; @position = 18; @symbol_constdef = [dithering,481,18,27]; @symbol_type<0> = [String,481,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 482; @position = 18; @symbol_constdef = [packingFormat,482,18,31]; @symbol_type<0> = [String,482,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 485; @symbol_moduledef = [activity_color_dark__background,485,15,46]; ]
+        module activity_color_dark__background {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 485; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 486; @position = 18; @symbol_constdef = [color,486,18,23]; @symbol_type<0> = [Number,486,27,33]; ]
+            const color as Number = 0x000000;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 487; @position = 18; @symbol_constdef = [background,487,18,28]; @symbol_type<0> = [Number,487,32,38]; ]
+            const background as Number = 0x000000;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 490; @symbol_moduledef = [system_icon_light__hint_button_left_bottom,490,15,57]; ]
+        module system_icon_light__hint_button_left_bottom {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 490; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 491; @position = 18; @symbol_constdef = [filename,491,18,26]; @symbol_type<0> = [String,491,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_light__hint_button_left_bottom.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 492; @position = 18; @symbol_constdef = [dithering,492,18,27]; @symbol_type<0> = [String,492,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 493; @position = 18; @symbol_constdef = [packingFormat,493,18,31]; @symbol_type<0> = [String,493,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 496; @symbol_moduledef = [system_icon_positive__hint_button_left_middle,496,15,60]; ]
+        module system_icon_positive__hint_button_left_middle {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 496; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 497; @position = 18; @symbol_constdef = [filename,497,18,26]; @symbol_type<0> = [String,497,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_positive__hint_button_left_middle.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 498; @position = 18; @symbol_constdef = [dithering,498,18,27]; @symbol_type<0> = [String,498,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 499; @position = 18; @symbol_constdef = [packingFormat,499,18,31]; @symbol_type<0> = [String,499,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 502; @symbol_moduledef = [system_size__menu_icon,502,15,37]; ]
+        module system_size__menu_icon {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 502; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 503; @position = 18; @symbol_constdef = [scaleX,503,18,24]; @symbol_type<0> = [Number,503,28,34]; ]
+            const scaleX as Number = 55;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 504; @position = 18; @symbol_constdef = [scaleY,504,18,24]; @symbol_type<0> = [Number,504,28,34]; ]
+            const scaleY as Number = 55;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 505; @position = 18; @symbol_constdef = [scaleRelativeTo,505,18,33]; @symbol_type<0> = [String,505,37,43]; ]
+            const scaleRelativeTo as String = "screen";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 508; @symbol_moduledef = [system_icon_destructive__warning,508,15,47]; ]
+        module system_icon_destructive__warning {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 508; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 509; @position = 18; @symbol_constdef = [filename,509,18,26]; @symbol_type<0> = [String,509,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_destructive__warning.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 510; @position = 18; @symbol_constdef = [dithering,510,18,27]; @symbol_type<0> = [String,510,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 511; @position = 18; @symbol_constdef = [packingFormat,511,18,31]; @symbol_type<0> = [String,511,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 514; @symbol_moduledef = [system_loc__hint_button_right_middle,514,15,51]; ]
+        module system_loc__hint_button_right_middle {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 514; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 515; @position = 18; @symbol_constdef = [exclude,515,18,25]; @symbol_type<0> = [Boolean,515,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 518; @symbol_moduledef = [system_icon_dark__cancel,518,15,39]; ]
+        module system_icon_dark__cancel {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 518; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 519; @position = 18; @symbol_constdef = [filename,519,18,26]; @symbol_type<0> = [String,519,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_dark__cancel.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 520; @position = 18; @symbol_constdef = [compress,520,18,26]; @symbol_type<0> = [String,520,30,36]; ]
+            const compress as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 521; @position = 18; @symbol_constdef = [dithering,521,18,27]; @symbol_type<0> = [String,521,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 522; @position = 18; @symbol_constdef = [automaticPalette,522,18,34]; @symbol_type<0> = [String,522,38,44]; ]
+            const automaticPalette as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 523; @position = 18; @symbol_constdef = [packingFormat,523,18,31]; @symbol_type<0> = [String,523,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 526; @symbol_moduledef = [prompt_size__body_with_title,526,15,43]; ]
+        module prompt_size__body_with_title {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 526; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 527; @position = 18; @symbol_constdef = [width,527,18,23]; @symbol_type<0> = [Number,527,27,33]; ]
+            const width as Number = 302;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 528; @position = 18; @symbol_constdef = [height,528,18,24]; @symbol_type<0> = [Number,528,28,34]; ]
+            const height as Number = 254;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 531; @symbol_moduledef = [system_loc__hint_button_right_top,531,15,48]; ]
+        module system_loc__hint_button_right_top {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 531; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 532; @position = 18; @symbol_constdef = [x,532,18,19]; @symbol_type<0> = [Number,532,23,29]; ]
+            const x as Number = 379;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 533; @position = 18; @symbol_constdef = [y,533,18,19]; @symbol_type<0> = [Number,533,23,29]; ]
+            const y as Number = 89;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 536; @symbol_moduledef = [system_color_light__text,536,15,39]; ]
+        module system_color_light__text {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 536; ]
+            <init> {
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen" 538 18 ]
+                symbol [ Graphics %tmp.43 538 31 39 ];
+                %tmp.43 = getm $.Toybox.Graphics;
+                symbol [ COLOR_TRANSPARENT %tmp.44 538 40 57 ];
+                %tmp.44 = getv %tmp.43 :COLOR_TRANSPARENT;
+                putv self :background %tmp.44;
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 537; @position = 18; @symbol_constdef = [color,537,18,23]; @symbol_type<0> = [Number,537,27,33]; ]
+            const color as Number = 0xFFFFFF;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 538; @position = 18; @symbol_constdef = [background,538,18,28]; ]
+            const background;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 541; @symbol_moduledef = [system_icon_light__check,541,15,39]; ]
+        module system_icon_light__check {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 541; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 542; @position = 18; @symbol_constdef = [filename,542,18,26]; @symbol_type<0> = [String,542,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_light__check.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 543; @position = 18; @symbol_constdef = [compress,543,18,26]; @symbol_type<0> = [String,543,30,36]; ]
+            const compress as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 544; @position = 18; @symbol_constdef = [dithering,544,18,27]; @symbol_type<0> = [String,544,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 545; @position = 18; @symbol_constdef = [automaticPalette,545,18,34]; @symbol_type<0> = [String,545,38,44]; ]
+            const automaticPalette as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 546; @position = 18; @symbol_constdef = [packingFormat,546,18,31]; @symbol_type<0> = [String,546,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 549; @symbol_moduledef = [confirmation_input__reject,549,15,41]; ]
+        module confirmation_input__reject {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 549; ]
+            <init> {
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen" 550 18 ]
+                symbol [ WatchUi %tmp.45 550 27 34 ];
+                %tmp.45 = getm $.Toybox.WatchUi;
+                symbol [ KEY_DOWN %tmp.46 550 35 43 ];
+                %tmp.46 = getv %tmp.45 :KEY_DOWN;
+                putv self :button %tmp.46;
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 550; @position = 18; @symbol_constdef = [button,550,18,24]; ]
+            const button;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 553; @symbol_moduledef = [system_icon_light__revert,553,15,40]; ]
+        module system_icon_light__revert {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 553; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 554; @position = 18; @symbol_constdef = [filename,554,18,26]; @symbol_type<0> = [String,554,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_light__revert.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 555; @position = 18; @symbol_constdef = [compress,555,18,26]; @symbol_type<0> = [String,555,30,36]; ]
+            const compress as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 556; @position = 18; @symbol_constdef = [dithering,556,18,27]; @symbol_type<0> = [String,556,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 557; @position = 18; @symbol_constdef = [automaticPalette,557,18,34]; @symbol_type<0> = [String,557,38,44]; ]
+            const automaticPalette as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 558; @position = 18; @symbol_constdef = [packingFormat,558,18,31]; @symbol_type<0> = [String,558,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 561; @symbol_moduledef = [system_size__subwindow,561,15,37]; ]
+        module system_size__subwindow {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 561; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 562; @position = 18; @symbol_constdef = [exclude,562,18,25]; @symbol_type<0> = [Boolean,562,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 565; @symbol_moduledef = [system_icon_positive__hint_button_left_bottom,565,15,60]; ]
+        module system_icon_positive__hint_button_left_bottom {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 565; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 566; @position = 18; @symbol_constdef = [filename,566,18,26]; @symbol_type<0> = [String,566,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_positive__hint_button_left_bottom.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 567; @position = 18; @symbol_constdef = [dithering,567,18,27]; @symbol_type<0> = [String,567,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 568; @position = 18; @symbol_constdef = [packingFormat,568,18,31]; @symbol_type<0> = [String,568,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 571; @symbol_moduledef = [system_icon_dark__check,571,15,38]; ]
+        module system_icon_dark__check {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 571; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 572; @position = 18; @symbol_constdef = [filename,572,18,26]; @symbol_type<0> = [String,572,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_dark__check.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 573; @position = 18; @symbol_constdef = [compress,573,18,26]; @symbol_type<0> = [String,573,30,36]; ]
+            const compress as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 574; @position = 18; @symbol_constdef = [dithering,574,18,27]; @symbol_type<0> = [String,574,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 575; @position = 18; @symbol_constdef = [automaticPalette,575,18,34]; @symbol_type<0> = [String,575,38,44]; ]
+            const automaticPalette as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 576; @position = 18; @symbol_constdef = [packingFormat,576,18,31]; @symbol_type<0> = [String,576,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 579; @symbol_moduledef = [confirmation_loc__hint_keep,579,15,42]; ]
+        module confirmation_loc__hint_keep {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 579; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 580; @position = 18; @symbol_constdef = [x,580,18,19]; @symbol_type<0> = [Number,580,23,29]; ]
+            const x as Number = 372;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 581; @position = 18; @symbol_constdef = [y,581,18,19]; @symbol_type<0> = [Number,581,23,29]; ]
+            const y as Number = 286;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 584; @symbol_moduledef = [confirmation_loc__hint_delete,584,15,44]; ]
+        module confirmation_loc__hint_delete {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 584; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 585; @position = 18; @symbol_constdef = [x,585,18,19]; @symbol_type<0> = [Number,585,23,29]; ]
+            const x as Number = 16;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 586; @position = 18; @symbol_constdef = [y,586,18,19]; @symbol_type<0> = [Number,586,23,29]; ]
+            const y as Number = 284;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 589; @symbol_moduledef = [system_icon_positive__hint_action_menu,589,15,53]; ]
+        module system_icon_positive__hint_action_menu {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 589; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 590; @position = 18; @symbol_constdef = [filename,590,18,26]; @symbol_type<0> = [String,590,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_positive__hint_button_right_top.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 591; @position = 18; @symbol_constdef = [dithering,591,18,27]; @symbol_type<0> = [String,591,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 592; @position = 18; @symbol_constdef = [packingFormat,592,18,31]; @symbol_type<0> = [String,592,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 595; @symbol_moduledef = [system_icon_positive__hint_button_right_middle,595,15,61]; ]
+        module system_icon_positive__hint_button_right_middle {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 595; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 596; @position = 18; @symbol_constdef = [exclude,596,18,25]; @symbol_type<0> = [Boolean,596,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 599; @symbol_moduledef = [system_icon_light__hint_button_left_middle,599,15,57]; ]
+        module system_icon_light__hint_button_left_middle {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 599; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 600; @position = 18; @symbol_constdef = [filename,600,18,26]; @symbol_type<0> = [String,600,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_light__hint_button_left_middle.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 601; @position = 18; @symbol_constdef = [dithering,601,18,27]; @symbol_type<0> = [String,601,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 602; @position = 18; @symbol_constdef = [packingFormat,602,18,31]; @symbol_type<0> = [String,602,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 605; @symbol_moduledef = [system_icon_dark__hint_button_right_bottom,605,15,57]; ]
+        module system_icon_dark__hint_button_right_bottom {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 605; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 606; @position = 18; @symbol_constdef = [filename,606,18,26]; @symbol_type<0> = [String,606,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_dark__hint_button_right_bottom.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 607; @position = 18; @symbol_constdef = [dithering,607,18,27]; @symbol_type<0> = [String,607,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 608; @position = 18; @symbol_constdef = [packingFormat,608,18,31]; @symbol_type<0> = [String,608,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 611; @symbol_moduledef = [system_icon_positive__hint_button_right_bottom,611,15,61]; ]
+        module system_icon_positive__hint_button_right_bottom {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 611; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 612; @position = 18; @symbol_constdef = [filename,612,18,26]; @symbol_type<0> = [String,612,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_positive__hint_button_right_bottom.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 613; @position = 18; @symbol_constdef = [dithering,613,18,27]; @symbol_type<0> = [String,613,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 614; @position = 18; @symbol_constdef = [packingFormat,614,18,31]; @symbol_type<0> = [String,614,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 617; @symbol_moduledef = [system_icon_dark__revert,617,15,39]; ]
+        module system_icon_dark__revert {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 617; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 618; @position = 18; @symbol_constdef = [filename,618,18,26]; @symbol_type<0> = [String,618,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_dark__revert.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 619; @position = 18; @symbol_constdef = [compress,619,18,26]; @symbol_type<0> = [String,619,30,36]; ]
+            const compress as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 620; @position = 18; @symbol_constdef = [dithering,620,18,27]; @symbol_type<0> = [String,620,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 621; @position = 18; @symbol_constdef = [automaticPalette,621,18,34]; @symbol_type<0> = [String,621,38,44]; ]
+            const automaticPalette as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 622; @position = 18; @symbol_constdef = [packingFormat,622,18,31]; @symbol_type<0> = [String,622,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 625; @symbol_moduledef = [confirmation_icon_light__hint_delete,625,15,51]; ]
+        module confirmation_icon_light__hint_delete {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 625; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 626; @position = 18; @symbol_constdef = [filename,626,18,26]; @symbol_type<0> = [String,626,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\confirmation_icon__hint_delete.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 627; @position = 18; @symbol_constdef = [dithering,627,18,27]; @symbol_type<0> = [String,627,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 628; @position = 18; @symbol_constdef = [packingFormat,628,18,31]; @symbol_type<0> = [String,628,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 631; @symbol_moduledef = [system_icon_dark__question,631,15,41]; ]
+        module system_icon_dark__question {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 631; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 632; @position = 18; @symbol_constdef = [filename,632,18,26]; @symbol_type<0> = [String,632,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_dark__question.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 633; @position = 18; @symbol_constdef = [compress,633,18,26]; @symbol_type<0> = [String,633,30,36]; ]
+            const compress as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 634; @position = 18; @symbol_constdef = [dithering,634,18,27]; @symbol_type<0> = [String,634,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 635; @position = 18; @symbol_constdef = [automaticPalette,635,18,34]; @symbol_type<0> = [String,635,38,44]; ]
+            const automaticPalette as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 636; @position = 18; @symbol_constdef = [packingFormat,636,18,31]; @symbol_type<0> = [String,636,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 639; @symbol_moduledef = [system_icon_light__discard,639,15,41]; ]
+        module system_icon_light__discard {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 639; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 640; @position = 18; @symbol_constdef = [filename,640,18,26]; @symbol_type<0> = [String,640,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_light__discard.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 641; @position = 18; @symbol_constdef = [compress,641,18,26]; @symbol_type<0> = [String,641,30,36]; ]
+            const compress as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 642; @position = 18; @symbol_constdef = [dithering,642,18,27]; @symbol_type<0> = [String,642,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 643; @position = 18; @symbol_constdef = [automaticPalette,643,18,34]; @symbol_type<0> = [String,643,38,44]; ]
+            const automaticPalette as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 644; @position = 18; @symbol_constdef = [packingFormat,644,18,31]; @symbol_type<0> = [String,644,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 647; @symbol_moduledef = [device_info,647,15,26]; ]
+        module device_info {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 647; ]
+            <init> {
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen" 649 18 ]
+                symbol [ Toybox %tmp.48 649 32 38 ];
+                %tmp.48 = getv ? :Toybox;
+                symbol [ System %tmp.49 649 39 45 ];
+                %tmp.49 = getv %tmp.48 :System;
+                symbol [ SCREEN_SHAPE_ROUND %tmp.50 649 46 64 ];
+                %tmp.50 = getv %tmp.49 :SCREEN_SHAPE_ROUND;
+                putv self :screenShape %tmp.50;
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 648; @position = 18; @symbol_constdef = [screenWidth,648,18,29]; @symbol_type<0> = [Number,648,33,39]; ]
+            const screenWidth as Number = 454;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 649; @position = 18; @symbol_constdef = [screenShape,649,18,29]; ]
+            const screenShape;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 650; @position = 18; @symbol_constdef = [hasNightMode,650,18,30]; @symbol_type<0> = [Boolean,650,34,41]; ]
+            const hasNightMode as Boolean = false;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 651; @position = 18; @symbol_constdef = [hasGpu,651,18,24]; @symbol_type<0> = [Boolean,651,28,35]; ]
+            const hasGpu as Boolean = true;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 652; @position = 18; @symbol_constdef = [screenHeight,652,18,30]; @symbol_type<0> = [Number,652,34,40]; ]
+            const screenHeight as Number = 454;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 653; @position = 18; @symbol_constdef = [hasTouchScreen,653,18,32]; @symbol_type<0> = [Boolean,653,36,43]; ]
+            const hasTouchScreen as Boolean = true;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 654; @position = 18; @symbol_constdef = [hasEnhancedReadabilityMode,654,18,44]; @symbol_type<0> = [Boolean,654,48,55]; ]
+            const hasEnhancedReadabilityMode as Boolean = false;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 657; @symbol_moduledef = [confirmation_icon_dark__hint_confirm,657,15,51]; ]
+        module confirmation_icon_dark__hint_confirm {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 657; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 658; @position = 18; @symbol_constdef = [filename,658,18,26]; @symbol_type<0> = [String,658,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\confirmation_icon__hint_completion.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 659; @position = 18; @symbol_constdef = [dithering,659,18,27]; @symbol_type<0> = [String,659,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 660; @position = 18; @symbol_constdef = [packingFormat,660,18,31]; @symbol_type<0> = [String,660,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 663; @symbol_moduledef = [prompt_font__body_no_title,663,15,41]; ]
+        module prompt_font__body_no_title {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 663; ]
+            <init> {
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen" 664 18 ]
+                symbol [ Graphics %tmp.51 664 34 42 ];
+                %tmp.51 = getm $.Toybox.Graphics;
+                symbol [ TEXT_JUSTIFY_CENTER %tmp.52 664 43 62 ];
+                %tmp.52 = getv %tmp.51 :TEXT_JUSTIFY_CENTER;
+                symbol [ Graphics %tmp.53 664 63 71 ];
+                %tmp.53 = getm $.Toybox.Graphics;
+                symbol [ TEXT_JUSTIFY_VCENTER %tmp.54 664 72 92 ];
+                %tmp.54 = getv %tmp.53 :TEXT_JUSTIFY_VCENTER;
+                %tmp.55 = bitor %tmp.52 %tmp.54;
+                putv self :justification %tmp.55;
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen" 665 18 ]
+                symbol [ Graphics %tmp.56 665 25 33 ];
+                %tmp.56 = getm $.Toybox.Graphics;
+                symbol [ FONT_XTINY %tmp.57 665 34 44 ];
+                %tmp.57 = getv %tmp.56 :FONT_XTINY;
+                putv self :font %tmp.57;
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 664; @position = 18; @symbol_constdef = [justification,664,18,31]; ]
+            const justification;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 665; @position = 18; @symbol_constdef = [font,665,18,22]; ]
+            const font;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 668; @symbol_moduledef = [prompt_size__title_icon,668,15,38]; ]
+        module prompt_size__title_icon {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 668; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 669; @position = 18; @symbol_constdef = [scaleX,669,18,24]; @symbol_type<0> = [Float,669,28,33]; ]
+            const scaleX as Float = 0.13;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 670; @position = 18; @symbol_constdef = [scaleRelativeTo,670,18,33]; @symbol_type<0> = [String,670,37,43]; ]
+            const scaleRelativeTo as String = "screen";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 673; @symbol_moduledef = [system_icon_dark__warning,673,15,40]; ]
+        module system_icon_dark__warning {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 673; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 674; @position = 18; @symbol_constdef = [filename,674,18,26]; @symbol_type<0> = [String,674,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_dark__warning.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 675; @position = 18; @symbol_constdef = [compress,675,18,26]; @symbol_type<0> = [String,675,30,36]; ]
+            const compress as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 676; @position = 18; @symbol_constdef = [dithering,676,18,27]; @symbol_type<0> = [String,676,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 677; @position = 18; @symbol_constdef = [automaticPalette,677,18,34]; @symbol_type<0> = [String,677,38,44]; ]
+            const automaticPalette as String = "true";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 678; @position = 18; @symbol_constdef = [packingFormat,678,18,31]; @symbol_type<0> = [String,678,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 681; @symbol_moduledef = [prompt_loc__title_icon,681,15,37]; ]
+        module prompt_loc__title_icon {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 681; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 682; @position = 18; @symbol_constdef = [x,682,18,19]; @symbol_type<0> = [Number,682,23,29]; ]
+            const x as Number = 227;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 683; @position = 18; @symbol_constdef = [y,683,18,19]; @symbol_type<0> = [Number,683,23,29]; ]
+            const y as Number = 46;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 684; @position = 18; @symbol_constdef = [horizontalJustification,684,18,41]; @symbol_type<0> = [String,684,45,51]; ]
+            const horizontalJustification as String = "center";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 685; @position = 18; @symbol_constdef = [verticalJustification,685,18,39]; @symbol_type<0> = [String,685,43,49]; ]
+            const verticalJustification as String = "center";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 688; @symbol_moduledef = [prompt_font_enhanced_readability__title,688,15,54]; ]
+        module prompt_font_enhanced_readability__title {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 688; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 689; @position = 18; @symbol_constdef = [exclude,689,18,25]; @symbol_type<0> = [Boolean,689,29,36]; ]
+            const exclude as Boolean = true;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 692; @symbol_moduledef = [prompt_color_dark__body,692,15,38]; ]
+        module prompt_color_dark__body {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 692; ]
+            <init> {
+[ "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen" 694 18 ]
+                symbol [ Graphics %tmp.58 694 31 39 ];
+                %tmp.58 = getm $.Toybox.Graphics;
+                symbol [ COLOR_TRANSPARENT %tmp.59 694 40 57 ];
+                %tmp.59 = getv %tmp.58 :COLOR_TRANSPARENT;
+                putv self :background %tmp.59;
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 693; @position = 18; @symbol_constdef = [color,693,18,23]; @symbol_type<0> = [Number,693,27,33]; ]
+            const color as Number = 0xFFFFFF;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 694; @position = 18; @symbol_constdef = [background,694,18,28]; ]
+            const background;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 697; @symbol_moduledef = [confirmation_icon__hint_delete,697,15,45]; ]
+        module confirmation_icon__hint_delete {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 697; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 698; @position = 18; @symbol_constdef = [filename,698,18,26]; @symbol_type<0> = [String,698,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\confirmation_icon__hint_delete.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 699; @position = 18; @symbol_constdef = [dithering,699,18,27]; @symbol_type<0> = [String,699,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 700; @position = 18; @symbol_constdef = [packingFormat,700,18,31]; @symbol_type<0> = [String,700,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 703; @symbol_moduledef = [system_icon_light__hint_button_right_top,703,15,55]; ]
+        module system_icon_light__hint_button_right_top {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 703; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 704; @position = 18; @symbol_constdef = [filename,704,18,26]; @symbol_type<0> = [String,704,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_light__hint_button_right_top.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 705; @position = 18; @symbol_constdef = [dithering,705,18,27]; @symbol_type<0> = [String,705,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 706; @position = 18; @symbol_constdef = [packingFormat,706,18,31]; @symbol_type<0> = [String,706,35,41]; ]
+            const packingFormat as String = "png";
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 709; @symbol_moduledef = [confirmation_size__body,709,15,38]; ]
+        module confirmation_size__body {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 709; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 710; @position = 18; @symbol_constdef = [width,710,18,23]; @symbol_type<0> = [Number,710,27,33]; ]
+            const width as Number = 316;
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 711; @position = 18; @symbol_constdef = [height,711,18,24]; @symbol_type<0> = [Number,711,28,34]; ]
+            const height as Number = 246;
+        }
+        [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 714; @symbol_moduledef = [system_icon_positive__check,714,15,42]; ]
+        module system_icon_positive__check {
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 714; ]
+            <init> {
+            }
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 715; @position = 18; @symbol_constdef = [filename,715,18,26]; @symbol_type<0> = [String,715,30,36]; ]
+            const filename as String = "C:\\Users\\TAGR\\AppData\\Roaming\\Garmin\\ConnectIQ\\Devices\\fr965\\system_icon_positive__check.svg";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 716; @position = 18; @symbol_constdef = [dithering,716,18,27]; @symbol_type<0> = [String,716,31,37]; ]
+            const dithering as String = "none";
+            [ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 717; @position = 18; @symbol_constdef = [packingFormat,717,18,31]; @symbol_type<0> = [String,717,35,41]; ]
+            const packingFormat as String = "png";
+        }
+    }
+}
+[ @file = "C:\Users\TAGR\Documents\rotvollfjaerafrontyardultra\UltraLoopTimer\bin\gen\006-B4315-00\source\Rez.mcgen"; @line = 1; ]
+<init> {
+}

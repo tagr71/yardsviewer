@@ -1,0 +1,107 @@
+{
+  "settings" : [ {
+    "key" : "supportMode",
+    "valueType" : "boolean",
+    "defaultValue" : true,
+    "configTitle" : "ModeTitle",
+    "configPrompt" : "ModePrompt",
+    "configType" : "boolean",
+    "configError" : null,
+    "configHelpUrl" : null,
+    "configReadonly" : false,
+    "configRequired" : false,
+    "configOptions" : null,
+    "configMin" : null,
+    "configMax" : null,
+    "configMaxLength" : null
+  }, {
+    "key" : "raceHours",
+    "valueType" : "number",
+    "defaultValue" : 6,
+    "configTitle" : "RaceHoursTitle",
+    "configPrompt" : "RaceHoursPrompt",
+    "configType" : "list",
+    "configError" : null,
+    "configHelpUrl" : null,
+    "configReadonly" : false,
+    "configRequired" : false,
+    "configOptions" : [ {
+      "display" : "$literal0$",
+      "value" : 6
+    }, {
+      "display" : "$literal1$",
+      "value" : 12
+    }, {
+      "display" : "$literal2$",
+      "value" : 24
+    } ],
+    "configMin" : null,
+    "configMax" : null,
+    "configMaxLength" : null
+  }, {
+    "key" : "loopMeters",
+    "valueType" : "float",
+    "defaultValue" : 1185.6,
+    "configTitle" : "LoopMetersTitle",
+    "configPrompt" : "LoopMetersPrompt",
+    "configType" : "numeric",
+    "configError" : null,
+    "configHelpUrl" : null,
+    "configReadonly" : false,
+    "configRequired" : false,
+    "configOptions" : null,
+    "configMin" : 1.0,
+    "configMax" : 100000.0,
+    "configMaxLength" : null
+  }, {
+    "key" : "loopsPerCircle",
+    "valueType" : "number",
+    "defaultValue" : 8,
+    "configTitle" : "LoopsPerCircleTitle",
+    "configPrompt" : "LoopsPerCirclePrompt",
+    "configType" : "numeric",
+    "configError" : null,
+    "configHelpUrl" : null,
+    "configReadonly" : false,
+    "configRequired" : false,
+    "configOptions" : null,
+    "configMin" : 1,
+    "configMax" : 50,
+    "configMaxLength" : null
+  }, {
+    "key" : "correctionWindowSec",
+    "valueType" : "number",
+    "defaultValue" : 5,
+    "configTitle" : "CorrectionWindowTitle",
+    "configPrompt" : "CorrectionWindowPrompt",
+    "configType" : "numeric",
+    "configError" : null,
+    "configHelpUrl" : null,
+    "configReadonly" : false,
+    "configRequired" : false,
+    "configOptions" : null,
+    "configMin" : 1,
+    "configMax" : 10,
+    "configMaxLength" : null
+  } ],
+  "supportsLiveValidation" : false,
+  "languages" : {
+    "valyrian" : {
+      "AppNameSupport" : "UltraLoop Support",
+      "CorrectionWindowTitle" : "Lap correction window (s)",
+      "ModeTitle" : "Support mode",
+      "ModePrompt" : "ON = crew view (no HR / pace). OFF = runner view.",
+      "LoopMetersTitle" : "Loop distance (m)",
+      "AppName" : "UltraLoopTimer",
+      "$literal1$" : "12 hours",
+      "$literal0$" : "6 hours",
+      "$literal2$" : "24 hours",
+      "LoopsPerCircleTitle" : "Loops per circle",
+      "RaceHoursTitle" : "Race duration",
+      "RaceHoursPrompt" : "Total race duration in hours (6, 12 or 24).",
+      "LoopsPerCirclePrompt" : "How many loops by the fastest fictive runner fill one full revolution of the display ring (default 6).",
+      "LoopMetersPrompt" : "Length of one loop in meters (default 1185.6).",
+      "CorrectionWindowPrompt" : "Within this window after a lap press: 2nd quick press = caught a missed lap (+1 extra). 3+ quick presses = undo last lap. Default 5 s."
+    }
+  }
+}
