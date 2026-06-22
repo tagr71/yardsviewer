@@ -316,6 +316,10 @@ def _count_rows(payload: Any) -> int:
             for value in data.values():
                 if isinstance(value, list):
                     total += len(value)
+                elif isinstance(value, dict):
+                    for inner in value.values():
+                        if isinstance(inner, list):
+                            total += len(inner)
             if total:
                 return total
     if isinstance(payload, list):
@@ -386,6 +390,7 @@ def _flatten_results(payload: dict[str, Any]) -> list[dict[str, object]]:
     bib_i = find_index("BIB")
     name_i = find_index(
         "DisplayNameBib",
+        "DisplayNameBibAnonym",
         "DisplayNameOrTeam",
         "DisplayName",
         "FullName",
@@ -408,6 +413,7 @@ def _flatten_results(payload: dict[str, Any]) -> list[dict[str, object]]:
         "WithStatus([LastSplitRankp])",
         "WithSTatus([TotalRank])",
         "WithStatus([TotalRank])",
+        "FinalTotalRank",
         "TotalRank",
         "Rank",
         "Place",
@@ -429,14 +435,14 @@ def _flatten_results(payload: dict[str, Any]) -> list[dict[str, object]]:
             ):
                 rank_i = i
                 break
-    place_i = find_index("TotalRank", "Rank", "Place")
+    place_i = find_index("FinalTotalRank", "TotalRank", "Rank", "Place")
     if place_i == -1:
         place_i = rank_i
     club_i = find_index("ClubOrCity", "DisplayClubOrNames", "Club", "City")
     country_i = find_index(
         "NATION.FLAG", "NationOrStateFlag", "NationOrState", "Nation", "Country"
     )
-    total_rank_i = find_index("TotalRank", "Rank")
+    total_rank_i = find_index("FinalTotalRank", "TotalRank", "Rank")
     if total_rank_i == -1:
         total_rank_i = rank_i
     laps_i = find_index(
@@ -558,6 +564,7 @@ def _flatten_results(payload: dict[str, Any]) -> list[dict[str, object]]:
                 "gap": gap,
                 "lapsBehind": laps_behind,
                 "total": cell(raw, total_i),
+                "totalSec": _parse_hms(cell(raw, total_i)) or 0,
             }
         )
 
@@ -570,6 +577,11 @@ def _flatten_results(payload: dict[str, Any]) -> list[dict[str, object]]:
             if isinstance(value, list):
                 for r in value:
                     add(r)
+            elif isinstance(value, dict):
+                for inner in value.values():
+                    if isinstance(inner, list):
+                        for r in inner:
+                            add(r)
 
     # RaceResult delivers rows in the list's natural sort order. If `totalRank`
     # wasn't populated (e.g. backyard "Resultatliste" only assigns a numeric
@@ -923,6 +935,7 @@ def _identity_indices(fields: list[Any]) -> dict[str, int]:
 
     name_i = find_index(
         "DisplayNameBib",
+        "DisplayNameBibAnonym",
         "DisplayNameOrTeam",
         "DisplayName",
         "FullName",
@@ -945,7 +958,13 @@ def _identity_indices(fields: list[Any]) -> dict[str, int]:
 
 
 def _iter_data_rows(payload: dict[str, Any]) -> list[list[Any]]:
-    """Flatten the `data` block of a RaceResult list payload into rows."""
+    """Flatten the `data` block of a RaceResult list payload into rows.
+
+    Handles 1-, 2-, and 3-level nesting:
+    - flat list of rows
+    - dict → list of rows  (one level of grouping)
+    - dict → dict → list of rows  (two levels of grouping, e.g. "Final" list)
+    """
     out: list[list[Any]] = []
     data = payload.get("data")
     if isinstance(data, list):
@@ -958,6 +977,12 @@ def _iter_data_rows(payload: dict[str, Any]) -> list[list[Any]]:
                 for r in value:
                     if isinstance(r, list):
                         out.append(r)
+            elif isinstance(value, dict):
+                for inner in value.values():
+                    if isinstance(inner, list):
+                        for r in inner:
+                            if isinstance(r, list):
+                                out.append(r)
     return out
 
 
@@ -1146,8 +1171,10 @@ async def jerseys(
             if laps_i >= 0:
                 entry["lapsCompleted"] = _safe_int(cell(raw, laps_i))
             out.append(entry)
-        # Ascending total time (fastest first); zero/missing sort last.
-        out.sort(key=lambda r: (int(r["totalSec"]) or 10**12, str(r["bib"])))
+        # Sort laps DESC first (most laps = best position), then time ASC as
+        # tie-breaker. This mirrors RaceResult's own "Gul trøye" ranking
+        # (laps-first, total time second). Zero/missing laps sort last.
+        out.sort(key=lambda r: (-(r.get("lapsCompleted") or 0), int(r["totalSec"]) or 10**12, str(r["bib"])))
         return out
 
     yellow = parse_yellow(yellow_payload)

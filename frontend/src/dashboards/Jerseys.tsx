@@ -111,17 +111,36 @@ function holdersPerLoop(
   const out: Record<Sex, Map<number, string>> = { K: new Map(), M: new Map() };
   for (const sex of ["K", "M"] as Sex[]) {
     const sexEntries = entries.filter((e) => resolveSex(e, sexLookup) === sex);
+    // sexMaxLaps and hasPerLoop are constant for the sex across all loops.
+    const sexMaxLaps = jersey === "yellow"
+      ? sexEntries.reduce((m, e) => Math.max(m, e.lapsCompleted ?? 0), 0)
+      : 0;
+    const hasPerLoop = jersey === "yellow"
+      ? sexEntries.some((e) => (e.perLoop ?? []).length > 0)
+      : false;
     for (let loop = 1; loop <= maxLoop; loop += 1) {
       if (jersey === "yellow") {
+        // Without per-loop data we can't reconstruct historical yellow
+        // standings. Only record the holder at sexMaxLaps; earlier loops
+        // are indeterminate. With per-loop data, compute at each loop
+        // using the min-cap approach.
+        if (!hasPerLoop && sexMaxLaps > 0 && loop !== sexMaxLaps) continue;
+        const effectiveLap = sexMaxLaps > 0
+          ? (hasPerLoop ? Math.min(sexMaxLaps, loop) : sexMaxLaps)
+          : loop;
         const eligible = sexEntries.filter((e) => {
           const lc = typeof e.lapsCompleted === "number" ? e.lapsCompleted : 0;
-          return lc >= loop;
+          if (lc < effectiveLap) return false;
+          // When per-loop data exists, exclude runners with more laps than
+          // effectiveLap and no per-loop breakdown (totalSec is incomparable).
+          if (hasPerLoop && lc > effectiveLap && (e.perLoop ?? []).length === 0) return false;
+          return true;
         });
         const sorted = [...eligible].sort((a, b) => {
-          const ta = accTimeUpto(a, loop) || 10 ** 12;
-          const tb = accTimeUpto(b, loop) || 10 ** 12;
+          const ta = accTimeUpto(a, effectiveLap) || 10 ** 12;
+          const tb = accTimeUpto(b, effectiveLap) || 10 ** 12;
           if (ta !== tb) return ta - tb;
-          return lapSecAtLoop(a, loop) - lapSecAtLoop(b, loop);
+          return lapSecAtLoop(a, effectiveLap) - lapSecAtLoop(b, effectiveLap);
         });
         if (sorted.length > 0) out[sex].set(loop, sorted[0].bib);
       } else {
@@ -658,30 +677,6 @@ export function Jerseys({ eventId, eventName }: { eventId: string; eventName?: s
   // competition's last loop is in the books the holder is frozen for
   // the remainder of the race / for any later replay loop.
   //
-  // Per-sex effective loop falls back to that sex's highest completed
-  // loop when no runner of that sex has reached `yellowEffectiveLoop`
-  // (e.g. a lone female who DNF'd mid-race), so the section still
-  // shows the last-known leader instead of vanishing.
-  const yellowEffectiveLoop: number | null =
-    snapshotLoop !== null ? Math.min(snapshotLoop, jerseyYellow) : null;
-  const yellowBySex = useMemo(() => {
-    const entries = data?.yellow ?? [];
-    const out: Record<Sex, DisplayRow[]> = { K: [], M: [] };
-    for (const sex of ["K", "M"] as Sex[]) {
-      const sexEntries = entries.filter((e) => resolveSex(e, sexLookup) === sex);
-      let effective = yellowEffectiveLoop;
-      if (effective !== null) {
-        const maxLaps = sexEntries.reduce(
-          (m, e) => Math.max(m, e.lapsCompleted ?? 0),
-          0,
-        );
-        if (maxLaps < effective) effective = maxLaps > 0 ? maxLaps : null;
-      }
-      out[sex] = rankYellow(entries, sexLookup, effective)[sex];
-    }
-    return out;
-  }, [data, sexLookup, yellowEffectiveLoop]);
-
   // Green: backend supplies per-loop points + total. Cap at greenCap.
   // Tie-break: most points on the snapshot loop.
   const greenBySex = useMemo(
@@ -694,6 +689,37 @@ export function Jerseys({ eventId, eventName }: { eventId: string; eventName?: s
     () => rankByPoints(data?.pink ?? [], sexLookup, pinkCap),
     [data, pinkCap, sexLookup],
   );
+
+  // Yellow: ranked by total time. When per-loop data is available, cap at
+  // snapshotLoop for accurate historical replay; otherwise use the sex's max
+  // laps so the final standings are always visible (no per-loop → no history).
+  const yellowBySex = useMemo(() => {
+    const entries = data?.yellow ?? [];
+    const out: Record<Sex, DisplayRow[]> = { K: [], M: [] };
+    const snap = snapshotLoop ?? null;
+    for (const sex of ["K", "M"] as Sex[]) {
+      const sexEntries = entries.filter((e) => resolveSex(e, sexLookup) === sex);
+      const maxLaps = sexEntries.reduce(
+        (m, e) => Math.max(m, e.lapsCompleted ?? 0),
+        0,
+      );
+      const hasPerLoop = sexEntries.some((e) => (e.perLoop ?? []).length > 0);
+      const effective = maxLaps > 0
+        ? (hasPerLoop && snap !== null ? Math.min(maxLaps, snap) : maxLaps)
+        : (hasPerLoop ? snap : null);
+      if (!effective || effective <= 0) { out[sex] = []; continue; }
+      // When per-loop data exists, pre-filter entries whose totalSec spans
+      // more laps than the effective cap and have no breakdown.
+      const eligibleEntries = hasPerLoop
+        ? entries.filter((e) => {
+            const lc = e.lapsCompleted ?? 0;
+            return lc <= effective || (e.perLoop ?? []).length > 0;
+          })
+        : entries;
+      out[sex] = rankYellow(eligibleEntries, sexLookup, effective)[sex];
+    }
+    return out;
+  }, [data, sexLookup, snapshotLoop]);
 
   // Current jersey holders per sex (rank-1 in each ranking). A single
   // runner may hold multiple jerseys simultaneously. Used to render the
@@ -1250,14 +1276,24 @@ function JerseyDetail({
             }),
             { totalSec: 0, lastLoop: 0 },
           );
-        if (snap.lastLoop < 1) continue;
+        // Fall back to entry-level fields when the Details list is absent
+        // (perLoop is empty) so the table still shows runners even without
+        // per-loop split times.
+        const totalSec = snap.totalSec > 0 ? snap.totalSec : (e.totalSec ?? 0);
+        const lastLoop =
+          snap.lastLoop >= 1
+            ? snap.lastLoop
+            : typeof e.lapsCompleted === "number" && e.lapsCompleted >= 1
+              ? Math.min(e.lapsCompleted, maxLoop)
+              : 0;
+        if (lastLoop < 1 || totalSec <= 0) continue;
         enriched.push({
           e,
-          primary: snap.totalSec || 10 ** 12,
+          primary: totalSec || 10 ** 12,
           // Tie-break: fastest lap on the runner's last completed loop in
           // the snapshot window (smaller is better).
-          tieBreak: lapSecAtLoop(e, snap.lastLoop) || 10 ** 12,
-          totalText: formatHms(snap.totalSec),
+          tieBreak: lapSecAtLoop(e, lastLoop) || 10 ** 12,
+          totalText: formatHms(totalSec),
         });
       } else {
         const pts = sumUpto(e, maxLoop);

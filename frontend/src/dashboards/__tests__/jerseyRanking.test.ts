@@ -236,3 +236,13 @@ describe("tie-break paths", () => {
   });
 });
 
+// TODO: add unit tests for the `hasPerLoop = false` fallback path in the
+// component-level yellow jersey memos (holdersPerLoop in Jerseys.tsx,
+// jerseyHolders / heldCountsByJersey / pickYellow / computeYellow in
+// Leaderboard.tsx and Dashboard.tsx). When no runner has perLoop data,
+// cap should equal sexMaxLaps regardless of snapshotLoop, and all runners
+// with lapsCompleted >= sexMaxLaps should participate in the ranking.
+// These memos live inside React components so they need either a React
+// Testing Library harness or extraction into pure helpers before they can
+// be unit-tested.
+

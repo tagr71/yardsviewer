@@ -265,9 +265,6 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
     };
     const pinkCap = Math.min(jerseyPink, holderSnapshotLoop);
     const greenCap = Math.min(jerseyGreen, holderSnapshotLoop);
-    // Yellow freezes at jerseyYellow once the snapshot passes that loop,
-    // so the holder stops changing for the remainder of the race.
-    const yellowCap = Math.min(jerseyYellow, holderSnapshotLoop);
     for (const sex of ["K", "M"] as const) {
       result.pink[sex] = jerseyData.pink
         .filter((e) => resolveSex(e) === sex)
@@ -291,26 +288,38 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
         })
         .slice(0, 3)
         .map((x) => ({ bib: x.e.bib, name: x.e.name, value: `${x.pts} p` }));
-      result.yellow[sex] = jerseyData.yellow
-        .filter((e) => {
-          if (resolveSex(e) !== sex) return false;
-          const lc = typeof e.lapsCompleted === "number" ? e.lapsCompleted : 0;
-          if (lc < yellowCap) return false;
-          return accTimeUpto(e, yellowCap) > 0;
-        })
-        .sort((a, b) => {
-          const ta = accTimeUpto(a, yellowCap);
-          const tb = accTimeUpto(b, yellowCap);
-          if (ta !== tb) return ta - tb;
-          // Tie: faster lap on the snapshot loop wins.
-          return lapSecAtLoop(a, yellowCap) - lapSecAtLoop(b, yellowCap);
-        })
-        .slice(0, 3)
-        .map((e) => ({
-          bib: e.bib,
-          name: e.name,
-          value: formatHms(accTimeUpto(e, yellowCap)),
-        }));
+      // Yellow: lowest total time. Without per-loop data use sexMaxLaps so
+      // the final standings are always visible. With per-loop data, cap at
+      // holderSnapshotLoop for accurate historical replay.
+      const yellowSexAll = jerseyData.yellow.filter((e) => resolveSex(e) === sex);
+      const yellowSexMax = yellowSexAll.reduce(
+        (m, e) => Math.max(m, typeof e.lapsCompleted === "number" ? e.lapsCompleted : 0), 0,
+      );
+      const hasPerLoop = yellowSexAll.some((e) => (e.perLoop ?? []).length > 0);
+      const yellowCap = yellowSexMax > 0
+        ? (hasPerLoop ? Math.min(yellowSexMax, holderSnapshotLoop) : yellowSexMax)
+        : Math.min(jerseyYellow || holderSnapshotLoop, holderSnapshotLoop);
+      if (yellowCap > 0) {
+        result.yellow[sex] = yellowSexAll
+          .filter((e) => {
+            const lc = typeof e.lapsCompleted === "number" ? e.lapsCompleted : 0;
+            if (lc < yellowCap) return false;
+            if (hasPerLoop && lc > yellowCap && (e.perLoop ?? []).length === 0) return false;
+            return accTimeUpto(e, yellowCap) > 0;
+          })
+          .sort((a, b) => {
+            const ta = accTimeUpto(a, yellowCap);
+            const tb = accTimeUpto(b, yellowCap);
+            if (ta !== tb) return ta - tb;
+            return lapSecAtLoop(a, yellowCap) - lapSecAtLoop(b, yellowCap);
+          })
+          .slice(0, 3)
+          .map((e) => ({
+            bib: e.bib,
+            name: e.name,
+            value: formatHms(accTimeUpto(e, yellowCap)),
+          }));
+      }
     }
     return result;
   }, [jerseyData, holderSnapshotLoop, jerseyPink, jerseyGreen, jerseyYellow]);
@@ -362,7 +371,6 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
     };
     const pinkEnd = Math.min(jerseyPink, holderSnapshotLoop);
     const greenEnd = Math.min(jerseyGreen, holderSnapshotLoop);
-    const yellowEnd = Math.min(jerseyYellow, holderSnapshotLoop);
     for (const sex of ["K", "M"] as const) {
       const pinkSex = jerseyData.pink.filter((e) => resolveSex(e) === sex);
       const greenSex = jerseyData.green.filter((e) => resolveSex(e) === sex);
@@ -396,17 +404,27 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
           )[0];
         tally(empty.green[sex], top?.e.bib);
       }
-      for (let loop = 1; loop <= yellowEnd; loop += 1) {
+      // Yellow held count: tally at the effective cap.
+      const yellowSexMax = yellowSex.reduce(
+        (m, e) => Math.max(m, typeof e.lapsCompleted === "number" ? e.lapsCompleted : 0), 0,
+      );
+      const yellowHasPerLoop = yellowSex.some((e) => (e.perLoop ?? []).length > 0);
+      const yellowEffCap = yellowSexMax > 0
+        ? (yellowHasPerLoop ? Math.min(yellowSexMax, holderSnapshotLoop) : yellowSexMax)
+        : Math.min(jerseyYellow || holderSnapshotLoop, holderSnapshotLoop);
+      if (yellowEffCap > 0) {
         const top = yellowSex
           .filter((e) => {
             const lc = typeof e.lapsCompleted === "number" ? e.lapsCompleted : 0;
-            return lc >= loop && accTimeUpto(e, loop) > 0;
+            if (lc < yellowEffCap) return false;
+            if (yellowHasPerLoop && lc > yellowEffCap && (e.perLoop ?? []).length === 0) return false;
+            return accTimeUpto(e, yellowEffCap) > 0;
           })
           .sort((a, b) => {
-            const ta = accTimeUpto(a, loop);
-            const tb = accTimeUpto(b, loop);
+            const ta = accTimeUpto(a, yellowEffCap);
+            const tb = accTimeUpto(b, yellowEffCap);
             if (ta !== tb) return ta - tb;
-            return lapSecAtLoop(a, loop) - lapSecAtLoop(b, loop);
+            return lapSecAtLoop(a, yellowEffCap) - lapSecAtLoop(b, yellowEffCap);
           })[0];
         tally(empty.yellow[sex], top?.bib);
       }

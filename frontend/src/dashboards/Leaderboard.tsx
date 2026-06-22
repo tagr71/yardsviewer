@@ -38,6 +38,8 @@ type ResultRow = {
   gap: string;
   lapsBehind: number | null;
   total: string;
+  /** Total race time in seconds (parsed from `total`). 0 when not available. */
+  totalSec?: number;
   perLoop?: { loop: number; time: string; lapSec?: number; totalSec?: number }[];
 };
 type ResultsResponse = { eventName?: string; raceFinished?: boolean; rows: ResultRow[] };
@@ -433,6 +435,10 @@ export function Leaderboard({ eventId }: { eventId: string }) {
           }
         }
       }
+      // Fall back to the row-level total time when per-loop data is absent.
+      if (accTimeSec === null && typeof r.totalSec === "number" && r.totalSec > 0) {
+        accTimeSec = r.totalSec;
+      }
       const accTime = accTimeSec === null ? "" : formatHms(accTimeSec);
       // Diff is computed per displayed subset in `renderTable` so the
       // By Gender tables can use their own per-loop fastest as reference.
@@ -536,13 +542,16 @@ export function Leaderboard({ eventId }: { eventId: string }) {
     };
     const accTotalSec = (r: ResultRow, cap: number): number => {
       const capped = (r.perLoop ?? []).filter((p) => p.loop <= cap);
-      if (capped.length === 0) return 0;
-      const last = capped[capped.length - 1];
-      if (typeof last.totalSec === "number" && last.totalSec > 0) return last.totalSec;
-      return capped.reduce(
-        (acc, p) => acc + (typeof p.lapSec === "number" ? p.lapSec : 0),
-        0,
-      );
+      if (capped.length > 0) {
+        const last = capped[capped.length - 1];
+        if (typeof last.totalSec === "number" && last.totalSec > 0) return last.totalSec;
+        const sum = capped.reduce(
+          (acc, p) => acc + (typeof p.lapSec === "number" ? p.lapSec : 0),
+          0,
+        );
+        if (sum > 0) return sum;
+      }
+      return typeof r.totalSec === "number" ? r.totalSec : 0;
     };
 
     const result = { pink: {}, green: {}, yellow: {} } as typeof empty;
@@ -579,24 +588,36 @@ export function Leaderboard({ eventId }: { eventId: string }) {
       if (green) result.green[sex] = green;
       const pink = pickPointsLeader(pinkByBib, pinkCap);
       if (pink) result.pink[sex] = pink;
-      // yellow: lowest cumulative time through `yellowCap` (which freezes
-      // at jerseyYellow once we've passed it). Tie-break: fastest lap on
-      // that loop.
-      let bestSec = Number.POSITIVE_INFINITY;
-      let bestTie = Number.POSITIVE_INFINITY;
-      let bestBib = "";
-      for (const r of sexRows) {
-        if ((r.lapsCompleted ?? 0) < yellowCap) continue;
-        const sec = accTotalSec(r, yellowCap);
-        if (sec <= 0) continue;
-        const tie = lapSecAt(r, yellowCap);
-        if (sec < bestSec || (sec === bestSec && tie < bestTie)) {
-          bestSec = sec;
-          bestTie = tie;
-          bestBib = String(r.bib);
+      // Yellow: lowest total time at the effective cap.
+      // Without per-loop data: use sexMaxLaps (final standings at all loops).
+      // With per-loop data: cap at snapshotLoop for accurate history.
+      const sexMaxLaps = sexRows.reduce(
+        (m, r) => Math.max(m, r.lapsCompleted ?? 0),
+        0,
+      );
+      const hasPerLoop = sexRows.some((r) => (r.perLoop ?? []).length > 0);
+      const cap = sexMaxLaps > 0
+        ? (hasPerLoop && snapshotLoop !== null ? Math.min(sexMaxLaps, snapshotLoop) : sexMaxLaps)
+        : (snapshotLoop ?? yellowCap);
+      if (cap > 0) {
+        let bestSec = Number.POSITIVE_INFINITY;
+        let bestTie = Number.POSITIVE_INFINITY;
+        let bestBib = "";
+        for (const r of sexRows) {
+          const lc = r.lapsCompleted ?? 0;
+          if (lc < cap) continue;
+          if (hasPerLoop && lc > cap && (r.perLoop ?? []).length === 0) continue;
+          const sec = accTotalSec(r, cap);
+          if (sec <= 0) continue;
+          const tie = lapSecAt(r, cap);
+          if (sec < bestSec || (sec === bestSec && tie < bestTie)) {
+            bestSec = sec;
+            bestTie = tie;
+            bestBib = String(r.bib);
+          }
         }
+        if (bestBib) result.yellow[sex] = bestBib;
       }
-      if (bestBib) result.yellow[sex] = bestBib;
     }
     return result;
   }, [
@@ -663,13 +684,16 @@ export function Leaderboard({ eventId }: { eventId: string }) {
     };
     const accTotalSec = (r: ResultRow, cap: number): number => {
       const capped = (r.perLoop ?? []).filter((p) => p.loop <= cap);
-      if (capped.length === 0) return 0;
-      const last = capped[capped.length - 1];
-      if (typeof last.totalSec === "number" && last.totalSec > 0) return last.totalSec;
-      return capped.reduce(
-        (acc, p) => acc + (typeof p.lapSec === "number" ? p.lapSec : 0),
-        0,
-      );
+      if (capped.length > 0) {
+        const last = capped[capped.length - 1];
+        if (typeof last.totalSec === "number" && last.totalSec > 0) return last.totalSec;
+        const sum = capped.reduce(
+          (acc, p) => acc + (typeof p.lapSec === "number" ? p.lapSec : 0),
+          0,
+        );
+        if (sum > 0) return sum;
+      }
+      return typeof r.totalSec === "number" ? r.totalSec : 0;
     };
 
     for (const sex of ["K", "M"] as const) {
@@ -694,15 +718,29 @@ export function Leaderboard({ eventId }: { eventId: string }) {
         }
         return bestBib;
       };
+      const sexMaxLaps = sexRows.reduce(
+        (m, r) => Math.max(m, r.lapsCompleted ?? 0),
+        0,
+      );
+      const hasPerLoop = sexRows.some((r) => (r.perLoop ?? []).length > 0);
       const pickYellow = (loop: number): string | undefined => {
+        // Without per-loop data: only tally at sexMaxLaps (can't replay
+        // history). With per-loop data: use min-cap for accurate counts.
+        if (!hasPerLoop && sexMaxLaps > 0 && loop !== sexMaxLaps) return undefined;
+        const cap = sexMaxLaps > 0
+          ? (hasPerLoop ? Math.min(sexMaxLaps, loop) : sexMaxLaps)
+          : loop;
+        if (cap <= 0) return undefined;
         let bestSec = Number.POSITIVE_INFINITY;
         let bestTie = Number.POSITIVE_INFINITY;
         let bestBib: string | undefined;
         for (const r of sexRows) {
-          if ((r.lapsCompleted ?? 0) < loop) continue;
-          const sec = accTotalSec(r, loop);
+          const lc = r.lapsCompleted ?? 0;
+          if (lc < cap) continue;
+          if (hasPerLoop && lc > cap && (r.perLoop ?? []).length === 0) continue;
+          const sec = accTotalSec(r, cap);
           if (sec <= 0) continue;
-          const tie = lapSecAt(r, loop);
+          const tie = lapSecAt(r, cap);
           if (sec < bestSec || (sec === bestSec && tie < bestTie)) {
             bestSec = sec;
             bestTie = tie;
@@ -788,13 +826,16 @@ export function Leaderboard({ eventId }: { eventId: string }) {
     };
     const accTotalSec = (r: ResultRow, cap: number): number => {
       const capped = (r.perLoop ?? []).filter((p) => p.loop <= cap);
-      if (capped.length === 0) return 0;
-      const last = capped[capped.length - 1];
-      if (typeof last.totalSec === "number" && last.totalSec > 0) return last.totalSec;
-      return capped.reduce(
-        (acc, p) => acc + (typeof p.lapSec === "number" ? p.lapSec : 0),
-        0,
-      );
+      if (capped.length > 0) {
+        const last = capped[capped.length - 1];
+        if (typeof last.totalSec === "number" && last.totalSec > 0) return last.totalSec;
+        const sum = capped.reduce(
+          (acc, p) => acc + (typeof p.lapSec === "number" ? p.lapSec : 0),
+          0,
+        );
+        if (sum > 0) return sum;
+      }
+      return typeof r.totalSec === "number" ? r.totalSec : 0;
     };
 
     const MAX_PTS = { pink: 3, green: 10 } as const;
@@ -836,11 +877,24 @@ export function Leaderboard({ eventId }: { eventId: string }) {
       if (snapshotLoop >= endsAt) return "finished";
       const remaining = endsAt - snapshotLoop;
       if (remaining <= 0) return "finished";
-      const cap = Math.min(endsAt, snapshotLoop);
       const sexRows = rows.filter((r) => sexKey(r) === sex);
+      const sexMaxLaps = sexRows.reduce(
+        (m, r) => Math.max(m, r.lapsCompleted ?? 0),
+        0,
+      );
+      const hasPerLoop = sexRows.some((r) => (r.perLoop ?? []).length > 0);
+      const cap = sexMaxLaps > 0
+        ? (hasPerLoop ? Math.min(sexMaxLaps, snapshotLoop) : sexMaxLaps)
+        : Math.min(endsAt, snapshotLoop);
+      // When the cap exceeds the current loop, standings are indeterminate
+      // (race clock behind data or no per-loop data available yet).
+      if (cap > snapshotLoop) return null;
+      if (cap <= 0) return null;
       const totals: { bib: string; sec: number; tie: number }[] = [];
       for (const r of sexRows) {
-        if ((r.lapsCompleted ?? 0) < cap) continue;
+        const lc = r.lapsCompleted ?? 0;
+        if (lc < cap) continue;
+        if (hasPerLoop && lc > cap && (r.perLoop ?? []).length === 0) continue;
         const sec = accTotalSec(r, cap);
         if (sec <= 0) continue;
         totals.push({ bib: String(r.bib), sec, tie: lapSecAt(r, cap) });

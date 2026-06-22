@@ -41,6 +41,12 @@ export type JerseyEntry = {
   perLoop?: JerseyPerLoop[];
   totalSec?: number;
   lapsCompleted?: number;
+  /** Native MF-rank from the RaceResult Gul trøye list (MFRank.P).
+   * Present when the backend fetched that list. Rank 1 = jersey holder.
+   * When present, `rankYellow` uses it as the primary sort key instead
+   * of accumulated time (because the frontyard ranking is laps-first,
+   * not time-first, and excludes runners holding other jerseys). */
+  mfRank?: number;
 };
 
 export type JerseysPayload = {
@@ -409,6 +415,7 @@ export function rankYellow(
   }
   return out;
 }
+
 
 /** Convenience: the current pink/green/yellow holders per sex at the
  * given snapshot loop, applying each jersey's configured cap. Returns

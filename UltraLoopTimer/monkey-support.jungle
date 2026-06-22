@@ -1,4 +1,0 @@
-project.manifest = manifest-support.xml
-
-base.sourcePath = source
-base.resourcePath = resources;resources-support-default

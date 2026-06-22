@@ -173,6 +173,26 @@ fastest last completed loop. The shared **Race finished** replay
 bar (`localStorage`) lets you scrub historical loops in lockstep
 with the Race dashboard and Leaderboard.
 
+**Yellow jersey cap** — the comparison strategy depends on whether
+per-loop split data is available for that sex in the yellow list:
+
+* **Per-loop data available** (populated by the backend from the
+  RRPublish Details list): `cap = min(sexMaxLaps, snapshotLoop)`.
+  Runners whose `lapsCompleted` exceeds `cap` and have no per-loop
+  breakdown are excluded because their `totalSec` spans more laps
+  and cannot be compared fairly. Historical replay is accurate — the
+  yellow holder advances loop by loop.
+* **No per-loop data** (Details list unpublished or unavailable for
+  the event): `cap = sexMaxLaps`. Only runners who reached the
+  sex's maximum lap count participate, compared on their final
+  `totalSec`. The same final standings are shown at every replay
+  loop — an honest approximation given the data limitation.
+
+The backend sorts yellow entries by laps DESC then total time ASC,
+mirroring RaceResult's own "Gul trøye" ranking. Per-loop data is
+loaded once via `_fetch_details_list` using the list name from the
+event's RRPublish config (field `Details` on each list object).
+
 The Jerseys overview and the Yellow detail view both display an
 **🏆 Overall winner** banner above the per-gender tables, and the
 winner's row in every jersey table is prefixed with a `🏆` next to
