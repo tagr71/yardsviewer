@@ -103,11 +103,18 @@ export function Overview({ eventId }: { eventId: string }) {
 
   // "Still in" means runners who actually completed the lap we are looking
   // at — runners who started the lap but DNF'd are excluded.
-  //   - replay at loop L  → completed >= L laps
-  //   - finished, static  → completed >= maxLoop laps (i.e. the winner(s))
-  //   - live              → status is not DNF/DNS/DQ/withdrawn
+  //   - pre-race (maxLoop=0) → same filter as "starting": exclude DNS only
+  //                            (RaceResult publishes all participants as DNF
+  //                            before the race begins, so OUT_PATTERN would
+  //                            incorrectly exclude everyone)
+  //   - replay at loop L     → completed >= L laps
+  //   - finished, static     → completed >= maxLoop laps (i.e. the winner(s))
+  //   - live                 → status is not DNF/DNS/DQ/withdrawn
   const sexOf = (r: ResultRow) => (r.sex ?? "").toUpperCase();
   const isStillIn = (r: ResultRow) => {
+    if (maxLoop === 0) {
+      return !DNS_PATTERN.test(r.status ?? "");
+    }
     if (effectiveViewLoop !== null) {
       return typeof r.lapsCompleted === "number"
         ? r.lapsCompleted >= effectiveViewLoop

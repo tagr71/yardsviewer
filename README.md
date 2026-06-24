@@ -17,10 +17,13 @@ The dashboard dropdown lists, in order: **Settings**, **Overview**,
   (red) and males (blue); a second row mirrors the three cells for
   runners still in competition per gender; the bottom row shows the
   current loop (teal), accumulated distance summed across completed
-  loops (green) and registered participants (neutral). When the race
-  is finished a `⏮ ◀ Loop N / max ▶ ⏭ Live` playback bar appears and
-  the still-in counters / accumulated distance follow the selected
-  loop.
+  loops (green) and registered participants (neutral). Before the
+  race starts (no completed loops yet) the still-in counters equal the
+  starting counts — RaceResult pre-populates all registered runners as
+  DNF before the race begins, so the dashboard uses DNS-only exclusion
+  instead of the usual DNF/DNS/DQ filter. When the race is finished a
+  `⏮ ◀ Loop N / max ▶ ⏭ Live` playback bar appears and the still-in
+  counters / accumulated distance follow the selected loop.
 - **Leaderboard** — sortable, 10 s-polled table:
   Total Rank, Bib, Full Name, Club, Country (flag), Gender, Laps,
   Gap, Last (lap), Fastest, Slowest, Average, Total Time,
@@ -190,8 +193,11 @@ per-loop split data is available for that sex in the yellow list:
 
 The backend sorts yellow entries by laps DESC then total time ASC,
 mirroring RaceResult's own "Gul trøye" ranking. Per-loop data is
-loaded once via `_fetch_details_list` using the list name from the
-event's RRPublish config (field `Details` on each list object).
+loaded by `_fetch_details_list`, which discovers the Details sub-page
+slug (e.g. `details1`) from the results page config, the real list
+name from the RRPublish config, and the correct contest ID from the
+RRPublish `contests` map — then fetches the full dataset with `r=all`
+from the event's server.
 
 The Jerseys overview and the Yellow detail view both display an
 **🏆 Overall winner** banner above the per-gender tables, and the
@@ -287,7 +293,9 @@ FastAPI backend on port 8000.
      "eventMode": <"backyard" | "frontyard" | "">, "rows": [...] }`.
   Each row has: `place`, `bib`, `name`, `club`, `country`, `sex`,
   `totalRank`, `lapsCompleted`, `lastLap`, `fastestLap`, `slowestLap`,
-  `averageLap`, `status`, `gap`, `lapsBehind`, `total`.
+  `averageLap`, `status`, `gap`, `lapsBehind`, `total`,
+  `perLoop?: [{ loop, time, lapSec, totalSec }]` (present when the
+  RaceResult Details list is published for the event).
 - `GET /api/jerseys?event_id=<id>` →
   `{ "eventName": <str>, "eventId": <str>, "raceFinished": <bool>,
      "green": [...], "pink": [...], "yellow": [...] }`.
@@ -302,8 +310,10 @@ FastAPI backend on port 8000.
   status matching `dnf|dns|dq|withdrawn` (i.e. a single survivor).
   `eventStartTime` is an ISO timestamp (`YYYY-MM-DDTHH:MM:SS`) scraped
   from the public landing page's schema.org `startDate`; if only a date
-  is available the time defaults to `10:00:00`. Either field is `""`
-  when not detectable.
+  is available the time defaults to `10:00:00` (per-event overrides can
+  be set in `_EVENT_START_TIME_OVERRIDES` in the backend — e.g. Rondane
+  Backyard Ultra uses `09:00:00`). Either field is `""` when not
+  detectable.
 
   Without `listname` the backend fetches the `Resultatliste` list
   (which carries `NumberOfLaps`, `MinLap`, `AvgLap`, `MaxLap`, total

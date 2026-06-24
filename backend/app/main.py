@@ -34,6 +34,12 @@ RACERESULT_BASE = os.getenv("RACERESULT_BASE", "https://my.raceresult.com")
 # frontyard events.
 DEFAULT_EVENT_START_TIME = "10:00:00"
 
+# Per-event overrides for events where RaceResult does not publish a
+# start time and the default above is wrong.  Key = event ID string.
+_EVENT_START_TIME_OVERRIDES: dict[str, str] = {
+    "352401": "09:00:00",  # Rondane Backyard Ultra
+}
+
 app = FastAPI(title="Race dashboards API")
 
 # CORS configuration.
@@ -258,45 +264,91 @@ async def _fetch_list(
 async def _fetch_details_list(
     event_id: str, page: str, contest: str = "0"
 ) -> dict[str, Any] | None:
-    """Fetch the per-lap "Details" list for `event_id` from the public
-    RRPublish endpoint. Returns the raw payload or None if not available.
+    """Fetch the per-lap "Details" list for `event_id`. Returns the raw
+    payload or None if not available.
 
-    RaceResult exposes per-lap times via a hidden Details list that the
-    authenticated `my.raceresult.com/{event}/results/...` API doesn't
-    serve — there the visible lists only reference it by a placeholder
-    name (``details0``). The same list is, however, served by the public
-    ``my2.raceresult.com/{event}/RRPublish/data/list`` endpoint under the
-    real listname found via that endpoint's config (e.g.
-    ``"02 - Result Lists|6 - Details"``).
+    RaceResult exposes per-runner lap times through a sub-page (e.g.
+    ``details1``) of the main results page.  The correct URL is
+    ``https://{server}/{event}/details1/list?…&page=details1&r=all``.
+
+    Discovery happens in two steps:
+
+    1. The results page config (``my.raceresult.com/{event}/{page}/config``)
+       carries a ``TabConfig.Lists[*].Details`` field whose value is the
+       sub-page slug (e.g. ``"details1"``).  The same config provides the
+       API key and the server hostname.
+
+    2. The public RRPublish config (``my2.raceresult.com/{event}/RRPublish/
+       data/config``) resolves that slug to the real list name (e.g.
+       ``"02 - Result Lists|6 - Details"``) and exposes the event's
+       contest IDs so the correct ``contest`` parameter can be selected.
     """
     _validate_event_id(event_id)
-    base = "https://my2.raceresult.com"
-    config_url = f"{base}/{event_id}/RRPublish/data/config"
-    async with httpx.AsyncClient(timeout=10.0, verify=_SSL_CONTEXT) as client:
+
+    # ── Step 1: Discover details page slug, API key, and server ──────────
+    key = ""
+    server = RACERESULT_BASE.removeprefix("https://").removeprefix("http://")
+    details_page = ""
+    results_config_url = f"{RACERESULT_BASE}/{event_id}/{page}/config?lang=en"
+    async with httpx.AsyncClient(
+        timeout=10.0, headers=_auth_headers(), verify=_SSL_CONTEXT
+    ) as client:
         try:
-            resp = await client.get(config_url)
+            resp = await client.get(results_config_url)
             resp.raise_for_status()
-            config = resp.json()
+            cfg = resp.json()
         except httpx.HTTPError:
             return None
-        key = config.get("key")
-        lists = config.get("lists") or []
-        details_name = ""
+        key = cfg.get("key") or ""
+        server = cfg.get("server") or server
+        lists = (cfg.get("TabConfig") or {}).get("Lists") or []
         for lst in lists:
+            d = lst.get("Details", "")
+            if isinstance(d, str) and d.strip() and d.strip() != "details0":
+                details_page = d.strip()
+                break
+
+    if not key or not details_page:
+        return None
+
+    # ── Step 2: Discover full list name and contest via RRPublish config ──
+    details_name = ""
+    effective_contest = contest
+    async with httpx.AsyncClient(timeout=10.0, verify=_SSL_CONTEXT) as client:
+        try:
+            resp = await client.get(
+                f"https://my2.raceresult.com/{event_id}/RRPublish/data/config"
+            )
+            resp.raise_for_status()
+            rrp = resp.json()
+        except httpx.HTTPError:
+            return None
+        for lst in rrp.get("lists") or []:
             ref = lst.get("Details") if isinstance(lst, dict) else None
             if isinstance(ref, str) and ref.strip() and ref.strip() != "details0":
                 details_name = ref.strip()
                 break
-        if not key or not details_name:
-            return None
+        # Auto-detect contest from the event's contest map when the caller
+        # left the default "0". RRPublish exposes it as e.g. {"1": "Frontyard"}.
+        if effective_contest == "0":
+            contests = rrp.get("contests") or {}
+            if contests:
+                effective_contest = str(next(iter(contests)))
+
+    if not details_name:
+        return None
+
+    # ── Step 3: Fetch the full details list with r=all ────────────────────
+    list_url = f"https://{server}/{event_id}/{details_page}/list"
+    async with httpx.AsyncClient(timeout=30.0, verify=_SSL_CONTEXT) as client:
         try:
             resp = await client.get(
-                f"{base}/{event_id}/RRPublish/data/list",
+                list_url,
                 params={
                     "key": key,
                     "listname": details_name,
-                    "page": page,
-                    "contest": contest,
+                    "page": details_page,
+                    "contest": effective_contest,
                     "r": "all",
                 },
             )
@@ -684,8 +736,8 @@ async def results(
             pass
 
     # Enrich each row with `perLoop` = list of `{loop, time, lapSec, totalSec}`
-    # from the hidden Details list, so the frontend can show the lap time
-    # for a specific historical loop when the user replays the race.
+    # from the Details sub-page when available. Callers may use this for
+    # per-loop analysis; it is also used by /api/jerseys independently.
     details_payload = await _fetch_details_list(resolved, "results")
     lap_times_by_bib = _parse_lap_times(details_payload)
     if lap_times_by_bib:
@@ -727,7 +779,8 @@ async def results(
     if iso_date and iso_time:
         event_start_time = f"{iso_date}T{iso_time}"
     elif iso_date:
-        event_start_time = f"{iso_date}T{DEFAULT_EVENT_START_TIME}"
+        _time_default = _EVENT_START_TIME_OVERRIDES.get(resolved, DEFAULT_EVENT_START_TIME)
+        event_start_time = f"{iso_date}T{_time_default}"
 
     # Detect backyard vs frontyard from the event name. Both formats use
     # the same RaceResult template (splits are named "Yard N"), so the

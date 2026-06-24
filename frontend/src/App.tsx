@@ -16,7 +16,7 @@ function normalizeDashboardId(id: string | null | undefined): string | null {
 const PREDEFINED_EVENTS: { id: string; label: string }[] = [
   { id: "337633", label: "Hell Backyard Ultra 2026" },
   { id: "374847", label: "Rotvollfjæra Frontyard Ultra" },
-  { id: "400116", label: "Frontyard Test" },
+  { id: "352401", label: "Rondane Backyard Ultra" },
 ];
 const OTHER_OPTION = "__other__";
 
@@ -82,23 +82,13 @@ export function App() {
     return { eventId: evId, dashboardId: initialPath.dashboardId };
   });
   const [eventId, setEventId] = useState<string>(
-    () =>
-      initialPath.eventId ??
-      localStorage.getItem(EVENT_ID_KEY) ??
-      PREDEFINED_EVENTS[0]?.id ??
-      "",
+    () => initialPath.eventId ?? localStorage.getItem(EVENT_ID_KEY) ?? "",
   );
   // Which dropdown option is currently selected. `OTHER_OPTION` means
-  // the user wants to type a custom event ID; any other value is one of
-  // the `PREDEFINED_EVENTS` IDs.
-  const [eventChoice, setEventChoice] = useState<string>(() => {
-    const stored = localStorage.getItem(EVENT_ID_KEY) ?? "";
-    return PREDEFINED_EVENTS.some((e) => e.id === stored)
-      ? stored
-      : stored
-        ? OTHER_OPTION
-        : PREDEFINED_EVENTS[0]?.id ?? OTHER_OPTION;
-  });
+  // the user wants to type a custom event ID; `""` means nothing chosen
+  // yet (first launch, no localStorage); any other value is a predefined
+  // event ID.
+  const [eventChoice, setEventChoice] = useState<string>("");
   const [dashboardId, setDashboardId] = useState<string>(
     () =>
       initialPath.dashboardId ??
@@ -226,15 +216,18 @@ export function App() {
             onChange={(e) => {
               const v = e.target.value;
               setEventChoice(v);
-              if (v !== OTHER_OPTION) {
+              if (v !== OTHER_OPTION && v !== "") {
                 setEventId(v);
                 applySelection(v, dashboardId);
-              } else {
+              } else if (v === OTHER_OPTION) {
                 setEventId("");
               }
             }}
             style={{ padding: "0.35rem 0.5rem", fontSize: "0.95rem" }}
           >
+            {eventChoice === "" && (
+              <option value="" disabled>Choose event…</option>
+            )}
             {PREDEFINED_EVENTS.map((ev) => (
               <option key={ev.id} value={ev.id}>
                 {ev.label} ({ev.id})
