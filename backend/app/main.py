@@ -14,7 +14,7 @@ import truststore
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import RedirectResponse
+from fastapi.responses import FileResponse, RedirectResponse
 
 # Use the operating system's certificate store so corporate / Windows CAs work
 # out of the box. certifi (httpx's default bundle) doesn't see locally
@@ -779,10 +779,10 @@ async def results(
         if out_count >= len(rows) - 1:
             survivors = [
                 r for r in rows
-                if not out_pattern.search(str(r.get("status") or ""))
+                if not _OUT_PATTERN_RE.search(str(r.get("status") or ""))
             ]
             race_finished = any(
-                int(r.get("lapsCompleted") or 0) > 0 for r in survivors
+                bool(r.get("lapsCompleted")) for r in survivors
             )
 
     # Combine the RaceResult event date + start time into an ISO timestamp
@@ -1257,7 +1257,11 @@ async def jerseys(
         # Sort laps DESC first (most laps = best position), then time ASC as
         # tie-breaker. This mirrors RaceResult's own "Gul trøye" ranking
         # (laps-first, total time second). Zero/missing laps sort last.
-        out.sort(key=lambda r: (-(r.get("lapsCompleted") or 0), int(r["totalSec"]) or 10**12, str(r["bib"])))
+        out.sort(key=lambda r: (
+            -(r.get("lapsCompleted") or 0),
+            int(r["totalSec"]) or 10**12,
+            str(r["bib"]),
+        ))
         return out
 
     yellow = parse_yellow(yellow_payload)
@@ -1361,13 +1365,12 @@ async def jerseys(
     }
 
 
-@app.get("/", include_in_schema=False)
-async def root() -> RedirectResponse:
+@app.get("/", include_in_schema=False, response_model=None)
+async def root() -> RedirectResponse | FileResponse:
     # If the production SPA bundle is mounted (see below), serve it.
     # Otherwise fall back to the legacy API redirect (used when the
     # backend runs standalone in dev with Vite on :5173).
     if _DIST.is_dir():
-        from fastapi.responses import FileResponse
         return FileResponse(_DIST / "index.html")
     return RedirectResponse(url="/api/participants/count")
 
@@ -1382,7 +1385,6 @@ async def root() -> RedirectResponse:
 # proxying /api/* during development.
 _DIST = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
 if _DIST.is_dir():
-    from fastapi.responses import FileResponse
     from fastapi.staticfiles import StaticFiles
 
     # Hashed bundle output goes under /assets — serve it directly.

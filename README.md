@@ -1,7 +1,11 @@
 # yardsviewer
 
-A small local web app that reads live data from a RaceResult event and
-shows it in pickable dashboards.
+A web app that reads live data from [RaceResult](https://my.raceresult.com)
+events and shows it in a set of race dashboards — Overview, Leaderboard,
+Timer and Jersey standings — for both **Backyard Ultra** and **Frontyard Ultra**
+events. The backend polls RaceResult every 10 s (or at loop boundaries
+when a start time is configured) and auto-detects event mode, start time
+and location from the event's public page.
 
 - **Backend:** Python + FastAPI + Uvicorn ([backend/app/main.py](backend/app/main.py))
 - **Frontend:** Vite + React + TypeScript ([frontend/](frontend))
@@ -350,13 +354,9 @@ FastAPI backend on port 8000.
   time) and merges in `lastLap` from the `LIVE` list (the only list
   that publishes it), keyed by BIB. Passing `listname` (suffix match,
   e.g. `LIVE`) skips the merge and uses only that list.
-- `GET /api/results/fields?event_id=<id>&listname=<suffix>` →
-  debug helper: `DataFields` array + first raw row from the selected
-  list, useful for mapping new RaceResult templates.
-- `GET /api/results/lists?event_id=<id>&page=results` →
-  debug helper: enumerates every list published on the page along with
-  each list's `DataFields` and a sample row.
-- `GET /` redirects to `/api/participants/count`.
+- `GET /` — in the production Docker build, serves the Vite SPA
+  (`index.html`). In local dev (no `frontend/dist/` present) redirects
+  to `/api/participants/count`.
 
 `event_id` falls back to `RACERESULT_EVENT_ID` from `backend/.env` when
 omitted.
