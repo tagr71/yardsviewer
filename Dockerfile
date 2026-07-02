@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 #
-# Multi-stage build for rotvollfjaerafrontyardultra.
+# Multi-stage build for yardsviewer.
 #
 #   Stage 1 (web)     — Node 20: install JS deps + run `vite build`.
 #                       Output ends up at /web/dist.

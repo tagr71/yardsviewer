@@ -1,4 +1,4 @@
-# rotvollfjaerafrontyardultra
+# yardsviewer
 
 A small local web app that reads live data from a RaceResult event and
 shows it in pickable dashboards.
