@@ -184,6 +184,15 @@ async def _fetch_list(
                             event_date = m_full.group(1)
                             if not event_time and m_full.group(2):
                                 event_time = m_full.group(2)
+                    if not event_date:
+                        # Fallback: RaceResult landing pages display the date as
+                        # plain text in DD/MM/YYYY format when JSON-LD is absent.
+                        m_text = re.search(
+                            r"\b(\d{1,2})[./](\d{2})[./](\d{4})\b", html
+                        )
+                        if m_text:
+                            d, mo, y = m_text.groups()
+                            event_date = f"{d.zfill(2)}.{mo}.{y}"
             except httpx.HTTPError:
                 pass
         # RaceResult publishes the location under various keys depending on the
@@ -656,10 +665,24 @@ async def results(
     _validate_listname(listname)
     resolved = event_id or RACERESULT_EVENT_ID
     effective = listname or "Resultatliste"
-    payload, event_name, event_location, event_date, event_time = await _fetch_list(
-        resolved, "results", listname_match=effective
-    )
-    rows = _flatten_results(payload)
+
+    # Try the results list first. If it isn't published yet (e.g. a future
+    # race), fall back to the participants list which is available earlier
+    # and carries the event name, location, and date we need for Settings
+    # auto-fill.
+    try:
+        payload, event_name, event_location, event_date, event_time = await _fetch_list(
+            resolved, "results", listname_match=effective
+        )
+        rows = _flatten_results(payload)
+    except HTTPException:
+        try:
+            _, event_name, event_location, event_date, event_time = await _fetch_list(
+                resolved, "participants"
+            )
+        except HTTPException:
+            event_name = event_location = event_date = event_time = ""
+        rows = []
 
     # Enrich with lastLap from the LIVE list when caller didn't override.
     if listname is None:
@@ -697,14 +720,24 @@ async def results(
     # Heuristic "race finished" detection: a backyard/frontyard race is
     # considered finished once every row except at most one is marked DNF/
     # DNS/DQ — i.e. there is a single survivor. Requires at least two rows
-    # so a one-runner placeholder list doesn't count.
+    # so a one-runner placeholder list doesn't count. Also requires the
+    # survivor to have completed at least one loop — this prevents false
+    # positives when an organiser pre-populates the results list with all
+    # participants marked DNF before the race starts.
     race_finished = False
     if len(rows) >= 2:
         out_pattern = re.compile(r"dnf|dns|dq|withdrawn", re.IGNORECASE)
         out_count = sum(
             1 for r in rows if out_pattern.search(str(r.get("status") or ""))
         )
-        race_finished = out_count >= len(rows) - 1
+        if out_count >= len(rows) - 1:
+            survivors = [
+                r for r in rows
+                if not out_pattern.search(str(r.get("status") or ""))
+            ]
+            race_finished = any(
+                int(r.get("lapsCompleted") or 0) > 0 for r in survivors
+            )
 
     # Combine the RaceResult event date + start time into an ISO timestamp
     # (yyyy-MM-ddTHH:MM:SS) so the frontend can auto-fill the Timer setup.
@@ -724,20 +757,22 @@ async def results(
     if m_time:
         h, mi, s = m_time.groups()
         iso_time = f"{h.zfill(2)}:{mi}:{(s or '00').zfill(2)}"
-    if iso_date and iso_time:
-        event_start_time = f"{iso_date}T{iso_time}"
-    elif iso_date:
-        event_start_time = f"{iso_date}T{DEFAULT_EVENT_START_TIME}"
-
-    # Detect backyard vs frontyard from the event name. Both formats use
-    # the same RaceResult template (splits are named "Yard N"), so the
-    # event name is the most reliable signal.
+    # Detect backyard vs frontyard early so we can pick the right default
+    # start time below.
     event_mode = ""
     name_lc = event_name.lower()
     if "frontyard" in name_lc:
         event_mode = "frontyard"
     elif "backyard" in name_lc:
         event_mode = "backyard"
+
+    # Backyard races traditionally start at 09:00; frontyard at 10:00.
+    _default_time = "09:00:00" if event_mode == "backyard" else DEFAULT_EVENT_START_TIME
+
+    if iso_date and iso_time:
+        event_start_time = f"{iso_date}T{iso_time}"
+    elif iso_date:
+        event_start_time = f"{iso_date}T{_default_time}"
 
     return {
         "eventName": event_name,

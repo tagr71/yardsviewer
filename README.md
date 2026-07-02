@@ -7,6 +7,23 @@ shows it in pickable dashboards.
 - **Frontend:** Vite + React + TypeScript ([frontend/](frontend))
 - Python project managed by [uv](https://docs.astral.sh/uv/) via [pyproject.toml](pyproject.toml)
 
+## Event selection
+
+On load the **Event** dropdown shows a "Select an event…" placeholder —
+no event is pre-selected and nothing is restored from `localStorage`, so
+the user must always make a conscious choice. Predefined events:
+
+| Label | ID |
+|---|---|
+| Rotvollfjæra Frontyard Ultra 2026 | 374847 |
+| Hell Backyard Ultra 2026 | 337633 |
+| Rondane Backyard Ultra 2026 | 352401 |
+
+Selecting a predefined event immediately opens its **Settings** dashboard.
+Choosing **Other…** reveals a 6-character alphanumeric ID input; the
+**Open** button is enabled only when exactly 6 characters have been
+entered.
+
 ## Dashboards
 
 The dashboard dropdown lists, in order: **Settings**, **Overview**,
@@ -45,11 +62,20 @@ The dashboard dropdown lists, in order: **Settings**, **Overview**,
   options (see [Timer options](#timer-options)). All settings are
   stored in `localStorage`, keyed by event ID, and picked up live by
   the Race dashboard via the `storage` event plus a 2 s poll
-  fallback. For a finished race the start date and mode are
-  auto-populated from RaceResult metadata when unset: the date comes
-  from the landing page's schema.org JSON-LD `startDate` (time
-  defaults to 10:00); the mode is inferred from the event name
-  (`frontyard` / `backyard` substring).
+  fallback. Settings are always editable regardless of race status.
+  On every fresh page load (new browser session) the start time, mode
+  and location are auto-populated from RaceResult metadata when not
+  already set: the date comes from the landing page (JSON-LD
+  `startDate` or plain text `DD/MM/YYYY`); the mode is inferred from
+  the event name (`frontyard` / `backyard` substring); the location
+  is taken from the event config. When no explicit start time is
+  published, the default is **09:00** for backyard events and
+  **10:00** for frontyard. The "user-edited" guard uses
+  `sessionStorage`, so the server value wins on every page reload but
+  manual edits are preserved within the session. When the results
+  list is not yet published (e.g. a future event) the endpoint falls
+  back to the participants list to recover the event date and
+  location.
 - **Dashboard (race timer)** — live race clock (`dd.hh.mm.ss`,
   ticked every wall-clock second via a self-correcting `setTimeout`)
   plus per-loop stat cards: *Loops completed* (green), *Current
@@ -73,8 +99,9 @@ The dashboard dropdown lists, in order: **Settings**, **Overview**,
   `/api/jerseys` poll freshness. Each section also surfaces two
   per-loop counters: *Runners completed past loop* (cumulative count
   who finished loop N − 1) and *Runners starting this loop* (subset
-  that actually went out for loop N; live = non-DNF/DQ, replay =
-  `finalLaps ≥ N`).
+  that actually went out for loop N; live = non-DNS/DQ for loop 1 so
+  pre-race DNF placeholders don't distort the count, non-DNF/DQ for
+  loop 2+; replay = `finalLaps ≥ N`).
 
   Two modes:
   - **Backyard** — fixed 60-minute loops; a `mm:ss` counter counts
@@ -222,10 +249,11 @@ finished:
 
 Mid-race "current leader" states show no trophy.
 
-The front page lets you type a RaceResult event ID, pick a dashboard
-from a dropdown, and open it. A **← Back** button returns to the
-front page. The chosen event ID and dashboard are remembered in
-`localStorage`.
+The front page lets you pick a predefined event or type a custom
+6-character alphanumeric RaceResult event ID, pick a dashboard from a
+dropdown, and open it. The chosen event ID and dashboard are saved in
+`localStorage` so other tabs / deep links continue to work, but the
+dropdown always starts empty on a fresh load.
 
 ### URL routing
 
@@ -240,15 +268,13 @@ deep-link or bookmark a specific view:
 | Dashboard    | `/dashboard`   |
 | Jerseys      | `/jerseys`     |
 
-Visiting `/<slug>` opens that dashboard using the last event ID stored
-in `localStorage` (falling back to the first predefined event).
-Appending an event ID — `/<slug>/<eventId>`, e.g. `/jerseys/374847` —
-overrides the stored value for that visit. Submitting the front-page
-form and pressing **← Back** update the URL via `history.pushState`,
-and the browser back/forward buttons re-sync the dashboard via a
-`popstate` listener. The FastAPI backend serves `index.html` for any
-unknown path so client-side routing works in the Docker / production
-build too.
+Visiting `/<slug>/<eventId>` — e.g. `/jerseys/374847` — opens that
+dashboard for the given event. The event ID segment accepts up to
+10 alphanumeric characters. Submitting the front-page form updates
+the URL via `history.pushState`, and the browser back/forward buttons
+re-sync the dashboard via a `popstate` listener. The FastAPI backend
+serves `index.html` for any unknown path so client-side routing works
+in the Docker / production build too.
 
 ## Run
 
@@ -298,12 +324,18 @@ FastAPI backend on port 8000.
   pulled from the public RRPublish *Details* list when available.
 - `GET /api/health` → `{ "status": "ok" }`.
 
-  `raceFinished` is `true` when at least `len(rows) − 1` rows have a
-  status matching `dnf|dns|dq|withdrawn` (i.e. a single survivor).
-  `eventStartTime` is an ISO timestamp (`YYYY-MM-DDTHH:MM:SS`) scraped
-  from the public landing page's schema.org `startDate`; if only a date
-  is available the time defaults to `10:00:00`. Either field is `""`
-  when not detectable.
+  `raceFinished` is `true` when at least `len(rows) − 1` rows carry a
+  `dnf|dns|dq|withdrawn` status **and** the last standing runner has
+  completed at least one loop (preventing false positives when an
+  organiser pre-populates the list with everyone marked DNF before the
+  race starts). When the results list is not yet published the endpoint
+  falls back to the participants list for event metadata and returns
+  `rows: []` with `raceFinished: false`.
+  `eventStartTime` is an ISO timestamp (`YYYY-MM-DDTHH:MM:SS`) from
+  the public landing page (JSON-LD `startDate` or plain-text
+  `DD/MM/YYYY`); when no explicit time is found the default is
+  `09:00:00` for backyard events and `10:00:00` for frontyard. Either
+  field is `""` when not detectable.
 
   Without `listname` the backend fetches the `Resultatliste` list
   (which carries `NumberOfLaps`, `MinLap`, `AvgLap`, `MaxLap`, total

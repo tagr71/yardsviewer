@@ -14,10 +14,11 @@ function normalizeDashboardId(id: string | null | undefined): string | null {
 /** Predefined races shown in the Event dropdown. Add entries here to
  * extend the list — the value is the RaceResult event ID. */
 const PREDEFINED_EVENTS: { id: string; label: string }[] = [
+  { id: "374847", label: "Rotvollfjæra Frontyard Ultra 2026" },
   { id: "337633", label: "Hell Backyard Ultra 2026" },
-  { id: "374847", label: "Rotvollfjæra Frontyard Ultra" },
-  { id: "400116", label: "Frontyard Test" },
+  { id: "352401", label: "Rondane Backyard Ultra 2026" },
 ];
+const NONE_OPTION = "__none__";
 const OTHER_OPTION = "__other__";
 
 /** Decide whether the given event is a "backyard" race. Resolution order:
@@ -48,7 +49,7 @@ type Selection = { eventId: string; dashboardId: string };
 function parsePath(): { dashboardId: string | null; eventId: string | null } {
   const segs = window.location.pathname.split("/").filter(Boolean);
   const dashId = normalizeDashboardId(segs[0]);
-  const evId = segs[1] && /^\d+$/.test(segs[1]) ? segs[1] : null;
+  const evId = segs[1] && /^[A-Za-z0-9]{1,10}$/.test(segs[1]) ? segs[1] : null;
   return { dashboardId: dashId, eventId: evId };
 }
 
@@ -72,38 +73,24 @@ function Logo({ style }: { style?: React.CSSProperties }) {
 export function App() {
   const initialPath = useMemo(() => parsePath(), []);
   const [selection, setSelection] = useState<Selection | null>(() => {
-    if (!initialPath.dashboardId) return null;
-    const evId =
-      initialPath.eventId ??
-      localStorage.getItem(EVENT_ID_KEY) ??
-      PREDEFINED_EVENTS[0]?.id ??
-      "";
-    if (!evId) return null;
-    return { eventId: evId, dashboardId: initialPath.dashboardId };
+    // Only restore from URL — never auto-load from localStorage so the
+    // event list always starts empty and the user must pick an event.
+    if (!initialPath.dashboardId || !initialPath.eventId) return null;
+    return { eventId: initialPath.eventId, dashboardId: initialPath.dashboardId };
   });
   const [eventId, setEventId] = useState<string>(
-    () =>
-      initialPath.eventId ??
-      localStorage.getItem(EVENT_ID_KEY) ??
-      PREDEFINED_EVENTS[0]?.id ??
-      "",
+    () => initialPath.eventId ?? "",
   );
-  // Which dropdown option is currently selected. `OTHER_OPTION` means
-  // the user wants to type a custom event ID; any other value is one of
-  // the `PREDEFINED_EVENTS` IDs.
+  // Which dropdown option is currently selected. `NONE_OPTION` is the
+  // "Select an event…" placeholder shown on first load. `OTHER_OPTION`
+  // means the user wants to type a custom event ID.
   const [eventChoice, setEventChoice] = useState<string>(() => {
-    const stored = localStorage.getItem(EVENT_ID_KEY) ?? "";
-    return PREDEFINED_EVENTS.some((e) => e.id === stored)
-      ? stored
-      : stored
-        ? OTHER_OPTION
-        : PREDEFINED_EVENTS[0]?.id ?? OTHER_OPTION;
+    const fromUrl = initialPath.eventId ?? "";
+    if (!fromUrl) return NONE_OPTION;
+    return PREDEFINED_EVENTS.some((e) => e.id === fromUrl) ? fromUrl : OTHER_OPTION;
   });
   const [dashboardId, setDashboardId] = useState<string>(
-    () =>
-      initialPath.dashboardId ??
-      normalizeDashboardId(localStorage.getItem(DASHBOARD_KEY)) ??
-      dashboards[0].id,
+    () => initialPath.dashboardId ?? "settings",
   );
   const [eventName, setEventName] = useState<string>("");
   const [eventLocation, setEventLocation] = useState<string>("");
@@ -152,20 +139,11 @@ export function App() {
   useEffect(() => {
     function onPop() {
       const parsed = parsePath();
-      if (!parsed.dashboardId) {
+      if (!parsed.dashboardId || !parsed.eventId) {
         setSelection(null);
         return;
       }
-      const evId =
-        parsed.eventId ??
-        localStorage.getItem(EVENT_ID_KEY) ??
-        PREDEFINED_EVENTS[0]?.id ??
-        "";
-      if (!evId) {
-        setSelection(null);
-        return;
-      }
-      setSelection({ eventId: evId, dashboardId: parsed.dashboardId });
+      setSelection({ eventId: parsed.eventId, dashboardId: parsed.dashboardId });
     }
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
@@ -226,15 +204,16 @@ export function App() {
             onChange={(e) => {
               const v = e.target.value;
               setEventChoice(v);
-              if (v !== OTHER_OPTION) {
+              if (v === NONE_OPTION || v === OTHER_OPTION) {
+                setEventId("");
+              } else {
                 setEventId(v);
                 applySelection(v, dashboardId);
-              } else {
-                setEventId("");
               }
             }}
             style={{ padding: "0.35rem 0.5rem", fontSize: "0.95rem" }}
           >
+            <option value={NONE_OPTION} disabled>Select an event…</option>
             {PREDEFINED_EVENTS.map((ev) => (
               <option key={ev.id} value={ev.id}>
                 {ev.label} ({ev.id})
@@ -248,15 +227,14 @@ export function App() {
           <label
             style={{ display: "flex", flexDirection: "column", gap: "0.15rem" }}
           >
-            <span style={{ fontSize: "0.75rem", color: "#555" }}>Event ID</span>
+            <span style={{ fontSize: "0.75rem", color: "#555" }}>Event ID (6 chars)</span>
             <input
               type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
+              maxLength={6}
               value={eventId}
               placeholder="e.g. 374847"
-              onChange={(e) => setEventId(e.target.value)}
-              style={{ padding: "0.35rem 0.5rem", fontSize: "0.95rem", width: "8rem" }}
+              onChange={(e) => setEventId(e.target.value.replace(/[^A-Za-z0-9]/g, "").toUpperCase())}
+              style={{ padding: "0.35rem 0.5rem", fontSize: "0.95rem", width: "7rem", fontFamily: "monospace" }}
             />
           </label>
         )}
@@ -285,11 +263,11 @@ export function App() {
         {eventChoice === OTHER_OPTION && (
           <button
             type="submit"
-            disabled={!eventId.trim()}
+            disabled={eventId.trim().length !== 6}
             style={{
               padding: "0.4rem 0.9rem",
               fontSize: "0.95rem",
-              cursor: eventId.trim() ? "pointer" : "not-allowed",
+              cursor: eventId.trim().length === 6 ? "pointer" : "not-allowed",
               alignSelf: "flex-end",
             }}
           >
