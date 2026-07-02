@@ -88,7 +88,12 @@ export function App() {
   // the user wants to type a custom event ID; `""` means nothing chosen
   // yet (first launch, no localStorage); any other value is a predefined
   // event ID.
-  const [eventChoice, setEventChoice] = useState<string>("");
+  const [eventChoice, setEventChoice] = useState<string>(() => {
+    const storedId = initialPath.eventId ?? localStorage.getItem(EVENT_ID_KEY) ?? "";
+    if (PREDEFINED_EVENTS.some((e) => e.id === storedId)) return storedId;
+    if (storedId) return OTHER_OPTION;
+    return "";
+  });
   const [dashboardId, setDashboardId] = useState<string>(
     () =>
       initialPath.dashboardId ??

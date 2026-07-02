@@ -152,7 +152,6 @@ export function useViewLoop(eventId: string): {
       window.removeEventListener("storage", onStorage);
       window.clearInterval(poll);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventId]);
   function setViewLoop(next: number | null) {
     if (next === null) localStorage.removeItem(viewLoopKey(eventId));
@@ -461,7 +460,6 @@ export function useTimerSettings(eventId: string) {
       window.removeEventListener("storage", onStorage);
       window.clearInterval(id);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventId]);
 
   return {

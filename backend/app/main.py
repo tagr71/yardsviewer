@@ -386,6 +386,7 @@ _FLAG_RE = re.compile(
 )
 _RANK_RE = re.compile(r"^\s*(-?\d+)\s*\.?\s*(.*?)\s*$")
 _LAPS_BEHIND_RE = re.compile(r"^\s*(-?\d+)\s*Runde", re.IGNORECASE)
+_OUT_PATTERN_RE = re.compile(r"dnf|dns|dq|withdrawn", re.IGNORECASE)
 _SEX_MAP = {
     "mann": "M", "male": "M", "m": "M", "herre": "M",
     "kvinne": "K", "female": "K", "f": "K", "dame": "K", "w": "K",
@@ -752,9 +753,8 @@ async def results(
     # so a one-runner placeholder list doesn't count.
     race_finished = False
     if len(rows) >= 2:
-        out_pattern = re.compile(r"dnf|dns|dq|withdrawn", re.IGNORECASE)
         out_count = sum(
-            1 for r in rows if out_pattern.search(str(r.get("status") or ""))
+            1 for r in rows if _OUT_PATTERN_RE.search(str(r.get("status") or ""))
         )
         race_finished = out_count >= len(rows) - 1
 
@@ -877,17 +877,18 @@ def _compute_loop_points(
             if loop <= 0 or not isinstance(sec, (int, float)) or sec <= 0:
                 continue
             by_key.setdefault((group, loop), []).append((bib, float(sec)))
+
+    def _bib_sort_key(b: str) -> tuple[int, str]:
+        try:
+            return (int(b), b)
+        except ValueError:
+            return (10**9, b)
+
     out: dict[str, dict[int, int]] = {}
     for (group, loop), entries in by_key.items():
         # Secondary sort by bib (numeric where possible, else string) so
         # ties resolve deterministically.
-        def bib_key(b: str) -> tuple[int, str]:
-            try:
-                return (int(b), b)
-            except ValueError:
-                return (10**9, b)
-
-        entries.sort(key=lambda e: (e[1], bib_key(e[0])))
+        entries.sort(key=lambda e: (e[1], _bib_sort_key(e[0])))
         # Detect and log ties.
         seen: dict[float, list[str]] = {}
         for bib, sec in entries:
@@ -1256,10 +1257,9 @@ async def jerseys(
         # flattened LIVE list (same source as `raceFinished`).
         excluded_bibs: set[str] = set()
         if live_payload is not None:
-            out_pattern = re.compile(r"dnf|dns|dq|withdrawn", re.IGNORECASE)
             for r in _flatten_results(live_payload):
                 status = str(r.get("status") or "")
-                if status and out_pattern.search(status):
+                if status and _OUT_PATTERN_RE.search(status):
                     bib = str(r.get("bib") or "")
                     if bib:
                         excluded_bibs.add(bib)
@@ -1317,9 +1317,8 @@ async def jerseys(
                 if lc is not None:
                     e["lapsCompleted"] = lc
         if len(live_rows) >= 2:
-            out_pattern = re.compile(r"dnf|dns|dq|withdrawn", re.IGNORECASE)
             out_count = sum(
-                1 for r in live_rows if out_pattern.search(str(r.get("status") or ""))
+                1 for r in live_rows if _OUT_PATTERN_RE.search(str(r.get("status") or ""))
             )
             race_finished = out_count >= len(live_rows) - 1
 
