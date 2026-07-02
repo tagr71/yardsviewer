@@ -115,7 +115,6 @@ export function computeJerseyStatus(
   snapshotLoop: number | null,
   _raceFinished: boolean,
 ): JerseyStatus {
-  void _raceFinished;
   if (snapshotLoop !== null && snapshotLoop >= endsAt) return "finished";
   if (snapshotLoop === null) return null;
   if (rows.length === 0) return null;

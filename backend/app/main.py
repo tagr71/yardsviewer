@@ -14,7 +14,7 @@ import truststore
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import RedirectResponse
+from fastapi.responses import FileResponse, RedirectResponse
 
 # Use the operating system's certificate store so corporate / Windows CAs work
 # out of the box. certifi (httpx's default bundle) doesn't see locally
@@ -267,45 +267,91 @@ async def _fetch_list(
 async def _fetch_details_list(
     event_id: str, page: str, contest: str = "0"
 ) -> dict[str, Any] | None:
-    """Fetch the per-lap "Details" list for `event_id` from the public
-    RRPublish endpoint. Returns the raw payload or None if not available.
+    """Fetch the per-lap "Details" list for `event_id`. Returns the raw
+    payload or None if not available.
 
-    RaceResult exposes per-lap times via a hidden Details list that the
-    authenticated `my.raceresult.com/{event}/results/...` API doesn't
-    serve — there the visible lists only reference it by a placeholder
-    name (``details0``). The same list is, however, served by the public
-    ``my2.raceresult.com/{event}/RRPublish/data/list`` endpoint under the
-    real listname found via that endpoint's config (e.g.
-    ``"02 - Result Lists|6 - Details"``).
+    RaceResult exposes per-runner lap times through a sub-page (e.g.
+    ``details1``) of the main results page.  The correct URL is
+    ``https://{server}/{event}/details1/list?…&page=details1&r=all``.
+
+    Discovery happens in two steps:
+
+    1. The results page config (``my.raceresult.com/{event}/{page}/config``)
+       carries a ``TabConfig.Lists[*].Details`` field whose value is the
+       sub-page slug (e.g. ``"details1"``).  The same config provides the
+       API key and the server hostname.
+
+    2. The public RRPublish config (``my2.raceresult.com/{event}/RRPublish/
+       data/config``) resolves that slug to the real list name (e.g.
+       ``"02 - Result Lists|6 - Details"``) and exposes the event's
+       contest IDs so the correct ``contest`` parameter can be selected.
     """
     _validate_event_id(event_id)
-    base = "https://my2.raceresult.com"
-    config_url = f"{base}/{event_id}/RRPublish/data/config"
-    async with httpx.AsyncClient(timeout=10.0, verify=_SSL_CONTEXT) as client:
+
+    # ── Step 1: Discover details page slug, API key, and server ──────────
+    key = ""
+    server = RACERESULT_BASE.removeprefix("https://").removeprefix("http://")
+    details_page = ""
+    results_config_url = f"{RACERESULT_BASE}/{event_id}/{page}/config?lang=en"
+    async with httpx.AsyncClient(
+        timeout=10.0, headers=_auth_headers(), verify=_SSL_CONTEXT
+    ) as client:
         try:
-            resp = await client.get(config_url)
+            resp = await client.get(results_config_url)
             resp.raise_for_status()
-            config = resp.json()
+            cfg = resp.json()
         except httpx.HTTPError:
             return None
-        key = config.get("key")
-        lists = config.get("lists") or []
-        details_name = ""
+        key = cfg.get("key") or ""
+        server = cfg.get("server") or server
+        lists = (cfg.get("TabConfig") or {}).get("Lists") or []
         for lst in lists:
+            d = lst.get("Details", "")
+            if isinstance(d, str) and d.strip() and d.strip() != "details0":
+                details_page = d.strip()
+                break
+
+    if not key or not details_page:
+        return None
+
+    # ── Step 2: Discover full list name and contest via RRPublish config ──
+    details_name = ""
+    effective_contest = contest
+    async with httpx.AsyncClient(timeout=10.0, verify=_SSL_CONTEXT) as client:
+        try:
+            resp = await client.get(
+                f"https://my2.raceresult.com/{event_id}/RRPublish/data/config"
+            )
+            resp.raise_for_status()
+            rrp = resp.json()
+        except httpx.HTTPError:
+            return None
+        for lst in rrp.get("lists") or []:
             ref = lst.get("Details") if isinstance(lst, dict) else None
             if isinstance(ref, str) and ref.strip() and ref.strip() != "details0":
                 details_name = ref.strip()
                 break
-        if not key or not details_name:
-            return None
+        # Auto-detect contest from the event's contest map when the caller
+        # left the default "0". RRPublish exposes it as e.g. {"1": "Frontyard"}.
+        if effective_contest == "0":
+            contests = rrp.get("contests") or {}
+            if contests:
+                effective_contest = str(next(iter(contests)))
+
+    if not details_name:
+        return None
+
+    # ── Step 3: Fetch the full details list with r=all ────────────────────
+    list_url = f"https://{server}/{event_id}/{details_page}/list"
+    async with httpx.AsyncClient(timeout=30.0, verify=_SSL_CONTEXT) as client:
         try:
             resp = await client.get(
-                f"{base}/{event_id}/RRPublish/data/list",
+                list_url,
                 params={
                     "key": key,
                     "listname": details_name,
-                    "page": page,
-                    "contest": contest,
+                    "page": details_page,
+                    "contest": effective_contest,
                     "r": "all",
                 },
             )
@@ -343,6 +389,7 @@ _FLAG_RE = re.compile(
 )
 _RANK_RE = re.compile(r"^\s*(-?\d+)\s*\.?\s*(.*?)\s*$")
 _LAPS_BEHIND_RE = re.compile(r"^\s*(-?\d+)\s*Runde", re.IGNORECASE)
+_OUT_PATTERN_RE = re.compile(r"dnf|dns|dq|withdrawn", re.IGNORECASE)
 _SEX_MAP = {
     "mann": "M", "male": "M", "m": "M", "herre": "M",
     "kvinne": "K", "female": "K", "f": "K", "dame": "K", "w": "K",
@@ -707,8 +754,8 @@ async def results(
             pass
 
     # Enrich each row with `perLoop` = list of `{loop, time, lapSec, totalSec}`
-    # from the hidden Details list, so the frontend can show the lap time
-    # for a specific historical loop when the user replays the race.
+    # from the Details sub-page when available. Callers may use this for
+    # per-loop analysis; it is also used by /api/jerseys independently.
     details_payload = await _fetch_details_list(resolved, "results")
     lap_times_by_bib = _parse_lap_times(details_payload)
     if lap_times_by_bib:
@@ -726,17 +773,16 @@ async def results(
     # participants marked DNF before the race starts.
     race_finished = False
     if len(rows) >= 2:
-        out_pattern = re.compile(r"dnf|dns|dq|withdrawn", re.IGNORECASE)
         out_count = sum(
-            1 for r in rows if out_pattern.search(str(r.get("status") or ""))
+            1 for r in rows if _OUT_PATTERN_RE.search(str(r.get("status") or ""))
         )
         if out_count >= len(rows) - 1:
             survivors = [
                 r for r in rows
-                if not out_pattern.search(str(r.get("status") or ""))
+                if not _OUT_PATTERN_RE.search(str(r.get("status") or ""))
             ]
             race_finished = any(
-                int(r.get("lapsCompleted") or 0) > 0 for r in survivors
+                bool(r.get("lapsCompleted")) for r in survivors
             )
 
     # Combine the RaceResult event date + start time into an ISO timestamp
@@ -757,6 +803,7 @@ async def results(
     if m_time:
         h, mi, s = m_time.groups()
         iso_time = f"{h.zfill(2)}:{mi}:{(s or '00').zfill(2)}"
+
     # Detect backyard vs frontyard early so we can pick the right default
     # start time below.
     event_mode = ""
@@ -859,17 +906,18 @@ def _compute_loop_points(
             if loop <= 0 or not isinstance(sec, (int, float)) or sec <= 0:
                 continue
             by_key.setdefault((group, loop), []).append((bib, float(sec)))
+
+    def _bib_sort_key(b: str) -> tuple[int, str]:
+        try:
+            return (int(b), b)
+        except ValueError:
+            return (10**9, b)
+
     out: dict[str, dict[int, int]] = {}
     for (group, loop), entries in by_key.items():
         # Secondary sort by bib (numeric where possible, else string) so
         # ties resolve deterministically.
-        def bib_key(b: str) -> tuple[int, str]:
-            try:
-                return (int(b), b)
-            except ValueError:
-                return (10**9, b)
-
-        entries.sort(key=lambda e: (e[1], bib_key(e[0])))
+        entries.sort(key=lambda e: (e[1], _bib_sort_key(e[0])))
         # Detect and log ties.
         seen: dict[float, list[str]] = {}
         for bib, sec in entries:
@@ -1209,7 +1257,11 @@ async def jerseys(
         # Sort laps DESC first (most laps = best position), then time ASC as
         # tie-breaker. This mirrors RaceResult's own "Gul trøye" ranking
         # (laps-first, total time second). Zero/missing laps sort last.
-        out.sort(key=lambda r: (-(r.get("lapsCompleted") or 0), int(r["totalSec"]) or 10**12, str(r["bib"])))
+        out.sort(key=lambda r: (
+            -(r.get("lapsCompleted") or 0),
+            int(r["totalSec"]) or 10**12,
+            str(r["bib"]),
+        ))
         return out
 
     yellow = parse_yellow(yellow_payload)
@@ -1238,10 +1290,9 @@ async def jerseys(
         # flattened LIVE list (same source as `raceFinished`).
         excluded_bibs: set[str] = set()
         if live_payload is not None:
-            out_pattern = re.compile(r"dnf|dns|dq|withdrawn", re.IGNORECASE)
             for r in _flatten_results(live_payload):
                 status = str(r.get("status") or "")
-                if status and out_pattern.search(status):
+                if status and _OUT_PATTERN_RE.search(status):
                     bib = str(r.get("bib") or "")
                     if bib:
                         excluded_bibs.add(bib)
@@ -1299,9 +1350,8 @@ async def jerseys(
                 if lc is not None:
                     e["lapsCompleted"] = lc
         if len(live_rows) >= 2:
-            out_pattern = re.compile(r"dnf|dns|dq|withdrawn", re.IGNORECASE)
             out_count = sum(
-                1 for r in live_rows if out_pattern.search(str(r.get("status") or ""))
+                1 for r in live_rows if _OUT_PATTERN_RE.search(str(r.get("status") or ""))
             )
             race_finished = out_count >= len(live_rows) - 1
 
@@ -1315,13 +1365,12 @@ async def jerseys(
     }
 
 
-@app.get("/", include_in_schema=False)
-async def root() -> RedirectResponse:
+@app.get("/", include_in_schema=False, response_model=None)
+async def root() -> RedirectResponse | FileResponse:
     # If the production SPA bundle is mounted (see below), serve it.
     # Otherwise fall back to the legacy API redirect (used when the
     # backend runs standalone in dev with Vite on :5173).
     if _DIST.is_dir():
-        from fastapi.responses import FileResponse
         return FileResponse(_DIST / "index.html")
     return RedirectResponse(url="/api/participants/count")
 
@@ -1336,7 +1385,6 @@ async def root() -> RedirectResponse:
 # proxying /api/* during development.
 _DIST = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
 if _DIST.is_dir():
-    from fastapi.responses import FileResponse
     from fastapi.staticfiles import StaticFiles
 
     # Hashed bundle output goes under /assets — serve it directly.

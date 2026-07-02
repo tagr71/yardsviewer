@@ -1,7 +1,11 @@
 # yardsviewer
 
-A small local web app that reads live data from a RaceResult event and
-shows it in pickable dashboards.
+A web app that reads live data from [RaceResult](https://my.raceresult.com)
+events and shows it in a set of race dashboards — Overview, Leaderboard,
+Timer and Jersey standings — for both **Backyard Ultra** and **Frontyard Ultra**
+events. The backend polls RaceResult every 10 s (or at loop boundaries
+when a start time is configured) and auto-detects event mode, start time
+and location from the event's public page.
 
 - **Backend:** Python + FastAPI + Uvicorn ([backend/app/main.py](backend/app/main.py))
 - **Frontend:** Vite + React + TypeScript ([frontend/](frontend))
@@ -34,10 +38,13 @@ The dashboard dropdown lists, in order: **Settings**, **Overview**,
   (red) and males (blue); a second row mirrors the three cells for
   runners still in competition per gender; the bottom row shows the
   current loop (teal), accumulated distance summed across completed
-  loops (green) and registered participants (neutral). When the race
-  is finished a `⏮ ◀ Loop N / max ▶ ⏭ Live` playback bar appears and
-  the still-in counters / accumulated distance follow the selected
-  loop.
+  loops (green) and registered participants (neutral). Before the
+  race starts (no completed loops yet) the still-in counters equal the
+  starting counts — RaceResult pre-populates all registered runners as
+  DNF before the race begins, so the dashboard uses DNS-only exclusion
+  instead of the usual DNF/DNS/DQ filter. When the race is finished a
+  `⏮ ◀ Loop N / max ▶ ⏭ Live` playback bar appears and the still-in
+  counters / accumulated distance follow the selected loop.
 - **Leaderboard** — sortable, 10 s-polled table:
   Total Rank, Bib, Full Name, Club, Country (flag), Gender, Laps,
   Gap, Last (lap), Fastest, Slowest, Average, Total Time,
@@ -217,8 +224,11 @@ per-loop split data is available for that sex in the yellow list:
 
 The backend sorts yellow entries by laps DESC then total time ASC,
 mirroring RaceResult's own "Gul trøye" ranking. Per-loop data is
-loaded once via `_fetch_details_list` using the list name from the
-event's RRPublish config (field `Details` on each list object).
+loaded by `_fetch_details_list`, which discovers the Details sub-page
+slug (e.g. `details1`) from the results page config, the real list
+name from the RRPublish config, and the correct contest ID from the
+RRPublish `contests` map — then fetches the full dataset with `r=all`
+from the event's server.
 
 The Jerseys overview and the Yellow detail view both display an
 **🏆 Overall winner** banner above the per-gender tables, and the
@@ -313,7 +323,9 @@ FastAPI backend on port 8000.
      "eventMode": <"backyard" | "frontyard" | "">, "rows": [...] }`.
   Each row has: `place`, `bib`, `name`, `club`, `country`, `sex`,
   `totalRank`, `lapsCompleted`, `lastLap`, `fastestLap`, `slowestLap`,
-  `averageLap`, `status`, `gap`, `lapsBehind`, `total`.
+  `averageLap`, `status`, `gap`, `lapsBehind`, `total`,
+  `perLoop?: [{ loop, time, lapSec, totalSec }]` (present when the
+  RaceResult Details list is published for the event).
 - `GET /api/jerseys?event_id=<id>` →
   `{ "eventName": <str>, "eventId": <str>, "raceFinished": <bool>,
      "green": [...], "pink": [...], "yellow": [...] }`.
@@ -342,13 +354,9 @@ FastAPI backend on port 8000.
   time) and merges in `lastLap` from the `LIVE` list (the only list
   that publishes it), keyed by BIB. Passing `listname` (suffix match,
   e.g. `LIVE`) skips the merge and uses only that list.
-- `GET /api/results/fields?event_id=<id>&listname=<suffix>` →
-  debug helper: `DataFields` array + first raw row from the selected
-  list, useful for mapping new RaceResult templates.
-- `GET /api/results/lists?event_id=<id>&page=results` →
-  debug helper: enumerates every list published on the page along with
-  each list's `DataFields` and a sample row.
-- `GET /` redirects to `/api/participants/count`.
+- `GET /` — in the production Docker build, serves the Vite SPA
+  (`index.html`). In local dev (no `frontend/dist/` present) redirects
+  to `/api/participants/count`.
 
 `event_id` falls back to `RACERESULT_EVENT_ID` from `backend/.env` when
 omitted.

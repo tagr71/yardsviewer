@@ -514,7 +514,6 @@ export function Jerseys({ eventId, eventName }: { eventId: string; eventName?: s
     };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Compute when the next loop boundary will pass so the next poll can be
@@ -1351,12 +1350,10 @@ function JerseyDetail({
 
   const womenRows = useMemo(
     () => buildRows("K"),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [entries, sexLookup, maxLoop, isYellow, loops, holders, holdersByLoop],
   );
   const menRows = useMemo(
     () => buildRows("M"),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [entries, sexLookup, maxLoop, isYellow, loops, holders, holdersByLoop],
   );
 
