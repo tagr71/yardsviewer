@@ -64,21 +64,34 @@ export function Settings({ eventId, eventName, eventLocation }: { eventId: strin
           raceFinished?: boolean;
           eventStartTime?: string;
           eventMode?: string;
+          eventLocation?: string;
         }) => {
           if (cancelled) return;
           setRaceFinished(Boolean(data.raceFinished));
           const iso = (data.eventStartTime ?? "").trim();
-          if (iso && !localStorage.getItem(startTimeEditedKey(eventId))) {
-            setStartTime(iso);
-            localStorage.setItem(startTimeKey(eventId), iso);
+          if (iso) {
+            // Always update from the server unless the user has explicitly
+            // edited the field in *this* session (startTimeEditedKey is set
+            // during onStartTimeDisplayChange and cleared here when the
+            // server provides a fresh value so stale localStorage edits from
+            // a previous session don't block auto-fill).
+            if (!sessionStorage.getItem(startTimeEditedKey(eventId))) {
+              setStartTime(iso);
+              localStorage.setItem(startTimeKey(eventId), iso);
+            }
           }
           const detected = (data.eventMode ?? "").trim();
           if (
             (detected === "backyard" || detected === "frontyard") &&
-            !localStorage.getItem(modeEditedKey(eventId))
+            !sessionStorage.getItem(modeEditedKey(eventId))
           ) {
             setMode(detected);
             localStorage.setItem(modeKey(eventId), detected);
+          }
+          const loc = (data.eventLocation ?? "").trim();
+          if (loc && !localStorage.getItem(locationKey(eventId))) {
+            setLocation(loc);
+            localStorage.setItem(locationKey(eventId), loc);
           }
         },
       )
@@ -118,15 +131,16 @@ export function Settings({ eventId, eventName, eventLocation }: { eventId: strin
     setStartTime(iso);
     if (iso) localStorage.setItem(startTimeKey(eventId), iso);
     else localStorage.removeItem(startTimeKey(eventId));
-    // Mark the field as user-edited so the auto-fill effect stops
-    // overwriting it with the RaceResult value on subsequent loads.
-    localStorage.setItem(startTimeEditedKey(eventId), "1");
+    // Mark the field as user-edited (session-scoped) so the auto-fill effect
+    // stops overwriting it with the RaceResult value during this session.
+    sessionStorage.setItem(startTimeEditedKey(eventId), "1");
   }
 
   function onModeChange(next: Mode) {
     setMode(next);
     localStorage.setItem(modeKey(eventId), next);
-    localStorage.setItem(modeEditedKey(eventId), "1");
+    // Mark mode as user-edited (session-scoped).
+    sessionStorage.setItem(modeEditedKey(eventId), "1");
   }
 
   function onFyLockChange(next: number) {
@@ -195,18 +209,15 @@ export function Settings({ eventId, eventName, eventLocation }: { eventId: strin
           width: "100%",
         }}
       >
-        <span>Race location{raceFinished && " · locked (race finished)"}</span>
+        <span>Race location{raceFinished && " · race finished"}</span>
         <input
           type="text"
           value={location}
           placeholder={eventLocation || "e.g. Trondheim"}
           onChange={onLocationChange}
-          disabled={raceFinished}
           style={{
             padding: "0.4rem 0.6rem",
             fontSize: "1rem",
-            opacity: raceFinished ? 0.5 : 1,
-            cursor: raceFinished ? "not-allowed" : "text",
           }}
         />
       </label>
@@ -219,21 +230,18 @@ export function Settings({ eventId, eventName, eventLocation }: { eventId: strin
           width: "100%",
         }}
       >
-        <span>Race start time (Oslo time){raceFinished && " · locked (race finished)"}</span>
+        <span>Race start time (Oslo time){raceFinished && " · race finished"}</span>
         <input
           type="datetime-local"
           step={1}
           lang="no-NO"
           value={startPicker}
           onChange={onStartTimeDisplayChange}
-          disabled={raceFinished}
           style={{
             padding: "0.4rem 0.6rem",
             fontSize: "1rem",
             border: "1px solid #ccc",
             borderRadius: "0.25rem",
-            opacity: raceFinished ? 0.5 : 1,
-            cursor: raceFinished ? "not-allowed" : "text",
           }}
         />
         <span style={{ fontSize: "0.85rem", color: "#666", fontFamily: "monospace" }}>
@@ -242,7 +250,6 @@ export function Settings({ eventId, eventName, eventLocation }: { eventId: strin
       </label>
 
       <fieldset
-        disabled={raceFinished}
         style={{
           border: "1px solid #ddd",
           borderRadius: "0.4rem",
@@ -250,14 +257,12 @@ export function Settings({ eventId, eventName, eventLocation }: { eventId: strin
           display: "flex",
           gap: "1rem",
           width: "100%",
-          opacity: raceFinished ? 0.5 : 1,
-          cursor: raceFinished ? "not-allowed" : "auto",
         }}
       >
         <legend style={{ padding: "0 0.4rem", color: "#555" }}>
-          Mode{raceFinished && " · locked (race finished)"}
+          Mode{raceFinished && " · race finished"}
         </legend>
-        <label style={{ display: "flex", gap: "0.4rem", cursor: raceFinished ? "not-allowed" : "pointer" }}>
+        <label style={{ display: "flex", gap: "0.4rem", cursor: "pointer" }}>
           <input
             type="radio"
             name="timer-mode"
@@ -267,7 +272,7 @@ export function Settings({ eventId, eventName, eventLocation }: { eventId: strin
           />
           Backyard
         </label>
-        <label style={{ display: "flex", gap: "0.4rem", cursor: raceFinished ? "not-allowed" : "pointer" }}>
+        <label style={{ display: "flex", gap: "0.4rem", cursor: "pointer" }}>
           <input
             type="radio"
             name="timer-mode"
@@ -370,19 +375,16 @@ export function Settings({ eventId, eventName, eventLocation }: { eventId: strin
           padding: "0.5rem 0.75rem",
           border: "1px solid #ddd",
           borderRadius: "0.4rem",
-          cursor: raceFinished ? "not-allowed" : "pointer",
-          opacity: raceFinished ? 0.5 : 1,
+          cursor: "pointer",
         }}
       >
         <input
           type="checkbox"
-          checked={beepEnabled && !raceFinished}
-          disabled={raceFinished}
+          checked={beepEnabled}
           onChange={(e) => onBeepToggle(e.target.checked)}
         />
         <span>
           Beep at 3, 2 and 1 minute remaining, and bell at loop end
-          {raceFinished && " · disabled (race finished)"}
         </span>
       </label>
 

@@ -536,6 +536,13 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
   //   completedPastLoop  = runners who finished loop N-1 (cumulative;
   //                        ≥ startingThisLoop; equals 0 when N == 1).
   const isOut = (s?: string) => /dnf|dns|dq|withdrawn/i.test(s ?? "");
+  // For loop 1, organisers sometimes pre-mark everyone DNF before the race
+  // starts (as a template placeholder). In that case DNF doesn't yet mean
+  // "eliminated" — only DNS/DQ/withdrawn should exclude a runner.
+  const isOutForLoop = (s: string | undefined, loop: number) =>
+    loop === 1
+      ? /dns|dq|withdrawn/i.test(s ?? "")
+      : isOut(s);
   let runnersStartingThisLoop: number | null = null;
   let runnersCompletedPastLoop: number | null = null;
   if (finalLaps.length > 0) {
@@ -563,7 +570,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
     runnersStartingThisLoop = inReplay
       ? finalLaps.filter((n) => n >= referenceN).length
       : finalLaps.filter(
-          (n, i) => n >= threshold && !isOut(finalStatuses[i]),
+          (n, i) => n >= threshold && !isOutForLoop(finalStatuses[i], referenceN),
         ).length;
     runnersCompletedPastLoop =
       referenceN < 2 ? 0 : finalLaps.filter((n) => n >= threshold).length;
@@ -1164,8 +1171,6 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                 label="Current loop"
                 value={beforeStart ? "—" : String(backyardCompleted + 1)}
               bg="#facc15" valueColor="black" labelColor="black" />
-              <StatCard label="Loop time-limit (min)" value="60" bg="#dc2626" valueColor="white" labelColor="white" />
-              <StatCard label="Next loop time-limit (min)" value="60" bg="#be0cfe" valueColor="white" labelColor="white" />
               <div style={{ flexBasis: "100%", height: 0 }} />
               <StatCard
                 label="Distance completed"
