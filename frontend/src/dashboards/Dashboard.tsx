@@ -577,6 +577,11 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
   }
   const startingThisLoopValue = runnersStartingThisLoop === null ? "—" : String(runnersStartingThisLoop);
   const completedPastLoopValue = runnersCompletedPastLoop === null ? "—" : String(runnersCompletedPastLoop);
+  const startingRunners = finalStatuses.filter((s) => !/dns/i.test(s)).length;
+  const startingThisLoopLabel =
+    runnersStartingThisLoop !== null && startingRunners > 0
+      ? `Runners starting this loop (${((runnersStartingThisLoop / startingRunners) * 100).toFixed(1)}%)`
+      : "Runners starting this loop";
 
   /** Length (min) of the loop after `currentLoopNumber` in frontyard, or null if none. */
   function nextFrontyardLoopMin(currentLoopNumber: number): number | null {
@@ -1199,8 +1204,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
               />
               <div style={{ flexBasis: "100%", height: 0 }} />
               <StatCard label="Runners completed past loop" value={completedPastLoopValue} valueColor="black" labelColor="black" />
-              <StatCard label="Runners starting this loop" value={startingThisLoopValue} valueColor="black" labelColor="black" />
-            </div>
+              <StatCard label={startingThisLoopLabel} value={startingThisLoopValue} valueColor="black" labelColor="black" />            </div>
           )}
 
           {mode === "frontyard" && (
@@ -1257,7 +1261,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                   <div style={{ flexBasis: "100%", height: 0 }} />
                   <JerseyCard loopNumber={1} />
                   <StatCard label="Runners completed past loop" value={completedPastLoopValue} valueColor="black" labelColor="black" />
-                  <StatCard label="Runners starting this loop" value={startingThisLoopValue} valueColor="black" labelColor="black" />
+                  <StatCard label={startingThisLoopLabel} value={startingThisLoopValue} valueColor="black" labelColor="black" />
                 </>
               ) : fy.finished ? (
                 <>
@@ -1286,7 +1290,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                   <div style={{ flexBasis: "100%", height: 0 }} />
                   <JerseyCard loopNumber={null} />
                   <StatCard label="Runners completed past loop" value={completedPastLoopValue} valueColor="black" labelColor="black" />
-                  <StatCard label="Runners starting this loop" value={startingThisLoopValue} valueColor="black" labelColor="black" />
+                  <StatCard label={startingThisLoopLabel} value={startingThisLoopValue} valueColor="black" labelColor="black" />
                 </>
               ) : (
                 <>
@@ -1336,7 +1340,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                   <div style={{ flexBasis: "100%", height: 0 }} />
                   <JerseyCard loopNumber={fy.loopNumber} />
                   <StatCard label="Runners completed past loop" value={completedPastLoopValue} valueColor="black" labelColor="black" />
-                  <StatCard label="Runners starting this loop" value={startingThisLoopValue} valueColor="black" labelColor="black" />
+                  <StatCard label={startingThisLoopLabel} value={startingThisLoopValue} valueColor="black" labelColor="black" />
                 </>
               )}
             </div>
