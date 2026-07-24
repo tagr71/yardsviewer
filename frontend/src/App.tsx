@@ -197,19 +197,29 @@ export function App() {
         flexDirection: "column",
       }}
     >
-      <form
-        onSubmit={onSubmit}
+      <div
         style={{
           padding: "0.6rem 1rem",
           background: "#fafafa",
           borderBottom: "1px solid #ddd",
           display: "flex",
           alignItems: "center",
+          justifyContent: "space-between",
           gap: "0.75rem",
-          flexWrap: "wrap",
         }}
       >
         <Logo />
+        <form
+          onSubmit={onSubmit}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.75rem",
+            flexWrap: "wrap",
+            flex: 1,
+            justifyContent: "center",
+          }}
+        >
 
         <label
           style={{ display: "flex", flexDirection: "column", gap: "0.15rem" }}
@@ -293,14 +303,13 @@ export function App() {
 
         {selection && active && (
           <span style={{ color: "#666", fontSize: "0.9rem" }}>
-            {active.title} · event {selection.eventId}
-          </span>
-        )}
+              {active.title} · event {selection.eventId}
+            </span>
+          )}
+        </form>
 
-        <div style={{ marginLeft: "auto" }}>
-          <EventLogo logoFile={PREDEFINED_EVENTS.find((e) => e.id === eventId)?.logoFile} />
-        </div>
-      </form>
+        <EventLogo logoFile={PREDEFINED_EVENTS.find((e) => e.id === eventId)?.logoFile} />
+      </div>
 
       <div
         style={{
