@@ -1,3 +1,6 @@
+# Deployment script (inneholder miljøvariabler/API-nøkler)
+deploy.ps1
+
 # Python
 __pycache__/
 *.pyc

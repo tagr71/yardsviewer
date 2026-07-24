@@ -462,6 +462,46 @@ export function useTimerSettings(eventId: string) {
     };
   }, [eventId]);
 
+  // Auto-populate start time, mode and location from the RaceResult API
+  // the first time this event is loaded (i.e. no prior user edits in
+  // localStorage / sessionStorage). This mirrors the logic in Settings.tsx
+  // so dashboards other than Settings also work on a fresh session.
+  useEffect(() => {
+    if (!eventId) return;
+    let cancelled = false;
+    fetch(`/api/results?event_id=${encodeURIComponent(eventId)}`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then(
+        (data: {
+          eventStartTime?: string;
+          eventMode?: string;
+          eventLocation?: string;
+        }) => {
+          if (cancelled) return;
+          const iso = (data.eventStartTime ?? "").trim();
+          if (iso && !sessionStorage.getItem(startTimeEditedKey(eventId))) {
+            localStorage.setItem(startTimeKey(eventId), iso);
+            setStartTime(iso);
+          }
+          const detected = (data.eventMode ?? "").trim();
+          if (
+            (detected === "backyard" || detected === "frontyard") &&
+            !sessionStorage.getItem(modeEditedKey(eventId))
+          ) {
+            localStorage.setItem(modeKey(eventId), detected);
+            setMode(detected as Mode);
+          }
+          const loc = (data.eventLocation ?? "").trim();
+          if (loc && !localStorage.getItem(locationKey(eventId))) {
+            localStorage.setItem(locationKey(eventId), loc);
+            setLocation(loc);
+          }
+        },
+      )
+      .catch(() => { /* non-fatal */ });
+    return () => { cancelled = true; };
+  }, [eventId]);
+
   return {
     startTime,
     setStartTime,

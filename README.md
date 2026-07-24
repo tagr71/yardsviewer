@@ -413,11 +413,42 @@ docker tag rotvoll:latest ghcr.io/<github-username>/rotvoll:latest
 docker push ghcr.io/<github-username>/rotvoll:latest
 ```
 
-### Deploy to a container PaaS
+### Deploy to Google Cloud Run
+
+The repository includes a [`deploy.ps1`](deploy.ps1) script and a
+[`cloudbuild.yaml`](cloudbuild.yaml) that build the image in the cloud
+(no local Docker required) and deploy it to Cloud Run.
+
+**One-time setup** (PowerShell, `gcloud` CLI required):
+
+```powershell
+gcloud auth login
+gcloud config set project <PROJECT_ID>
+gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com
+```
+
+**Deploy / redeploy:**
+
+1. Open [`deploy.ps1`](deploy.ps1) and fill in your `RACERESULT_EVENT_ID` (and
+   optionally `RACERESULT_API_KEY`).
+2. Run:
+
+```powershell
+.\deploy.ps1
+```
+
+Cloud Build compiles the Dockerfile in the cloud (~2–3 min), pushes the image
+to Artifact Registry, and deploys a new Cloud Run revision. The service URL is
+printed at the end.
+
+> `deploy.ps1` is listed in `.gitignore` so your credentials are never
+> committed to version control.
+
+### Deploy to any other container PaaS
 
 Any container-aware platform can pull the image and run it. The
 container honours `$PORT` so platforms that assign a port at runtime
-(Cloud Run, Render, Fly.io, Azure Container Apps) work without
+(Render, Fly.io, Azure Container Apps) work without
 modification. Provide configuration via environment variables:
 
 | Variable              | Purpose                                                                  |

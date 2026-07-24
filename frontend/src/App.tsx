@@ -12,11 +12,13 @@ function normalizeDashboardId(id: string | null | undefined): string | null {
 }
 
 /** Predefined races shown in the Event dropdown. Add entries here to
- * extend the list — the value is the RaceResult event ID. */
-const PREDEFINED_EVENTS: { id: string; label: string }[] = [
+ * extend the list — the value is the RaceResult event ID.
+ * `logoFile` (optional): filename inside `public/logos/` shown in the
+ * upper-right corner while that event is active. */
+const PREDEFINED_EVENTS: { id: string; label: string; logoFile?: string }[] = [
   { id: "374847", label: "Rotvollfjæra Frontyard Ultra 2026" },
   { id: "337633", label: "Hell Backyard Ultra 2026" },
-  { id: "352401", label: "Rondane Backyard Ultra 2026" },
+  { id: "352401", label: "Rondane Backyard Ultra 2026", logoFile: "RBU_logo.png" },
 ];
 const NONE_OPTION = "__none__";
 const OTHER_OPTION = "__other__";
@@ -66,6 +68,20 @@ function Logo({ style }: { style?: React.CSSProperties }) {
       src="/logo.png"
       alt="Logo"
       style={{ height: "64px", width: "auto", display: "block", ...style }}
+    />
+  );
+}
+
+/** Race-specific logo shown in the upper-right corner.
+ * Place the image in `frontend/public/logos/<filename>`.
+ * Renders nothing when `logoFile` is undefined. */
+function EventLogo({ logoFile }: { logoFile?: string }) {
+  if (!logoFile) return <div style={{ height: "64px", width: "1px" }} />;
+  return (
+    <img
+      src={`/logos/${logoFile}`}
+      alt="Event logo"
+      style={{ height: "64px", width: "auto", display: "block" }}
     />
   );
 }
@@ -276,10 +292,14 @@ export function App() {
         )}
 
         {selection && active && (
-          <span style={{ color: "#666", marginLeft: "auto", fontSize: "0.9rem" }}>
+          <span style={{ color: "#666", fontSize: "0.9rem" }}>
             {active.title} · event {selection.eventId}
           </span>
         )}
+
+        <div style={{ marginLeft: "auto" }}>
+          <EventLogo logoFile={PREDEFINED_EVENTS.find((e) => e.id === eventId)?.logoFile} />
+        </div>
       </form>
 
       <div

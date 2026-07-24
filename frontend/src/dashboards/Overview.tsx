@@ -155,6 +155,10 @@ export function Overview({ eventId }: { eventId: string }) {
   const fmt = (n: number) => (hasResults ? n.toString() : "—");
   const fmtKm = (n: number) =>
     hasResults ? n.toFixed(1) : "—";
+  const fmtPct = (part: number, total: number): string => {
+    if (!hasResults || total === 0) return "";
+    return ` (${((part / total) * 100).toFixed(1)}%)`;
+  };
 
   return (
     <section
@@ -275,9 +279,9 @@ export function Overview({ eventId }: { eventId: string }) {
             <RegisteredCell label="Starting Males (M)" value={fmt(male)} bg="#2563eb" color="white" />
           </div>
           <div style={statGridFour}>
-            <StatCard label="Still in competition" value={fmt(stillIn)} bg="#facc15" color="black" />
-            <StatCard label="Female still in" value={fmt(femaleStillIn)} bg="#dc2626" color="white" />
-            <StatCard label="Men still in" value={fmt(maleStillIn)} bg="#2563eb" color="white" />
+            <StatCard label={`Still in${fmtPct(stillIn, starting)}`} value={fmt(stillIn)} bg="#facc15" color="black" />
+            <StatCard label={`Female still in${fmtPct(femaleStillIn, female)}`} value={fmt(femaleStillIn)} bg="#dc2626" color="white" />
+            <StatCard label={`Men still in${fmtPct(maleStillIn, male)}`} value={fmt(maleStillIn)} bg="#2563eb" color="white" />
           </div>
           <div style={statGridBottom}>
             <StatCard label="Current loop" value={fmt(currentLoop)} bg="#0f766e" color="white" />

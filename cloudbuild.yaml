@@ -1,0 +1,28 @@
+steps:
+  # Konfigurer Docker-autentisering mot Artifact Registry
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - auth
+      - configure-docker
+      - europe-north1-docker.pkg.dev
+
+  # Bygg Docker-imagen
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - -t
+      - europe-north1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/yardsviewer:latest
+      - .
+
+  # Push til Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - push
+      - europe-north1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/yardsviewer:latest
+
+images:
+  - europe-north1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/yardsviewer:latest
+
+options:
+  logging: CLOUD_LOGGING_ONLY
