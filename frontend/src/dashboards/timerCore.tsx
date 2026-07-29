@@ -357,10 +357,9 @@ export function useNowTick(): Date {
   useEffect(() => {
     let cancelled = false;
     let timeoutId: number | null = null;
+
     const schedule = () => {
       if (cancelled) return;
-      // Time until the next wall-clock second boundary (with a tiny
-      // 5 ms cushion so we land *just after* the rollover, not before).
       const ms = 1000 - (Date.now() % 1000) + 5;
       timeoutId = window.setTimeout(() => {
         if (cancelled) return;
@@ -369,9 +368,17 @@ export function useNowTick(): Date {
       }, ms);
     };
     schedule();
+
+    // Backup interval: if the chained setTimeout chain breaks (e.g. browser
+    // throttles timers in background tabs), this keeps the clock alive.
+    const intervalId = window.setInterval(() => {
+      if (!cancelled) setNow(new Date());
+    }, 1000);
+
     return () => {
       cancelled = true;
       if (timeoutId !== null) window.clearTimeout(timeoutId);
+      window.clearInterval(intervalId);
     };
   }, []);
   return now;

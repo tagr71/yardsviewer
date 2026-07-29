@@ -206,6 +206,9 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
 
   const backyardCompleted = beforeStart ? 0 : loopsCompleted;
   const backyardDistance = backyardCompleted * BACKYARD_LOOP_KM;
+  const currentLoopKm = beforeStart
+    ? 0
+    : (backyardCompleted + 1) * BACKYARD_LOOP_KM;
   const frontyardCompleted = beforeStart ? 0 : fy.loopsCompleted;
   const frontyardDistance = frontyardCompleted * FRONTYARD_LOOP_KM;
 
@@ -535,14 +538,6 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
   //   startingThisLoop   = runners actively in loop N (subset of below)
   //   completedPastLoop  = runners who finished loop N-1 (cumulative;
   //                        ≥ startingThisLoop; equals 0 when N == 1).
-  const isOut = (s?: string) => /dnf|dns|dq|withdrawn/i.test(s ?? "");
-  // For loop 1, organisers sometimes pre-mark everyone DNF before the race
-  // starts (as a template placeholder). In that case DNF doesn't yet mean
-  // "eliminated" — only DNS/DQ/withdrawn should exclude a runner.
-  const isOutForLoop = (s: string | undefined, loop: number) =>
-    loop === 1
-      ? /dns|dq|withdrawn/i.test(s ?? "")
-      : isOut(s);
   let runnersStartingThisLoop: number | null = null;
   let runnersCompletedPastLoop: number | null = null;
   if (finalLaps.length > 0) {
@@ -563,25 +558,38 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
     // `threshold`-laps-completed predicate; the "starting" counter
     // additionally requires the runner to be active (still going).
     //
-    //   * LIVE: "active" = current leaderboard status is not DNF/DQ/withdrawn.
-    //   * REPLAY: "active at loop N" ≡ final lap count reached N
-    //     (i.e. they later completed loop N). Final DNF/DQ labels can't
-    //     tell us when a runner stopped, so we use lap count instead.
-    runnersStartingThisLoop = inReplay
-      ? finalLaps.filter((n) => n >= referenceN).length
-      : finalLaps.filter(
-          (n, i) => n >= threshold && !isOutForLoop(finalStatuses[i], referenceN),
-        ).length;
+    //   Both live and replay: count runners who completed loop N
+    //   (lapsCompleted >= referenceN). In live mode this grows from 0
+    //   as runners finish the loop; in replay it shows the final count.
+    runnersStartingThisLoop = finalLaps.filter(
+      (n, i) => n >= referenceN && !/dns/i.test(finalStatuses[i] ?? ""),
+    ).length;
     runnersCompletedPastLoop =
-      referenceN < 2 ? 0 : finalLaps.filter((n) => n >= threshold).length;
+      referenceN < 2
+        ? 0
+        : finalLaps.filter((n, i) => n >= threshold && !/dns/i.test(finalStatuses[i] ?? "")).length;
   }
-  const startingThisLoopValue = runnersStartingThisLoop === null ? "—" : String(runnersStartingThisLoop);
   const completedPastLoopValue = runnersCompletedPastLoop === null ? "—" : String(runnersCompletedPastLoop);
+
+  // Runners who started this loop but haven't finished it yet.
+  const notFinished =
+    runnersStartingThisLoop !== null && runnersCompletedPastLoop !== null
+      ? Math.max(0, runnersCompletedPastLoop - runnersStartingThisLoop)
+      : null;
+  const notFinishedValue = notFinished === null ? "—" : String(notFinished);
+
+  // Starting runners (excluding DNS) — denominator for completed-past-loop %.
   const startingRunners = finalStatuses.filter((s) => !/dns/i.test(s)).length;
+
+  const completedPastLoopLabel =
+    runnersCompletedPastLoop !== null && startingRunners > 0
+      ? `Runners completed past loop (${((runnersCompletedPastLoop / startingRunners) * 100).toFixed(1)}%)`
+      : "Runners completed past loop";
+
   const startingThisLoopLabel =
-    runnersStartingThisLoop !== null && startingRunners > 0
-      ? `Runners starting this loop (${((runnersStartingThisLoop / startingRunners) * 100).toFixed(1)}%)`
-      : "Runners starting this loop";
+    notFinished !== null && runnersCompletedPastLoop !== null && runnersCompletedPastLoop > 0
+      ? `Runners started, not finished (${((notFinished / runnersCompletedPastLoop) * 100).toFixed(1)}%)`
+      : "Runners started, not finished";
 
   /** Length (min) of the loop after `currentLoopNumber` in frontyard, or null if none. */
   function nextFrontyardLoopMin(currentLoopNumber: number): number | null {
@@ -1151,6 +1159,15 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
               >
                 {signedDays !== 0 && <span>days = {signedDays}</span>}
                 <span>{hms}</span>
+                <span style={{ fontSize: "3.5rem", color: "#888", fontWeight: 600 }}>
+                  {now.toLocaleTimeString("no-NO", {
+                    timeZone: "Europe/Oslo",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                    hour12: false,
+                  })}
+                </span>
               </div>
             );
           })()}
@@ -1180,17 +1197,11 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
               <StatCard
                 label="Distance completed"
                 value={formatKm(backyardDistance)}
-              valueColor="black" labelColor="black" />
-              {(() => {
-                const r = requiredPace(60, BACKYARD_LOOP_KM);
-                return (
-                  <StatCard
-                    label="Speed min:sec per km"
-                    value={`${r.pace}`}
-                    sub={`(${r.kmh} km/t)`}
-                  bg="#111111" valueColor="white" labelColor="white" />
-                );
-              })()}
+              bg="#117a3a" valueColor="white" labelColor="white" />
+              <StatCard
+                label="Distance this loop"
+                value={beforeStart ? "—" : `${currentLoopKm.toFixed(1)} km`}
+              bg="#facc15" valueColor="black" labelColor="black" />
               <StatCard
                 label={
                   beforeStart
@@ -1203,8 +1214,8 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                 labelColor="black"
               />
               <div style={{ flexBasis: "100%", height: 0 }} />
-              <StatCard label="Runners completed past loop" value={completedPastLoopValue} valueColor="black" labelColor="black" />
-              <StatCard label={startingThisLoopLabel} value={startingThisLoopValue} valueColor="black" labelColor="black" />            </div>
+              <StatCard label={completedPastLoopLabel} value={completedPastLoopValue} valueColor="black" labelColor="black" />
+              <StatCard label={startingThisLoopLabel} value={notFinishedValue} valueColor="black" labelColor="black" />            </div>
           )}
 
           {mode === "frontyard" && (
@@ -1260,8 +1271,8 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                   />
                   <div style={{ flexBasis: "100%", height: 0 }} />
                   <JerseyCard loopNumber={1} />
-                  <StatCard label="Runners completed past loop" value={completedPastLoopValue} valueColor="black" labelColor="black" />
-                  <StatCard label={startingThisLoopLabel} value={startingThisLoopValue} valueColor="black" labelColor="black" />
+                  <StatCard label={completedPastLoopLabel} value={completedPastLoopValue} valueColor="black" labelColor="black" />
+                  <StatCard label={startingThisLoopLabel} value={notFinishedValue} valueColor="black" labelColor="black" />
                 </>
               ) : fy.finished ? (
                 <>
@@ -1289,8 +1300,8 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                   />
                   <div style={{ flexBasis: "100%", height: 0 }} />
                   <JerseyCard loopNumber={null} />
-                  <StatCard label="Runners completed past loop" value={completedPastLoopValue} valueColor="black" labelColor="black" />
-                  <StatCard label={startingThisLoopLabel} value={startingThisLoopValue} valueColor="black" labelColor="black" />
+                  <StatCard label={completedPastLoopLabel} value={completedPastLoopValue} valueColor="black" labelColor="black" />
+                  <StatCard label={startingThisLoopLabel} value={notFinishedValue} valueColor="black" labelColor="black" />
                 </>
               ) : (
                 <>
@@ -1339,8 +1350,8 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                   />
                   <div style={{ flexBasis: "100%", height: 0 }} />
                   <JerseyCard loopNumber={fy.loopNumber} />
-                  <StatCard label="Runners completed past loop" value={completedPastLoopValue} valueColor="black" labelColor="black" />
-                  <StatCard label={startingThisLoopLabel} value={startingThisLoopValue} valueColor="black" labelColor="black" />
+                  <StatCard label={completedPastLoopLabel} value={completedPastLoopValue} valueColor="black" labelColor="black" />
+                  <StatCard label={startingThisLoopLabel} value={notFinishedValue} valueColor="black" labelColor="black" />
                 </>
               )}
             </div>
