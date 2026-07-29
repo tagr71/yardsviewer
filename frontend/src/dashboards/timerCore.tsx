@@ -357,10 +357,9 @@ export function useNowTick(): Date {
   useEffect(() => {
     let cancelled = false;
     let timeoutId: number | null = null;
+
     const schedule = () => {
       if (cancelled) return;
-      // Time until the next wall-clock second boundary (with a tiny
-      // 5 ms cushion so we land *just after* the rollover, not before).
       const ms = 1000 - (Date.now() % 1000) + 5;
       timeoutId = window.setTimeout(() => {
         if (cancelled) return;
@@ -369,9 +368,17 @@ export function useNowTick(): Date {
       }, ms);
     };
     schedule();
+
+    // Backup interval: if the chained setTimeout chain breaks (e.g. browser
+    // throttles timers in background tabs), this keeps the clock alive.
+    const intervalId = window.setInterval(() => {
+      if (!cancelled) setNow(new Date());
+    }, 1000);
+
     return () => {
       cancelled = true;
       if (timeoutId !== null) window.clearTimeout(timeoutId);
+      window.clearInterval(intervalId);
     };
   }, []);
   return now;
@@ -460,6 +467,46 @@ export function useTimerSettings(eventId: string) {
       window.removeEventListener("storage", onStorage);
       window.clearInterval(id);
     };
+  }, [eventId]);
+
+  // Auto-populate start time, mode and location from the RaceResult API
+  // the first time this event is loaded (i.e. no prior user edits in
+  // localStorage / sessionStorage). This mirrors the logic in Settings.tsx
+  // so dashboards other than Settings also work on a fresh session.
+  useEffect(() => {
+    if (!eventId) return;
+    let cancelled = false;
+    fetch(`/api/results?event_id=${encodeURIComponent(eventId)}`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then(
+        (data: {
+          eventStartTime?: string;
+          eventMode?: string;
+          eventLocation?: string;
+        }) => {
+          if (cancelled) return;
+          const iso = (data.eventStartTime ?? "").trim();
+          if (iso && !sessionStorage.getItem(startTimeEditedKey(eventId))) {
+            localStorage.setItem(startTimeKey(eventId), iso);
+            setStartTime(iso);
+          }
+          const detected = (data.eventMode ?? "").trim();
+          if (
+            (detected === "backyard" || detected === "frontyard") &&
+            !sessionStorage.getItem(modeEditedKey(eventId))
+          ) {
+            localStorage.setItem(modeKey(eventId), detected);
+            setMode(detected as Mode);
+          }
+          const loc = (data.eventLocation ?? "").trim();
+          if (loc && !localStorage.getItem(locationKey(eventId))) {
+            localStorage.setItem(locationKey(eventId), loc);
+            setLocation(loc);
+          }
+        },
+      )
+      .catch(() => { /* non-fatal */ });
+    return () => { cancelled = true; };
   }, [eventId]);
 
   return {

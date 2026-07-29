@@ -11,6 +11,16 @@ and location from the event's public page.
 - **Frontend:** Vite + React + TypeScript ([frontend/](frontend))
 - Python project managed by [uv](https://docs.astral.sh/uv/) via [pyproject.toml](pyproject.toml)
 
+## Logos
+
+The navigation bar shows two logos:
+
+- **Upper-left** — club/organiser logo. Replace `frontend/public/logo.png` to change it.
+- **Upper-right** — event-specific logo. Place the image in
+  `frontend/public/logos/<filename>` and set `logoFile` on the matching entry
+  in `PREDEFINED_EVENTS` in [App.tsx](frontend/src/App.tsx). Empty by default
+  for events without a configured logo.
+
 ## Event selection
 
 On load the **Event** dropdown shows a "Select an event…" placeholder —
@@ -36,15 +46,16 @@ The dashboard dropdown lists, in order: **Settings**, **Overview**,
 - **Overview** — live participant counters with auto-refresh.
   Colour-coded cells for starting runners (yellow), starting females
   (red) and males (blue); a second row mirrors the three cells for
-  runners still in competition per gender; the bottom row shows the
-  current loop (teal), accumulated distance summed across completed
-  loops (green) and registered participants (neutral). Before the
-  race starts (no completed loops yet) the still-in counters equal the
-  starting counts — RaceResult pre-populates all registered runners as
-  DNF before the race begins, so the dashboard uses DNS-only exclusion
-  instead of the usual DNF/DNS/DQ filter. When the race is finished a
-  `⏮ ◀ Loop N / max ▶ ⏭ Live` playback bar appears and the still-in
-  counters / accumulated distance follow the selected loop.
+  runners still in competition per gender — each cell's label includes
+  the percentage still in (e.g. `Still in (75.6%)`); the bottom row
+  shows the current loop (teal), accumulated distance summed across
+  completed loops (green) and registered participants (neutral). Before
+  the race starts (no completed loops yet) the still-in counters equal
+  the starting counts — RaceResult pre-populates all registered runners
+  as DNF before the race begins, so the dashboard uses DNS-only
+  exclusion instead of the usual DNF/DNS/DQ filter. When the race is
+  finished a `⏮ ◀ Loop N / max ▶ ⏭ Live` playback bar appears and
+  the still-in counters / accumulated distance follow the selected loop.
 - **Leaderboard** — sortable, 10 s-polled table:
   Total Rank, Bib, Full Name, Club, Country (flag), Gender, Laps,
   Gap, Last (lap), Fastest, Slowest, Average, Total Time,
@@ -72,43 +83,53 @@ The dashboard dropdown lists, in order: **Settings**, **Overview**,
   fallback. Settings are always editable regardless of race status.
   On every fresh page load (new browser session) the start time, mode
   and location are auto-populated from RaceResult metadata when not
-  already set: the date comes from the landing page (JSON-LD
-  `startDate` or plain text `DD/MM/YYYY`); the mode is inferred from
-  the event name (`frontyard` / `backyard` substring); the location
-  is taken from the event config. When no explicit start time is
-  published, the default is **09:00** for backyard events and
-  **10:00** for frontyard. The "user-edited" guard uses
+  already set. This auto-population runs on **all dashboards** (not
+  just Settings), so the race clock works correctly on a fresh device
+  without requiring the user to visit Settings first. The date comes
+  from the landing page (JSON-LD `startDate` or plain text
+  `DD/MM/YYYY`); the mode is inferred from the event name (`frontyard`
+  / `backyard` substring); the location is taken from the event config.
+  When no explicit start time is published, the default is **09:00**
+  for backyard events and **10:00** for frontyard. The "user-edited" guard uses
   `sessionStorage`, so the server value wins on every page reload but
   manual edits are preserved within the session. When the results
   list is not yet published (e.g. a future event) the endpoint falls
   back to the participants list to recover the event date and
   location.
 - **Dashboard (race timer)** — live race clock (`dd.hh.mm.ss`,
-  ticked every wall-clock second via a self-correcting `setTimeout`)
-  plus per-loop stat cards: *Loops completed* (green), *Current
-  loop* (yellow), *Loop time-limit* (red), *Next loop time-limit*
-  (purple), *Speed min:sec per km* (black). In frontyard mode the
-  top of the view also shows three **jersey holder** cards — one per
-  colour, with the matching jersey image, top 3 Women + top 3 Men
-  after the last completed loop. The current holder row in each
-  gender section is highlighted: the rank number is replaced by the
-  jersey image (`/rosa.png`, `/grønn.png`, `/gul.png`), the text is
-  bolder, and the row sits inside a jersey-coloured border. Each
-  holder's name is followed by a count pill showing how many loops
+  ticked every wall-clock second) alongside the current Oslo
+  wall-clock time (`hh:mm:ss`). Per-loop stat cards depend on mode:
+
+  **Backyard mode** — *Loops completed* (green), *Current loop*
+  (yellow), *Distance completed* (green, accumulated km across all
+  completed loops), *Distance this loop* (yellow, target distance
+  when the current loop ends), *Remaining min:sec of loop* (colour
+  turns yellow at 6 min, red at 3 min). Two runner counters:
+  *Runners completed past loop (X%)* — historical count of runners
+  who finished loop N−1, percentage of all starting runners;
+  *Runners started, not finished (X%)* — runners who started loop N
+  but have not yet completed it, percentage of those who started.
+
+  **Frontyard mode** — same clock plus jersey holder cards (one per
+  colour, top 3 Women + top 3 Men). *Speed min:sec per km* card shows
+  required pace for the current loop length. Same two runner counters
+  as backyard.
+
+  In frontyard mode the top of the view also shows three **jersey
+  holder** cards — one per colour, with the matching jersey image, top
+  3 Women + top 3 Men after the last completed loop. The current holder
+  row in each gender section is highlighted: the rank number is
+  replaced by the jersey image (`/rosa.png`, `/grønn.png`, `/gul.png`),
+  the text is bolder, and the row sits inside a jersey-coloured border.
+  Each holder's name is followed by a count pill showing how many loops
   they have worn that jersey. The gender sub-header carries the
   same `~ LIKELY` / `✓ DECIDED` / `★ FINISHED` status pill used in
   the Leaderboard. The yellow card surfaces an **🏆 Overall winner**
   footer with the single fastest finisher (sex-independent) on the
   highest loop completed within the time limit, shown once the race
-  is decided. The
-  standings are driven by the live race clock so the cards advance
-  the moment the timer ticks past a loop boundary — independent of
-  `/api/jerseys` poll freshness. Each section also surfaces two
-  per-loop counters: *Runners completed past loop* (cumulative count
-  who finished loop N − 1) and *Runners starting this loop* (subset
-  that actually went out for loop N; live = non-DNS/DQ for loop 1 so
-  pre-race DNF placeholders don't distort the count, non-DNF/DQ for
-  loop 2+; replay = `finalLaps ≥ N`).
+  is decided. The standings are driven by the live race clock so the
+  cards advance the moment the timer ticks past a loop boundary —
+  independent of `/api/jerseys` poll freshness.
 
   Two modes:
   - **Backyard** — fixed 60-minute loops; a `mm:ss` counter counts
@@ -413,11 +434,42 @@ docker tag rotvoll:latest ghcr.io/<github-username>/rotvoll:latest
 docker push ghcr.io/<github-username>/rotvoll:latest
 ```
 
-### Deploy to a container PaaS
+### Deploy to Google Cloud Run
+
+The repository includes a [`deploy.ps1`](deploy.ps1) script and a
+[`cloudbuild.yaml`](cloudbuild.yaml) that build the image in the cloud
+(no local Docker required) and deploy it to Cloud Run.
+
+**One-time setup** (PowerShell, `gcloud` CLI required):
+
+```powershell
+gcloud auth login
+gcloud config set project <PROJECT_ID>
+gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com
+```
+
+**Deploy / redeploy:**
+
+1. Open [`deploy.ps1`](deploy.ps1) and fill in your `RACERESULT_EVENT_ID` (and
+   optionally `RACERESULT_API_KEY`).
+2. Run:
+
+```powershell
+.\deploy.ps1
+```
+
+Cloud Build compiles the Dockerfile in the cloud (~2–3 min), pushes the image
+to Artifact Registry, and deploys a new Cloud Run revision. The service URL is
+printed at the end.
+
+> `deploy.ps1` is listed in `.gitignore` so your credentials are never
+> committed to version control.
+
+### Deploy to any other container PaaS
 
 Any container-aware platform can pull the image and run it. The
 container honours `$PORT` so platforms that assign a port at runtime
-(Cloud Run, Render, Fly.io, Azure Container Apps) work without
+(Render, Fly.io, Azure Container Apps) work without
 modification. Provide configuration via environment variables:
 
 | Variable              | Purpose                                                                  |
