@@ -65,8 +65,9 @@ a { color: var(--link); }
 .top15-results h2 { margin: 0 0 0.25rem; font-size: 0.875rem; text-align: left; }
 .leaderboard-results { width: 100%; }
 .top15-plot { display: grid; grid-template-columns: minmax(0,1fr) minmax(280px,32%); width: 100%; height: 420px; gap: 12px; }
-.plot-canvas { min-width: 0; height: 100%; overflow-x: auto; }
-.plot-inner { height: 100%; min-width: 600px; }
+.plot-canvas { min-width: 0; height: 100%; overflow-x: auto; overflow-y: hidden; }
+.plot-inner { position: relative; width: 100%; height: 100%; min-width: 600px; }
+.plot-inner > .recharts-responsive-container { position: absolute; inset: 0; overflow: hidden; }
 .plot-name-tag { height: 18px; padding: 0 4px; border-radius: 2px; font-size: 12px; line-height: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; }
 .plot-legend { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; list-style: none; margin: 0; padding: 0; font-size: 0.8125rem; line-height: 16px; align-self: start; }
 .plot-legend li { display: flex; align-items: flex-start; gap: 6px; min-height: 24px; }

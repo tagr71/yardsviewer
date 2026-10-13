@@ -22,9 +22,17 @@ describe("display preferences", () => {
     expect(initialTheme()).toBe(raw === '"night"' ? "night" : "day");
     expect(window.localStorage.getItem).toHaveBeenCalledWith(THEME_KEY);
   });
-  it("defaults participant and top-15 controls to On", () => {
+  it("defaults participant info and the Leaderboard plot to On", () => {
     vi.stubGlobal("window", { localStorage: { getItem: () => null } });
     expect(readPreference("view", true, (value): value is boolean => typeof value === "boolean")).toBe(true);
+  });
+  it.each([null, "invalid", '"true"'])("defaults Dashboard top-15 to Off for %s", (raw) => {
+    vi.stubGlobal("window", { localStorage: { getItem: () => raw } });
+    expect(readPreference("raceresult.dashboard.showTop15", false, (value): value is boolean => typeof value === "boolean")).toBe(false);
+  });
+  it("preserves a saved Dashboard top-15 On choice", () => {
+    vi.stubGlobal("window", { localStorage: { getItem: () => "true" } });
+    expect(readPreference("raceresult.dashboard.showTop15", false, (value): value is boolean => typeof value === "boolean")).toBe(true);
   });
   it("restores an explicit Off", () => {
     vi.stubGlobal("window", { localStorage: { getItem: () => "false" } });

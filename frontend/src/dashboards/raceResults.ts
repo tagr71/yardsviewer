@@ -156,6 +156,15 @@ export function plotLineLabels(runners: ResultRow[], loop: number): { bib: strin
   }).sort((first, second) => second.seconds - first.seconds || first.bib.localeCompare(second.bib, undefined, { numeric: true }));
 }
 
+export function plotSignature(runners: ResultRow[], loop: number): string {
+  return JSON.stringify({
+    loop,
+    runners: runners.map(({ bib, name }) => [bib, name]),
+    data: plotData(runners, loop),
+    labels: plotLineLabels(runners, loop),
+  });
+}
+
 export function contrastText(color: string): string {
   const components = [1, 3, 5].map((offset) => {
     const channel = parseInt(color.slice(offset, offset + 2), 16) / 255;

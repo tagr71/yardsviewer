@@ -82,8 +82,8 @@ export function useTheme() {
   return [settings.theme, settings.setManualTheme] as const;
 }
 
-export function useDisplayPreference(name: string) {
-  return usePreference(`raceresult.${name}`, true, isBoolean);
+export function useDisplayPreference(name: string, fallback = true) {
+  return usePreference(`raceresult.${name}`, fallback, isBoolean);
 }
 
 export function DisplayToggle({ label, checked, onChange }: {

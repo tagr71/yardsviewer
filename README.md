@@ -21,6 +21,9 @@ The navigation bar shows two logos:
   `frontend/public/logos/<filename>` and set `logoFile` on the matching entry
   in `PREDEFINED_EVENTS` in [App.tsx](frontend/src/App.tsx). Empty by default
   for events without a configured logo.
+  The World Team Championship event (`423509`) uses the uploaded Backyard
+  Ultra Norway logo with flags. Its optional `logoBackground` is white so
+  the transparent black lettering stays readable in night mode.
 
 ## Event selection
 
@@ -34,6 +37,7 @@ link restores its event from the URL instead. Predefined events:
 | Hell Backyard Ultra 2026 | 337633 |
 | Rondane Backyard Ultra 2026 | 352401 |
 | Muruvik Backyard Ultra 2026 | 361312 |
+| Backyard Ultra Norway - World Team Championship 2026 | 423509 |
 
 Selecting a predefined event immediately opens the selected dashboard;
 **Settings** is the initial dashboard choice.
@@ -54,15 +58,17 @@ manual default. Returning to manual mode restores the saved manual choice.
 Both settings persist across navigation, event changes and reloads, and
 synchronize between tabs.
 
-Three independent display switches default to **On** and remember their
-settings across events:
+Three independent display switches remember their settings across events.
+Participant information and the Leaderboard plot default to **On**;
+Dashboard top-15 results default to **Off**. Explicit saved choices are
+preserved:
 
 - **Overview: Show participant info** controls the starting and remaining
   detailed counts, female/male breakdowns and registered count. Turning it
   off keeps the total **Still in**, current loop, accumulated distance and
   replay controls visible.
-- **Dashboard: Show top-15** adds a compact results table beneath the timer:
-  bib, name, last/fastest/average lap and accumulated time. Enabling it
+- **Dashboard: Show top-15** (default Off) adds a compact results table beneath
+  the timer: bib, name, last/fastest/average lap and accumulated time. Enabling it
   compacts timer and jersey panels; disabling it restores their spacious
   layout.
 - **Leaderboard: Show top-15 plot** displays each selected runner's lap time
@@ -669,7 +675,7 @@ in `localStorage` and validated before use:
 | `raceresult.themeAutomatic` | `true` | Use the Europe/Oslo day/night schedule |
 | `raceresult.theme` | `"day"` | Saved manual theme: `"day"` or `"night"` |
 | `raceresult.overview.showParticipantInfo` | `true` | Show detailed participant counts |
-| `raceresult.dashboard.showTop15` | `true` | Show compact top-15 results |
+| `raceresult.dashboard.showTop15` | `false` | Show compact top-15 results |
 | `raceresult.leaderboard.showTop15Plot` | `true` | Show the bottom lap-time plot |
 
 Updates notify same-tab consumers through `raceresult.preferenceChanged`
@@ -691,6 +697,10 @@ The chart assigns stable colors by bib. Lines, name tags and legend
 swatches share one appearance definition, and name tags connect to the
 last available split at or before the snapshot. Preserve the reserved
 label lane and local horizontal scrolling on small screens.
+Unchanged polling responses do not redraw the plot; corrected splits,
+runner/name/order changes, replay position and theme changes still update
+it. Keep the SVG out of the chart sizing box's layout flow to prevent
+rounded dimensions and scrollbars from triggering resize feedback.
 
 ### Validation
 

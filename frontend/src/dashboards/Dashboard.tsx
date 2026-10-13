@@ -33,7 +33,7 @@ import { DisplayToggle, useDisplayPreference } from "../theme";
 import { resultSnapshot, resultsPollDelay, selectTop15, type ResultRow, type ResultsResponse } from "./raceResults";
 
 export function Dashboard({ eventId, eventName, eventLocation }: { eventId: string; eventName?: string; eventLocation?: string }) {
-  const [showTop15, setShowTop15] = useDisplayPreference("dashboard.showTop15");
+  const [showTop15, setShowTop15] = useDisplayPreference("dashboard.showTop15", false);
   const now = useNowTick();
   const { startTime, mode, fyLock, fyMax, beepEnabled, location,
     jerseyPink, jerseyGreen, jerseyYellow } = useTimerSettings(eventId);

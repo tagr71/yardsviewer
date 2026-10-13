@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { clockCompletedLoops, contrastText, lapSeconds, lineDash, plotData, plotLineLabels, remainingRunner, resultSnapshot, resultsPollDelay, runnerColors, selectTop15, type ResultRow } from "../raceResults";
+import { clockCompletedLoops, contrastText, lapSeconds, lineDash, plotData, plotLineLabels, plotSignature, remainingRunner, resultSnapshot, resultsPollDelay, runnerColors, selectTop15, type ResultRow } from "../raceResults";
 
 function runner(bib: number, changes: Partial<ResultRow> = {}): ResultRow {
   return { place: bib, bib: String(bib), name: `Runner ${bib}`, club: "", country: "NOR", sex: "M",
@@ -11,6 +11,29 @@ function runner(bib: number, changes: Partial<ResultRow> = {}): ResultRow {
 const live = { loop: 2, replay: false, finished: false };
 
 describe("top-15 snapshots", () => {
+  it("keeps the plot signature stable across unchanged polls and unrelated metadata changes", () => {
+    const original = runner(1);
+    const refreshed = runner(1, { club: "Updated club", totalRank: 2, status: "DNF", totalSec: 2400 });
+    expect(plotSignature([refreshed], 2)).toBe(plotSignature([original], 2));
+  });
+  it("updates the plot signature for corrected splits", () => {
+    const corrected = runner(1, { perLoop: [{ loop: 1, time: "18:00", lapSec: 1080 }] });
+    expect(plotSignature([corrected], 2)).not.toBe(plotSignature([runner(1)], 2));
+  });
+  it("updates the plot signature for names, membership, order and selected loop", () => {
+    const original = [runner(1), runner(2)];
+    const signature = plotSignature(original, 2);
+    expect(plotSignature([runner(1, { name: "Updated name" }), runner(2)], 2)).not.toBe(signature);
+    expect(plotSignature([runner(1)], 2)).not.toBe(signature);
+    expect(plotSignature([...original].reverse(), 2)).not.toBe(signature);
+    expect(plotSignature(original, 1)).not.toBe(signature);
+  });
+  it("ignores future splits in the plot signature until their loop is selected", () => {
+    const original = runner(1);
+    const future = runner(1, { perLoop: [...original.perLoop!, { loop: 3, time: "21:00", lapSec: 1260 }] });
+    expect(plotSignature([future], 2)).toBe(plotSignature([original], 2));
+    expect(plotSignature([future], 3)).not.toBe(plotSignature([original], 3));
+  });
   it("shares dash patterns between traces, connectors and legend", () => {
     expect([0, 4, 5, 9, 10, 14].map(lineDash)).toEqual([undefined, undefined, "6 3", "6 3", "2 3", "2 3"]);
   });

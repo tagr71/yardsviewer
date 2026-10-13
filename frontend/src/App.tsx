@@ -16,11 +16,22 @@ function normalizeDashboardId(id: string | null | undefined): string | null {
  * extend the list — the value is the RaceResult event ID.
  * `logoFile` (optional): filename inside `public/logos/` shown in the
  * upper-right corner while that event is active. */
-const PREDEFINED_EVENTS: { id: string; label: string; logoFile?: string }[] = [
+const PREDEFINED_EVENTS: {
+  id: string;
+  label: string;
+  logoFile?: string;
+  logoBackground?: string;
+}[] = [
   { id: "374847", label: "Rotvollfjæra Frontyard Ultra 2026" },
   { id: "337633", label: "Hell Backyard Ultra 2026" },
   { id: "352401", label: "Rondane Backyard Ultra 2026", logoFile: "RBU_logo.png" },
-  { id: "361312", label: "Muruvik Backyard Ultra 2026"},
+  { id: "361312", label: "Muruvik Backyard Ultra 2026" },
+  {
+    id: "423509",
+    label: "Backyard Ultra Norway - World Team Championship 2026",
+    logoFile: "FINAL Logo Backyard Ultra Norway - Black with Flag.png",
+    logoBackground: "#ffffff",
+  },
 ];
 const NONE_OPTION = "__none__";
 const OTHER_OPTION = "__other__";
@@ -77,13 +88,16 @@ function Logo({ style }: { style?: React.CSSProperties }) {
 /** Race-specific logo shown in the upper-right corner.
  * Place the image in `frontend/public/logos/<filename>`.
  * Renders nothing when `logoFile` is undefined. */
-function EventLogo({ logoFile }: { logoFile?: string }) {
+function EventLogo({ logoFile, logoBackground }: {
+  logoFile?: string;
+  logoBackground?: string;
+}) {
   if (!logoFile) return <div style={{ height: "64px", width: "1px" }} />;
   return (
     <img
       src={`/logos/${logoFile}`}
       alt="Event logo"
-      style={{ height: "64px", width: "auto", display: "block" }}
+      style={{ height: "64px", width: "auto", display: "block", background: logoBackground }}
     />
   );
 }
@@ -170,8 +184,8 @@ export function App() {
   }, []);
 
   // Filter the Dashboard dropdown: Jerseys is frontyard-only.
-  const currentLabel =
-    PREDEFINED_EVENTS.find((e) => e.id === eventId)?.label ?? "";
+  const selectedEvent = PREDEFINED_EVENTS.find((event) => event.id === eventId);
+  const currentLabel = selectedEvent?.label ?? "";
   const visibleDashboards = useMemo(
     () =>
       isBackyardEvent(eventId, currentLabel)
@@ -318,7 +332,7 @@ export function App() {
           <DisplayToggle label="Automatic day/night" checked={automatic} onChange={setAutomatic} />
           {!automatic && <DisplayToggle label="Night mode" checked={manualTheme === "night"} onChange={(night) => setManualTheme(night ? "night" : "day")} />}
         </div>
-        <EventLogo logoFile={PREDEFINED_EVENTS.find((e) => e.id === eventId)?.logoFile} />
+        <EventLogo logoFile={selectedEvent?.logoFile} logoBackground={selectedEvent?.logoBackground} />
       </div>
 
       <div

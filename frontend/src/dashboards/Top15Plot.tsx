@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { CartesianGrid, LabelList, Line, LineChart, ResponsiveContainer, Tooltip, usePlotArea, XAxis, YAxis } from "recharts";
 import { useTheme } from "../theme";
 import { formatHms } from "./timerCore";
-import { contrastText, lineDash, plotData, plotLineLabels, runnerColors, type RankedRunner } from "./raceResults";
+import { contrastText, lineDash, plotData, plotLineLabels, plotSignature, runnerColors, type RankedRunner } from "./raceResults";
 
 const DAY_COLORS = ["#0072b2", "#c43d00", "#008059", "#ab4791", "#9b7100", "#0094a4", "#d52b49", "#6952b5", "#577c10", "#ba5c1c", "#007e85", "#ae3c69", "#626d0b", "#555555", "#6c54e0"];
 const NIGHT_COLORS = ["#56b4e9", "#ff914d", "#40d6a1", "#e093d0", "#f0d23d", "#39d4e7", "#ff6b81", "#b69bff", "#a7d452", "#eab676", "#66d6c4", "#ff9bbd", "#d2d878", "#d4d4d4", "#9589ff"];
@@ -48,7 +48,7 @@ function RunnerTag({ name, bib, color, dash, lastLoop, slot, count, index, viewB
   );
 }
 
-export function Top15Plot({ runners, loop }: { runners: RankedRunner[]; loop: number }) {
+function Top15PlotContent({ runners, loop }: { runners: RankedRunner[]; loop: number }) {
   const [theme] = useTheme();
   const [colors, setColors] = useState(() => runnerColors(runners.map((runner) => runner.bib), new Map()));
   const activeColors = runnerColors(runners.map((runner) => runner.bib), colors);
@@ -142,3 +142,8 @@ export function Top15Plot({ runners, loop }: { runners: RankedRunner[]; loop: nu
     </div>
   );
 }
+
+export const Top15Plot = memo(Top15PlotContent, (previous, next) =>
+  previous.loop === next.loop
+  && plotSignature(previous.runners, previous.loop) === plotSignature(next.runners, next.loop),
+);
