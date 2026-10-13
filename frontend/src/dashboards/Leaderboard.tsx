@@ -1,11 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import {
   BACKYARD_LOOP_KM,
   FRONTYARD_LOOP_KM,
-  FRONTYARD_MAX_CAP,
   formatHms,
-  frontyardElapsedAtLoopStart,
-  frontyardState,
   leaderboardGroupKey,
   osloWallClockToInstant,
   playbackBtn,
@@ -14,6 +11,8 @@ import {
   useViewLoop,
 } from "./timerCore";
 import { friendlyFetchError } from "../utils/fetchError";
+import { DisplayToggle, useDisplayPreference } from "../theme";
+import { clockCompletedLoops, resultSnapshot, resultsPollDelay, selectTop15, type ResultRow, type ResultsResponse } from "./raceResults";
 import {
   computeOverallWinner,
   isWinnerFinal,
@@ -21,28 +20,7 @@ import {
   type WinnerRow,
 } from "./jerseyRanking";
 
-type ResultRow = {
-  place: number | null;
-  bib: string;
-  name: string;
-  club: string;
-  country: string;
-  sex: string;
-  totalRank: number | null;
-  lapsCompleted: number | null;
-  lastLap: string;
-  fastestLap: string;
-  slowestLap: string;
-  averageLap: string;
-  status: string;
-  gap: string;
-  lapsBehind: number | null;
-  total: string;
-  /** Total race time in seconds (parsed from `total`). 0 when not available. */
-  totalSec?: number;
-  perLoop?: { loop: number; time: string; lapSec?: number; totalSec?: number }[];
-};
-type ResultsResponse = { eventName?: string; raceFinished?: boolean; rows: ResultRow[] };
+const Top15Plot = lazy(() => import("./Top15Plot").then((module) => ({ default: module.Top15Plot })));
 
 type DerivedRow = ResultRow & {
   laps: number | null;
@@ -115,7 +93,6 @@ const columns: { key: SortKey; label: string; numeric?: boolean }[] = [
   { key: "gap", label: "Gap" },
   { key: "club", label: "Club" },
   { key: "country", label: "Country" },
-  { key: "sex", label: "Gender" },
   { key: "laps", label: "Laps", numeric: true },
   { key: "lastLap", label: "Last" },
   { key: "rankNow", label: "Rank Last", numeric: true },
@@ -154,6 +131,7 @@ function compare(a: DerivedRow, b: DerivedRow, key: SortKey, dir: SortDir): numb
 }
 
 export function Leaderboard({ eventId }: { eventId: string }) {
+  const [showPlot, setShowPlot] = useDisplayPreference("leaderboard.showTop15Plot");
   const { mode, startTime, fyLock, fyMax, jerseyGreen, jerseyPink, jerseyYellow } =
     useTimerSettings(eventId);
   const { viewLoop, setViewLoop } = useViewLoop(eventId);
@@ -216,7 +194,7 @@ export function Leaderboard({ eventId }: { eventId: string }) {
 
   // Wall-clock instant for the configured frontyard start time (if any).
   const raceStartMs = useMemo(() => {
-    if (mode !== "frontyard" || !startTime) return null;
+    if (!startTime) return null;
     const instant = osloWallClockToInstant(startTime);
     return instant ? instant.getTime() : null;
   }, [mode, startTime]);
@@ -224,36 +202,9 @@ export function Leaderboard({ eventId }: { eventId: string }) {
   useEffect(() => {
     let cancelled = false;
     let timer: number | null = null;
-    /** Buffer after a loop boundary before refetching, giving
-     * RaceResult a few seconds to publish the just-completed loop. */
-    const POST_LOOP_DELAY_MS = 5_000;
-    /** Fallback cadence used when no loop boundary is scheduled
-     * (backyard mode, race not yet started, race already finished). */
-    const FALLBACK_MS = 10_000;
-
-    function nextLoopBoundaryAfter(nowMs: number): number | null {
-      if (raceStartMs === null) return null;
-      const maxLoops = Math.min(FRONTYARD_MAX_CAP, Math.max(1, fyMax));
-      for (let k = 1; k <= maxLoops; k += 1) {
-        const endSec = frontyardElapsedAtLoopStart(k + 1, fyLock);
-        const endMs = raceStartMs + endSec * 1000;
-        if (endMs > nowMs) return endMs;
-      }
-      return null;
-    }
-
     function scheduleNext() {
       if (cancelled) return;
-      const nowMs = Date.now();
-      const boundary = nextLoopBoundaryAfter(nowMs);
-      let delay: number;
-      if (boundary !== null) {
-        const untilBoundary = boundary + POST_LOOP_DELAY_MS - nowMs;
-        delay = Math.max(1_000, Math.min(FALLBACK_MS, untilBoundary));
-      } else {
-        delay = FALLBACK_MS;
-      }
-      timer = window.setTimeout(load, delay);
+      timer = window.setTimeout(load, resultsPollDelay(raceStartMs, Date.now(), mode, fyLock, fyMax));
     }
 
     async function load() {
@@ -287,7 +238,7 @@ export function Leaderboard({ eventId }: { eventId: string }) {
       cancelled = true;
       if (timer !== null) window.clearTimeout(timer);
     };
-  }, [eventId, raceStartMs, fyLock, fyMax]);
+  }, [eventId, raceStartMs, mode, fyLock, fyMax]);
 
   // Fetch jersey points (Green + Pink) so the leaderboard can show the
   // per-loop points awarded for the viewed loop. Refreshes alongside the
@@ -486,17 +437,13 @@ export function Leaderboard({ eventId }: { eventId: string }) {
   // (i.e. once per loop boundary, not once per second).
   const [liveCompletedLoops, setLiveCompletedLoops] = useState(0);
   useEffect(() => {
-    if (mode !== "frontyard" || raceStartMs === null) {
+    if (raceStartMs === null) {
       setLiveCompletedLoops(0);
       return;
     }
-    const maxLoops = Math.min(FRONTYARD_MAX_CAP, Math.max(1, fyMax));
     const tick = () => {
       const elapsedSec = (Date.now() - raceStartMs) / 1000;
-      const lc =
-        elapsedSec < 0
-          ? 0
-          : frontyardState(elapsedSec, fyLock, maxLoops).loopsCompleted;
+      const lc = clockCompletedLoops(elapsedSec, mode, fyLock, fyMax);
       setLiveCompletedLoops((prev) => (prev === lc ? prev : lc));
     };
     tick();
@@ -1110,7 +1057,7 @@ export function Leaderboard({ eventId }: { eventId: string }) {
   function renderHead() {
     return (
       <thead>
-        <tr style={{ background: "#f3f3f3" }}>
+        <tr style={{ background: "var(--surface-strong)" }}>
           {visibleColumns.map((col) => {
             const active = col.key === sortKey;
             const arrow = active ? (sortDir === "asc" ? " ▲" : " ▼") : "";
@@ -1128,7 +1075,7 @@ export function Leaderboard({ eventId }: { eventId: string }) {
                 title="Click to sort"
               >
                 {col.label}
-                <span style={{ color: "#888" }}>{arrow}</span>
+                <span style={{ color: "var(--muted)" }}>{arrow}</span>
               </th>
             );
           })}
@@ -1141,7 +1088,7 @@ export function Leaderboard({ eventId }: { eventId: string }) {
     return (
       <tr
         key={`${r.bib}-${i}`}
-        style={i % 2 ? { background: "#fafafa" } : undefined}
+        style={i % 2 ? { background: "var(--surface)" } : undefined}
       >
         <td style={tdNum}>{r.bib}</td>
         <td style={td}>
@@ -1183,7 +1130,6 @@ export function Leaderboard({ eventId }: { eventId: string }) {
             r.country
           )}
         </td>
-        <td style={td}>{r.sex}</td>
         <td style={tdNum}>{r.laps ?? "—"}</td>
         <td style={td}>{r.lastLap || "—"}</td>
         {!hiddenCols.has("rankNow") && (
@@ -1193,7 +1139,7 @@ export function Leaderboard({ eventId }: { eventId: string }) {
           <td
             style={
               r.greenPts !== r.greenApiPts
-                ? { ...tdNum, background: "#fef9c3" }
+                ? { ...tdNum, background: "var(--yellow-surface)" }
                 : tdNum
             }
           >
@@ -1204,7 +1150,7 @@ export function Leaderboard({ eventId }: { eventId: string }) {
           <td
             style={
               r.greenPts !== r.greenApiPts
-                ? { ...tdNum, background: "#fef9c3" }
+                ? { ...tdNum, background: "var(--yellow-surface)" }
                 : tdNum
             }
           >
@@ -1274,7 +1220,7 @@ export function Leaderboard({ eventId }: { eventId: string }) {
             style={{
               margin: "0.25rem 0 0",
               fontSize: "0.78rem",
-              color: "#555",
+              color: "var(--muted)",
               alignSelf: "flex-start",
             }}
           >
@@ -1294,7 +1240,7 @@ export function Leaderboard({ eventId }: { eventId: string }) {
         {femaleRows.length > 0 ? (
           renderTable(femaleRows, colWidths, 10)
         ) : (
-          <p style={{ color: "#888", margin: 0 }}>No entries</p>
+          <p style={{ color: "var(--muted)", margin: 0 }}>No entries</p>
         )}
         <h3 style={{ margin: "0.5rem 0 0", alignSelf: "flex-start" }}>
           Male ({maleRows.length})
@@ -1302,7 +1248,7 @@ export function Leaderboard({ eventId }: { eventId: string }) {
         {maleRows.length > 0 ? (
           renderTable(maleRows, colWidths, 10)
         ) : (
-          <p style={{ color: "#888", margin: 0 }}>No entries</p>
+          <p style={{ color: "var(--muted)", margin: 0 }}>No entries</p>
         )}
       </>
     );
@@ -1310,12 +1256,16 @@ export function Leaderboard({ eventId }: { eventId: string }) {
 
   const femaleRows = derivedRows.filter(isFemale);
   const maleRows = derivedRows.filter(isMale);
+  const top15Snapshot = resultSnapshot(rows, raceStartMs === null ? null : liveCompletedLoops, effectiveViewLoop,
+    mode === "backyard" ? raceFinished : raceStartMs !== null && liveCompletedLoops >= fyMax);
+  const top15 = selectTop15(rows, top15Snapshot);
   // `derivedRows` is the unsorted set of rows for the current view loop
   // (in-place sorting happens inside `renderTable` so each subset can
   // compute its own Diff column).
 
   return (
     <section
+      className={showPlot ? "leaderboard-with-plot" : undefined}
       style={{
         width: "100%",
         maxWidth: "2100px",
@@ -1328,9 +1278,12 @@ export function Leaderboard({ eventId }: { eventId: string }) {
       }}
     >
       {eventName && (
-        <h2 style={{ margin: 0, fontWeight: 500, color: "#555" }}>{eventName}</h2>
+        <h2 style={{ margin: 0, fontWeight: 500, color: "var(--muted)" }}>{eventName}</h2>
       )}
-      <h1 style={{ margin: 0 }}>Leaderboard</h1>
+      <div className="page-heading">
+        <h1>Leaderboard</h1>
+        <DisplayToggle label="Show top-15 plot" checked={showPlot} onChange={setShowPlot} />
+      </div>
 
       {loading && rows.length === 0 && <p>Loading…</p>}
       {maxLoop >= 1 && (
@@ -1362,8 +1315,8 @@ export function Leaderboard({ eventId }: { eventId: string }) {
             alignItems: "center",
             gap: "0.5rem",
             padding: "0.4rem 0.6rem",
-            background: effectiveViewLoop !== null ? "#fff7ed" : "#f3f3f3",
-            border: "1px solid #ddd",
+            background: effectiveViewLoop !== null ? "var(--replay)" : "var(--surface-strong)",
+            border: "1px solid var(--border)",
             borderRadius: "0.3rem",
           }}
         >
@@ -1424,7 +1377,7 @@ export function Leaderboard({ eventId }: { eventId: string }) {
           </button>
         </div>
       )}
-      {error && <p style={{ color: "crimson" }}>Error: {error}</p>}
+      {error && <p style={{ color: "var(--danger)" }}>Error: {error}</p>}
 
       {derivedRows.length > 0 && (
         <div
@@ -1450,32 +1403,33 @@ export function Leaderboard({ eventId }: { eventId: string }) {
         </div>
       )}
 
-      {derivedRows.length > 0 && groupMode === "all" && renderTable(derivedRows)}
-
-      {derivedRows.length > 0 && groupMode === "gender" && renderGenderTables()}
+      {derivedRows.length > 0 && <div className="leaderboard-results">
+        {groupMode === "all" ? renderTable(derivedRows) : renderGenderTables()}
+      </div>}
 
       {lastUpdated && (
-        <p style={{ margin: 0, color: "#888", fontSize: "0.85rem" }}>
+        <p style={{ margin: 0, color: "var(--muted)", fontSize: "0.85rem" }}>
           {raceFinished
             ? `Final results · ${derivedRows.length} entries`
             : `Updated ${lastUpdated.toLocaleTimeString()} · auto-refresh every ${REFRESH_MS / 1000}s · ${derivedRows.length} entries`}
         </p>
       )}
+      {showPlot && <Suspense fallback={<p>Loading plot...</p>}><Top15Plot key={eventId} runners={top15} loop={top15Snapshot.loop} /></Suspense>}
     </section>
   );
 }
 
 const th: React.CSSProperties = {
   padding: "0.5rem 0.75rem",
-  borderBottom: "2px solid #ddd",
+  borderBottom: "2px solid var(--border)",
   position: "sticky",
   top: 0,
-  background: "#f3f3f3",
+  background: "var(--surface-strong)",
   zIndex: 1,
 };
 const td: React.CSSProperties = {
   padding: "0.4rem 0.75rem",
-  borderBottom: "1px solid #eee",
+  borderBottom: "1px solid var(--subtle-border)",
   whiteSpace: "nowrap",
   textAlign: "left",
 };

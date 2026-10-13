@@ -8,6 +8,8 @@ import {
   useViewLoop,
 } from "./timerCore";
 import { friendlyFetchError } from "../utils/fetchError";
+import { DisplayToggle, useDisplayPreference } from "../theme";
+import { remainingRunner } from "./raceResults";
 
 type CountResponse = { count: number; eventName?: string };
 type ResultRow = {
@@ -23,6 +25,7 @@ const DNS_PATTERN = /dns/i;
 const REFRESH_MS = 10_000;
 
 export function Overview({ eventId }: { eventId: string }) {
+  const [showInfo, setShowInfo] = useDisplayPreference("overview.showParticipantInfo");
   const { mode } = useTimerSettings(eventId);
   const { viewLoop, setViewLoop } = useViewLoop(eventId);
   const [count, setCount] = useState<number | null>(null);
@@ -111,22 +114,9 @@ export function Overview({ eventId }: { eventId: string }) {
   //   - finished, static     → completed >= maxLoop laps (i.e. the winner(s))
   //   - live                 → status is not DNF/DNS/DQ/withdrawn
   const sexOf = (r: ResultRow) => (r.sex ?? "").toUpperCase();
-  const isStillIn = (r: ResultRow) => {
-    if (maxLoop === 0) {
-      return !DNS_PATTERN.test(r.status ?? "");
-    }
-    if (effectiveViewLoop !== null) {
-      return typeof r.lapsCompleted === "number"
-        ? r.lapsCompleted >= effectiveViewLoop
-        : false;
-    }
-    if (raceFinished && maxLoop >= 1) {
-      return typeof r.lapsCompleted === "number"
-        ? r.lapsCompleted >= maxLoop
-        : false;
-    }
-    return !OUT_PATTERN.test(r.status ?? "");
-  };
+  const isStillIn = (r: ResultRow) => remainingRunner(r, {
+    loop: effectiveViewLoop ?? maxLoop, replay: effectiveViewLoop !== null, finished: raceFinished,
+  });
 
   const female = rows.filter((r) => sexOf(r) === "K").length;
   const male = rows.filter((r) => sexOf(r) === "M").length;
@@ -175,9 +165,12 @@ export function Overview({ eventId }: { eventId: string }) {
       }}
     >
       {eventName && (
-        <h2 style={{ margin: 0, fontWeight: 500, color: "#555" }}>{eventName}</h2>
+        <h2 style={{ margin: 0, fontWeight: 500, color: "var(--muted)" }}>{eventName}</h2>
       )}
-      <h1 style={{ margin: 0 }}>Overview</h1>
+      <div className="page-heading">
+        <h1>Overview</h1>
+        <DisplayToggle label="Show participant info" checked={showInfo} onChange={setShowInfo} />
+      </div>
       {maxLoop >= 1 && (
         <div
           role="group"
@@ -207,8 +200,8 @@ export function Overview({ eventId }: { eventId: string }) {
             alignItems: "center",
             gap: "0.5rem",
             padding: "0.4rem 0.6rem",
-            background: effectiveViewLoop !== null ? "#fff7ed" : "#f3f3f3",
-            border: "1px solid #ddd",
+            background: effectiveViewLoop !== null ? "var(--replay)" : "var(--surface-strong)",
+            border: "1px solid var(--border)",
             borderRadius: "0.3rem",
           }}
         >
@@ -270,28 +263,29 @@ export function Overview({ eventId }: { eventId: string }) {
         </div>
       )}
       {loading && count === null && <p>Loading…</p>}
-      {error && <p style={{ color: "crimson" }}>Error: {error}</p>}
+      {error && <p style={{ color: "var(--danger)" }}>Error: {error}</p>}
       {count !== null && (
         <>
-          <div style={registeredRow}>
-            <RegisteredCell label="Starting runners" value={fmt(starting)} bg="#facc15" color="black" />
+          {showInfo && <div className="overview-participants" style={registeredRow}>
+            <RegisteredCell label="Starting runners" value={fmt(starting)} bg="var(--stat-yellow)" color="var(--text)" />
             <RegisteredCell label="Starting Females (K)" value={fmt(female)} bg="#dc2626" color="white" />
             <RegisteredCell label="Starting Males (M)" value={fmt(male)} bg="#2563eb" color="white" />
-          </div>
-          <div style={statGridFour}>
-            <StatCard label={`Still in${fmtPct(stillIn, starting)}`} value={fmt(stillIn)} bg="#facc15" color="black" />
+          </div>}
+          {showInfo && <div className="overview-participants" style={statGridFour}>
+            <StatCard label={`Still in${fmtPct(stillIn, starting)}`} value={fmt(stillIn)} bg="var(--stat-yellow)" color="var(--text)" />
             <StatCard label={`Female still in${fmtPct(femaleStillIn, female)}`} value={fmt(femaleStillIn)} bg="#dc2626" color="white" />
             <StatCard label={`Men still in${fmtPct(maleStillIn, male)}`} value={fmt(maleStillIn)} bg="#2563eb" color="white" />
-          </div>
-          <div style={statGridBottom}>
+          </div>}
+          <div className="overview-metrics" style={statGridBottom}>
+            {!showInfo && <StatCard label={`Still in${fmtPct(stillIn, starting)}`} value={fmt(stillIn)} bg="var(--stat-yellow)" color="var(--text)" />}
             <StatCard label="Current loop" value={fmt(currentLoop)} bg="#0f766e" color="white" />
             <StatCard label="Acc. distance (km)" value={fmtKm(accKm)} bg="#117a3a" color="white" valueStyle={{ fontSize: "4rem" }} />
-            <StatCard label="Registered participants" value={fmt(count)} />
+            {showInfo && <StatCard label="Registered participants" value={fmt(count)} />}
           </div>
         </>
       )}
       {lastUpdated && (
-        <p style={{ margin: 0, color: "#888", fontSize: "0.85rem" }}>
+        <p style={{ margin: 0, color: "var(--muted)", fontSize: "0.85rem" }}>
           {raceFinished
             ? "Final results"
             : `Updated ${lastUpdated.toLocaleTimeString()} · auto-refresh every ${REFRESH_MS / 1000}s`}
@@ -361,7 +355,7 @@ const bigNumber: React.CSSProperties = {
 };
 
 const statLabel: React.CSSProperties = {
-  color: "#666",
+  color: "var(--muted)",
   fontSize: "1rem",
 };
 
@@ -396,10 +390,10 @@ const statGridBottom: React.CSSProperties = {
 };
 
 const statCard: React.CSSProperties = {
-  border: "1px solid #ddd",
+  border: "1px solid var(--border)",
   borderRadius: "0.4rem",
   padding: "0.75rem 1rem",
-  background: "#fafafa",
+  background: "var(--surface)",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
@@ -407,7 +401,7 @@ const statCard: React.CSSProperties = {
 };
 
 const statCardLabel: React.CSSProperties = {
-  color: "#666",
+  color: "var(--muted)",
   fontSize: "1rem",
 };
 

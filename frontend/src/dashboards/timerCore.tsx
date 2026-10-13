@@ -213,9 +213,9 @@ export function formatHms(sec: number): string {
 export const playbackBtn: React.CSSProperties = {
   padding: "0.3rem 0.6rem",
   fontSize: "1rem",
-  border: "1px solid #ccc",
+  border: "1px solid var(--border)",
   borderRadius: "0.3rem",
-  background: "white",
+  background: "var(--page)",
   cursor: "pointer",
 };
 
@@ -295,9 +295,9 @@ export const panel: React.CSSProperties = {
   flex: "1 1 0",
   minWidth: "13rem",
   padding: "1.6rem 1.75rem",
-  border: "1px solid #ddd",
+  border: "1px solid var(--border)",
   borderRadius: "0.75rem",
-  background: "#fafafa",
+  background: "var(--surface)",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
@@ -313,14 +313,14 @@ export const bigClock: React.CSSProperties = {
 
 const panelLabel: React.CSSProperties = {
   margin: 0,
-  color: "#555",
+  color: "var(--muted)",
   fontSize: "1.15rem",
   textAlign: "center",
 };
 
 const panelSub: React.CSSProperties = {
   margin: 0,
-  color: "#888",
+  color: "var(--muted)",
   fontSize: "1rem",
 };
 
@@ -340,9 +340,9 @@ export function StatCard({
   labelColor?: string;
 }) {
   return (
-    <div style={{ ...panel, background: bg ?? panel.background }}>
-      <p style={{ ...panelLabel, color: labelColor ?? panelLabel.color }}>{label}</p>
-      <div style={{ ...bigClock, color: valueColor ?? bigClock.color }}>{value}</div>
+    <div className="stat-card" style={{ ...panel, background: bg ?? panel.background }}>
+      <p title={label} style={{ ...panelLabel, color: labelColor ?? panelLabel.color }}>{label}</p>
+      <div className="stat-value" style={{ ...bigClock, color: valueColor ?? bigClock.color }}>{value}</div>
       {sub && <p style={panelSub}>{sub}</p>}
     </div>
   );
@@ -642,9 +642,9 @@ export function playBell(durationMs = 2000) {
 const nowRowStyle: React.CSSProperties = {
   width: "100%",
   padding: "0.5rem 0.75rem",
-  border: "1px solid #eee",
+  border: "1px solid var(--subtle-border)",
   borderRadius: "0.4rem",
-  background: "#fafafa",
+  background: "var(--surface)",
   display: "flex",
   justifyContent: "space-between",
   alignItems: "baseline",
@@ -655,14 +655,14 @@ const nowRowStyle: React.CSSProperties = {
 export function NowOsloRow({ now, eventLocation }: { now: Date; eventLocation?: string }) {
   const parts = formatOsloParts(now);
   return (
-    <div style={nowRowStyle}>
-      <span style={{ color: "#888", fontSize: "0.85rem" }}>Now (Oslo)</span>
+    <div className="now-oslo" style={nowRowStyle}>
+      <span style={{ color: "var(--muted)", fontSize: "0.85rem" }}>Now (Oslo)</span>
       <span style={{ fontSize: "1.1rem" }}>
         {parts.date} &nbsp; {parts.time}
       </span>
       {eventLocation && (
         <>
-          <span style={{ color: "#888", fontSize: "0.85rem", marginLeft: "1.5rem" }}>
+          <span style={{ color: "var(--muted)", fontSize: "0.85rem", marginLeft: "1.5rem" }}>
             Location
           </span>
           <span style={{ fontSize: "1.1rem" }}>{eventLocation}</span>

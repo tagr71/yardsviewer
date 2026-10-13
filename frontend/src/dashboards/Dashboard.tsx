@@ -29,17 +29,20 @@ import {
   useTimerSettings,
   useViewLoop,
 } from "./timerCore";
+import { DisplayToggle, useDisplayPreference } from "../theme";
+import { resultSnapshot, resultsPollDelay, selectTop15, type ResultRow, type ResultsResponse } from "./raceResults";
 
 export function Dashboard({ eventId, eventName, eventLocation }: { eventId: string; eventName?: string; eventLocation?: string }) {
+  const [showTop15, setShowTop15] = useDisplayPreference("dashboard.showTop15");
   const now = useNowTick();
   const { startTime, mode, fyLock, fyMax, beepEnabled, location,
     jerseyPink, jerseyGreen, jerseyYellow } = useTimerSettings(eventId);
 
   /** Background for the Remaining min:sec of loop card based on seconds left. */
   function remainingBg(secondsLeft: number): string {
-    if (secondsLeft < 180) return "#fecaca"; // red
-    if (secondsLeft < 360) return "#fef08a"; // yellow
-    return "#ffffff"; // white
+    if (secondsLeft < 180) return "var(--danger-surface)"; // red
+    if (secondsLeft < 360) return "var(--warning)"; // yellow
+    return "var(--page)"; // white
   }
 
   /** Required average pace given a loop time limit (min) and distance (km).
@@ -62,42 +65,36 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
   // Fetch leaderboard once + every 10 s. Used both for the runners-counters
   // and for the "race finished" detection that drives playback mode.
   const [raceFinished, setRaceFinished] = useState(false);
-  const [finalLaps, setFinalLaps] = useState<number[]>([]);
-  const [finalStatuses, setFinalStatuses] = useState<string[]>([]);
+  const [resultRows, setResultRows] = useState<ResultRow[]>([]);
+  const finalLaps = resultRows.map((row) => row.lapsCompleted ?? 0);
+  const finalStatuses = resultRows.map((row) => row.status ?? "");
   useEffect(() => {
     let cancelled = false;
     let t: number | null = null;
+    const instant = osloWallClockToInstant(startTime);
     async function load() {
       try {
         const res = await fetch(`/api/results?event_id=${encodeURIComponent(eventId)}`);
         if (!res.ok) return;
-        const data = (await res.json()) as {
-          raceFinished?: boolean;
-          rows?: { lapsCompleted: number | null; status?: string }[];
-        };
+        const data = (await res.json()) as ResultsResponse;
         if (cancelled) return;
         const rows = data.rows ?? [];
         setRaceFinished(Boolean(data.raceFinished));
-        setFinalLaps(
-          rows.map((r) => (typeof r.lapsCompleted === "number" ? r.lapsCompleted : 0)),
-        );
-        setFinalStatuses(rows.map((r) => r.status ?? ""));
-        // No point polling a finished race — the data is static.
-        if (data.raceFinished && t !== null) {
-          window.clearInterval(t);
-          t = null;
-        }
+        setResultRows(rows);
       } catch {
         // Leave previous values in place on transient errors.
+      } finally {
+        if (!cancelled) t = window.setTimeout(load, resultsPollDelay(instant?.getTime() ?? null, Date.now(), mode, fyLock, fyMax));
       }
     }
+    setResultRows([]);
+    setRaceFinished(false);
     load();
-    t = window.setInterval(load, 10_000);
     return () => {
       cancelled = true;
-      if (t !== null) window.clearInterval(t);
+      if (t !== null) window.clearTimeout(t);
     };
-  }, [eventId]);
+  }, [eventId, startTime, mode, fyLock, fyMax]);
 
   // Fetch jersey standings once + every 10 s, used to display the current
   // pink/green/yellow holders (Women + Men) after the last completed loop.
@@ -211,6 +208,11 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
     : (backyardCompleted + 1) * BACKYARD_LOOP_KM;
   const frontyardCompleted = beforeStart ? 0 : fy.loopsCompleted;
   const frontyardDistance = frontyardCompleted * FRONTYARD_LOOP_KM;
+  const top15Snapshot = resultSnapshot(resultRows,
+    startInstant ? beforeStart ? 0 : mode === "backyard" ? Math.floor(liveElapsedSec / LOOP_SECONDS)
+      : frontyardState(liveElapsedSec, fyLock, fyMax).loopsCompleted : null,
+    effectiveViewLoop, raceClockFinished);
+  const top15 = selectTop15(resultRows, top15Snapshot);
 
   /** Snapshot loop for the Dashboard's jersey holder cards. In live mode
    * this follows the race clock (so the cards advance as soon as the
@@ -615,11 +617,12 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
   function JerseyCard({ loopNumber }: { loopNumber: number | null }) {
     const imgs = loopNumber === null ? [] : jerseyImagesFor(loopNumber);
     return (
-      <div style={panel}>
-        <p style={{ margin: 0, color: "#555", fontWeight: 600 }}>
+      <div className="stat-card" style={panel}>
+        <p style={{ margin: 0, color: "var(--muted)", fontWeight: 600 }}>
           Competition this loop
         </p>
         <div
+          className="competition-images"
           style={{
             display: "flex",
             gap: "0.5rem",
@@ -629,7 +632,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
           }}
         >
           {imgs.length === 0 ? (
-            <span style={{ color: "#bbb", fontSize: "2rem" }}>—</span>
+            <span style={{ color: "var(--border)", fontSize: "2rem" }}>—</span>
           ) : (
             imgs.map((src) => (
               <img
@@ -658,12 +661,12 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
       endsAt: number;
       img: string;
     }[] = [
-      { key: "pink", label: "Pink jersey", bg: "#fce7f3", valueHeader: "Total points", endsAt: jerseyPink, img: "/rosa.png" },
-      { key: "green", label: "Green jersey", bg: "#dcfce7", valueHeader: "Total points", endsAt: jerseyGreen, img: "/gr\u00f8nn.png" },
-      { key: "yellow", label: "Yellow jersey", bg: "#fef9c3", valueHeader: "Overall time", endsAt: jerseyYellow, img: "/gul.png" },
+      { key: "pink", label: "Pink jersey", bg: "var(--pink-surface)", valueHeader: "Total points", endsAt: jerseyPink, img: "/rosa.png" },
+      { key: "green", label: "Green jersey", bg: "var(--green-surface)", valueHeader: "Total points", endsAt: jerseyGreen, img: "/gr\u00f8nn.png" },
+      { key: "yellow", label: "Yellow jersey", bg: "var(--yellow-surface)", valueHeader: "Overall time", endsAt: jerseyYellow, img: "/gul.png" },
     ];
     return (
-      <>
+      <div className="jersey-holders" style={{ display: "contents" }}>
         {cards.map((c) => {
           const h = jerseyHolders[c.key];
           const frozen =
@@ -677,17 +680,18 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
           // Color tokens for the inline "loops held" pill — match the
           // jersey palette used elsewhere in the app (Jerseys.tsx /
           // Leaderboard.tsx) so the visual language is consistent.
-          const pillBg = c.key === "yellow" ? "#facc15" : c.key === "pink" ? "#ec4899" : "#16a34a";
-          const pillFg = c.key === "yellow" ? "#1f2937" : "#fff";
+          const pillBg = c.key === "yellow" ? "var(--stat-yellow)" : c.key === "pink" ? "#ec4899" : "#16a34a";
+          const pillFg = c.key === "yellow" ? "var(--text)" : "#fff";
           return (
             <div
               key={c.key}
+              className="jersey-holder-card"
               style={{ ...panel, background: c.bg, alignItems: "stretch" }}
             >
               <p
                 style={{
                   margin: 0,
-                  color: "#333",
+                  color: "var(--text)",
                   fontWeight: 600,
                   textAlign: "center",
                   display: "flex",
@@ -704,7 +708,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                 />
                 <span>
                   {c.label}{" "}
-                  <span style={{ color: "#666", fontWeight: 400, fontSize: "0.9em" }}>
+                  <span style={{ color: "var(--muted)", fontWeight: 400, fontSize: "0.9em" }}>
                     ({subtitle})
                   </span>
                 </span>
@@ -724,6 +728,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                 return (
                   <div
                     key={sex}
+                    className="holder-gender"
                     style={{
                       borderTop: "1px solid rgba(0,0,0,0.08)",
                       paddingTop: "0.25rem",
@@ -732,7 +737,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                   >
                     <div
                       style={{
-                        color: "#555",
+                        color: "var(--muted)",
                         fontWeight: 600,
                         fontSize: "0.8rem",
                         marginBottom: "0.15rem",
@@ -779,13 +784,14 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                       return (
                         <div
                           key={i}
+                          className="holder-line"
                           style={{
                             display: "flex",
                             justifyContent: "space-between",
                             alignItems: "baseline",
                             gap: "0.5rem",
                             padding: isLeader ? "0.2rem 0.35rem" : "0.1rem 0",
-                            background: isLeader ? "rgba(255,255,255,0.7)" : "transparent",
+                            background: isLeader ? "var(--highlight)" : "transparent",
                             border: isLeader ? `2px solid ${pillBg}` : "none",
                             borderRadius: isLeader ? "0.35rem" : 0,
                             marginBottom: isLeader ? "0.2rem" : 0,
@@ -793,7 +799,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                         >
                           <span
                             style={{
-                              color: isLeader ? "#111" : "#777",
+                              color: isLeader ? "var(--text)" : "var(--muted)",
                               fontWeight: isLeader ? 800 : 600,
                               fontSize: isLeader ? "0.95rem" : "0.85rem",
                               minWidth: "1rem",
@@ -822,7 +828,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                           </span>
                           <span
                             style={{
-                              color: isLeader ? "#111" : "#555",
+                              color: isLeader ? "var(--text)" : "var(--muted)",
                               fontWeight: isLeader ? 800 : 600,
                               fontSize: isLeader ? "0.95rem" : "0.85rem",
                               fontVariantNumeric: "tabular-nums",
@@ -834,6 +840,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                             {holder?.bib ?? "—"}
                           </span>
                           <span
+                            title={holder?.name}
                             style={{
                               flex: "1 1 auto",
                               textAlign: "left",
@@ -842,7 +849,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                               whiteSpace: "nowrap",
                               fontSize: isLeader ? "1rem" : "0.9rem",
                               fontWeight: isLeader ? 800 : 400,
-                              color: isLeader ? "#111" : undefined,
+                              color: isLeader ? "var(--text)" : undefined,
                               display: "inline-flex",
                               alignItems: "center",
                               gap: "0.35rem",
@@ -884,7 +891,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                               fontVariantNumeric: "tabular-nums",
                               fontWeight: isLeader ? 800 : 600,
                               fontSize: isLeader ? "1rem" : "0.9rem",
-                              color: isLeader ? "#111" : undefined,
+                              color: isLeader ? "var(--text)" : undefined,
                             }}
                           >
                             {holder?.value ?? "—"}
@@ -897,6 +904,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
               })}
               {c.key === "yellow" && winner && (
                 <div
+                  className="holder-winner"
                   style={{
                     marginTop: "0.4rem",
                     paddingTop: "0.35rem",
@@ -907,7 +915,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                     style={{
                       fontWeight: 800,
                       fontSize: "0.8rem",
-                      color: "#1f2937",
+                      color: "var(--text)",
                       marginBottom: "0.15rem",
                       textAlign: "center",
                     }}
@@ -926,7 +934,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                   >
                     <span
                       style={{
-                        color: "#111",
+                        color: "var(--text)",
                         fontWeight: 700,
                         flex: "1 1 auto",
                         overflow: "hidden",
@@ -939,7 +947,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                     </span>
                     <span
                       style={{
-                        color: "#555",
+                        color: "var(--muted)",
                         fontVariantNumeric: "tabular-nums",
                         fontSize: "0.8rem",
                       }}
@@ -952,7 +960,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
               <p
                 style={{
                   margin: 0,
-                  color: "#777",
+                  color: "var(--muted)",
                   fontSize: "0.75rem",
                   textAlign: "right",
                 }}
@@ -962,7 +970,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
             </div>
           );
         })}
-      </>
+      </div>
     );
   }
 
@@ -1019,6 +1027,8 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
 
   return (
     <section
+      className={showTop15 ? "dashboard-compact" : undefined}
+      data-race-mode={mode}
       style={{
         width: "100%",
         maxWidth: "1800px",
@@ -1029,9 +1039,10 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
         gap: "1.25rem",
       }}
     >
-      <h1 style={{ margin: 0 }}>
-        Dashboard{eventName ? ` — ${eventName}` : ""}
-      </h1>
+      <div className="page-heading">
+        <h1>Dashboard{eventName ? ` — ${eventName}` : ""}</h1>
+        <DisplayToggle label="Show top-15" checked={showTop15} onChange={setShowTop15} />
+      </div>
 
       <NowOsloRow now={now} eventLocation={location || eventLocation} />
 
@@ -1064,9 +1075,9 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
             alignItems: "center",
             gap: "0.5rem",
             padding: "0.5rem 0.75rem",
-            border: "1px solid #ddd",
+            border: "1px solid var(--border)",
             borderRadius: "0.4rem",
-            background: inReplay ? "#fff7ed" : "#f3f3f3",
+            background: inReplay ? "var(--replay)" : "var(--surface-strong)",
           }}
         >
           <span style={{ fontWeight: 600 }}>
@@ -1139,13 +1150,14 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
 
       {startInstant ? (
         <>
-          <p style={{ margin: 0, color: "#555" }}>{label}</p>
+          <p className="clock-label" style={{ margin: 0, color: "var(--muted)" }}>{label}</p>
           {(() => {
             const { signedDays, hms } = formatDuration(diffMs);
             const clockColor =
-              signedDays < 0 ? "#c62828" : signedDays > 0 ? "#1f6feb" : "#117a3a";
+              signedDays < 0 ? "var(--danger)" : signedDays > 0 ? "var(--link)" : "var(--success)";
             return (
               <div
+                className="race-clock"
                 style={{
                   fontSize: "3.5rem",
                   fontVariantNumeric: "tabular-nums",
@@ -1159,7 +1171,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
               >
                 {signedDays !== 0 && <span>days = {signedDays}</span>}
                 <span>{hms}</span>
-                <span style={{ fontSize: "3.5rem", color: "#888", fontWeight: 600 }}>
+                <span style={{ fontSize: "3.5rem", color: "var(--muted)", fontWeight: 600 }}>
                   {now.toLocaleTimeString("no-NO", {
                     timeZone: "Europe/Oslo",
                     hour: "2-digit",
@@ -1171,12 +1183,13 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
               </div>
             );
           })()}
-          <p style={{ margin: 0, color: "#888", fontSize: "0.85rem" }}>
+          <p className="clock-meta" style={{ margin: 0, color: "var(--muted)", fontSize: "0.85rem" }}>
             Start: {formatOslo(startInstant)} (Oslo) · Mode: {mode}
           </p>
 
           {mode === "backyard" && (
             <div
+              className="metrics-grid"
               style={{
                 width: "100%",
                 marginTop: "0.5rem",
@@ -1192,8 +1205,8 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
               <StatCard
                 label="Current loop"
                 value={beforeStart ? "—" : String(backyardCompleted + 1)}
-              bg="#facc15" valueColor="black" labelColor="black" />
-              <div style={{ flexBasis: "100%", height: 0 }} />
+              bg="var(--stat-yellow)" valueColor="var(--text)" labelColor="var(--text)" />
+              <div className="metric-break" style={{ flexBasis: "100%", height: 0 }} />
               <StatCard
                 label="Distance completed"
                 value={formatKm(backyardDistance)}
@@ -1201,7 +1214,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
               <StatCard
                 label="Distance this loop"
                 value={beforeStart ? "—" : `${currentLoopKm.toFixed(1)} km`}
-              bg="#facc15" valueColor="black" labelColor="black" />
+              bg="var(--stat-yellow)" valueColor="var(--text)" labelColor="var(--text)" />
               <StatCard
                 label={
                   beforeStart
@@ -1210,16 +1223,17 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                 }
                 value={`${pad(remMin)}:${pad(remSec)}`}
                 bg={beforeStart ? undefined : remainingBg(remainingInLoop)}
-                valueColor="black"
-                labelColor="black"
+                valueColor="var(--text)"
+                labelColor="var(--text)"
               />
-              <div style={{ flexBasis: "100%", height: 0 }} />
-              <StatCard label={completedPastLoopLabel} value={completedPastLoopValue} valueColor="black" labelColor="black" />
-              <StatCard label={startingThisLoopLabel} value={notFinishedValue} valueColor="black" labelColor="black" />            </div>
+              <div className="metric-break" style={{ flexBasis: "100%", height: 0 }} />
+              <StatCard label={completedPastLoopLabel} value={completedPastLoopValue} valueColor="var(--text)" labelColor="var(--text)" />
+              <StatCard label={startingThisLoopLabel} value={notFinishedValue} valueColor="var(--text)" labelColor="var(--text)" />            </div>
           )}
 
           {mode === "frontyard" && (
             <div
+              className="metrics-grid"
               style={{
                 width: "100%",
                 marginTop: "0.5rem",
@@ -1229,14 +1243,14 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
               }}
             >
               <JerseyHoldersRow />
-              <div style={{ flexBasis: "100%", height: 0 }} />
+              <div className="metric-break" style={{ flexBasis: "100%", height: 0 }} />
               {beforeStart ? (
                 <>
                   <StatCard
                     label="Loops completed"
                     value="0"
                   bg="#117a3a" valueColor="white" labelColor="white" />
-                  <StatCard label="Current loop" value="1" bg="#facc15" valueColor="black" labelColor="black" />
+                  <StatCard label="Current loop" value="1" bg="var(--stat-yellow)" valueColor="var(--text)" labelColor="var(--text)" />
                   <StatCard
                     label="Loop time-limit (min)"
                     value={String(FRONTYARD_START_MIN)}
@@ -1250,11 +1264,11 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                       bg="#be0cfe" valueColor="white" labelColor="white" />
                     );
                   })()}
-                  <div style={{ flexBasis: "100%", height: 0 }} />
+                  <div className="metric-break" style={{ flexBasis: "100%", height: 0 }} />
                   <StatCard
                     label="Distance (km) completed"
                     value={formatKm(0)}
-                  valueColor="black" labelColor="black" />
+                  valueColor="var(--text)" labelColor="var(--text)" />
                   {(() => {
                     const r = requiredPace(FRONTYARD_START_MIN, FRONTYARD_LOOP_KM);
                     return (
@@ -1269,10 +1283,10 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                     label="Loop starts at race start"
                     value="30:00"
                   />
-                  <div style={{ flexBasis: "100%", height: 0 }} />
+                  <div className="metric-break" style={{ flexBasis: "100%", height: 0 }} />
                   <JerseyCard loopNumber={1} />
-                  <StatCard label={completedPastLoopLabel} value={completedPastLoopValue} valueColor="black" labelColor="black" />
-                  <StatCard label={startingThisLoopLabel} value={notFinishedValue} valueColor="black" labelColor="black" />
+                  <StatCard label={completedPastLoopLabel} value={completedPastLoopValue} valueColor="var(--text)" labelColor="var(--text)" />
+                  <StatCard label={startingThisLoopLabel} value={notFinishedValue} valueColor="var(--text)" labelColor="var(--text)" />
                 </>
               ) : fy.finished ? (
                 <>
@@ -1280,14 +1294,14 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                     label="Loops completed"
                     value={String(frontyardCompleted)}
                   bg="#117a3a" valueColor="white" labelColor="white" />
-                  <StatCard label="Current loop" value="—" bg="#facc15" valueColor="black" labelColor="black" />
+                  <StatCard label="Current loop" value="—" bg="var(--stat-yellow)" valueColor="var(--text)" labelColor="var(--text)" />
                   <StatCard label="Loop time-limit (min)" value="—" bg="#dc2626" valueColor="white" labelColor="white" />
                   <StatCard label="Next loop time-limit (min)" value="—" bg="#be0cfe" valueColor="white" labelColor="white" />
-                  <div style={{ flexBasis: "100%", height: 0 }} />
+                  <div className="metric-break" style={{ flexBasis: "100%", height: 0 }} />
                   <StatCard
                     label="Distance (km) completed"
                     value={formatKm(frontyardDistance)}
-                  valueColor="black" labelColor="black" />
+                  valueColor="var(--text)" labelColor="var(--text)" />
                   <StatCard
                     label="Speed min:sec per km"
                     value="—"
@@ -1296,12 +1310,12 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                   <StatCard
                     label="Race finished"
                     value="00:00"
-                    valueColor="#117a3a"
+                    valueColor="var(--success)"
                   />
-                  <div style={{ flexBasis: "100%", height: 0 }} />
+                  <div className="metric-break" style={{ flexBasis: "100%", height: 0 }} />
                   <JerseyCard loopNumber={null} />
-                  <StatCard label={completedPastLoopLabel} value={completedPastLoopValue} valueColor="black" labelColor="black" />
-                  <StatCard label={startingThisLoopLabel} value={notFinishedValue} valueColor="black" labelColor="black" />
+                  <StatCard label={completedPastLoopLabel} value={completedPastLoopValue} valueColor="var(--text)" labelColor="var(--text)" />
+                  <StatCard label={startingThisLoopLabel} value={notFinishedValue} valueColor="var(--text)" labelColor="var(--text)" />
                 </>
               ) : (
                 <>
@@ -1312,7 +1326,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                   <StatCard
                     label="Current loop"
                     value={String(fy.loopNumber)}
-                  bg="#facc15" valueColor="black" labelColor="black" />
+                  bg="var(--stat-yellow)" valueColor="var(--text)" labelColor="var(--text)" />
                   <StatCard
                     label="Loop time-limit (min)"
                     value={String(fy.loopLengthMin)}
@@ -1326,11 +1340,11 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                       bg="#be0cfe" valueColor="white" labelColor="white" />
                     );
                   })()}
-                  <div style={{ flexBasis: "100%", height: 0 }} />
+                  <div className="metric-break" style={{ flexBasis: "100%", height: 0 }} />
                   <StatCard
                     label="Distance completed"
                     value={formatKm(frontyardDistance)}
-                  valueColor="black" labelColor="black" />
+                  valueColor="var(--text)" labelColor="var(--text)" />
                   {(() => {
                     const r = requiredPace(fy.loopLengthMin, FRONTYARD_LOOP_KM);
                     return (
@@ -1345,22 +1359,61 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                     label="Remaining min:sec of loop"
                     value={`${pad(fyMin)}:${pad(fySec)}`}
                     bg={remainingBg(fy.remainingSec)}
-                    valueColor="black"
-                    labelColor="black"
+                    valueColor="var(--text)"
+                    labelColor="var(--text)"
                   />
-                  <div style={{ flexBasis: "100%", height: 0 }} />
+                  <div className="metric-break" style={{ flexBasis: "100%", height: 0 }} />
                   <JerseyCard loopNumber={fy.loopNumber} />
-                  <StatCard label={completedPastLoopLabel} value={completedPastLoopValue} valueColor="black" labelColor="black" />
-                  <StatCard label={startingThisLoopLabel} value={notFinishedValue} valueColor="black" labelColor="black" />
+                  <StatCard label={completedPastLoopLabel} value={completedPastLoopValue} valueColor="var(--text)" labelColor="var(--text)" />
+                  <StatCard label={startingThisLoopLabel} value={notFinishedValue} valueColor="var(--text)" labelColor="var(--text)" />
                 </>
               )}
             </div>
           )}
         </>
       ) : (
-        <p style={{ color: "#888" }}>
+        <p style={{ color: "var(--muted)" }}>
           Set the race start time in the Settings dashboard to start the clock.
         </p>
+      )}
+      {showTop15 && (
+        <div className="top15-results" aria-label="Top-15 results">
+          <h2>Top-15 {top15Snapshot.loop > 0 ? `after loop ${top15Snapshot.loop}` : "before first loop"}</h2>
+          {top15.length > 0 ? (
+            <table className="top15-table">
+              <colgroup>
+                <col style={{ width: "6%" }} />
+                <col style={{ width: "38%" }} />
+                <col style={{ width: "14%" }} />
+                <col style={{ width: "14%" }} />
+                <col style={{ width: "14%" }} />
+                <col style={{ width: "14%" }} />
+              </colgroup>
+              <thead>
+                <tr>
+                  {["Bib", "Name", "Last", "Fastest", "Average", "Acc. Time"].map((label) => (
+                    <th key={label} scope="col">{label}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {top15.map((runner) => (
+                  <tr key={runner.bib}>
+                    <td>{runner.bib}</td>
+                    <td title={runner.name}>{runner.name}</td>
+                    {[runner.snapshotLast, runner.snapshotFastest, runner.snapshotAverage, runner.snapshotTotal].map((seconds, index) => (
+                      <td key={index}>{seconds === null ? "-" : formatHms(seconds)}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p style={{ margin: 0, color: "var(--muted)" }}>
+              {resultRows.length ? "No remaining runners" : "Results not yet available"}
+            </p>
+          )}
+        </div>
       )}
     </section>
   );

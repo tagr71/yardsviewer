@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { dashboards } from "./dashboards";
 import { modeKey } from "./dashboards/timerCore";
+import { DisplayToggle, useThemeSettings } from "./theme";
 
 const EVENT_ID_KEY = "raceresult.eventId";
 const DASHBOARD_KEY = "raceresult.dashboard";
@@ -19,6 +20,7 @@ const PREDEFINED_EVENTS: { id: string; label: string; logoFile?: string }[] = [
   { id: "374847", label: "Rotvollfjæra Frontyard Ultra 2026" },
   { id: "337633", label: "Hell Backyard Ultra 2026" },
   { id: "352401", label: "Rondane Backyard Ultra 2026", logoFile: "RBU_logo.png" },
+  { id: "361312", label: "Muruvik Backyard Ultra 2026"},
 ];
 const NONE_OPTION = "__none__";
 const OTHER_OPTION = "__other__";
@@ -87,6 +89,8 @@ function EventLogo({ logoFile }: { logoFile?: string }) {
 }
 
 export function App() {
+  const { theme, manualTheme, setManualTheme, automatic, setAutomatic } = useThemeSettings();
+  useEffect(() => { document.documentElement.dataset.theme = theme; }, [theme]);
   const initialPath = useMemo(() => parsePath(), []);
   const [selection, setSelection] = useState<Selection | null>(() => {
     // Only restore from URL — never auto-load from localStorage so the
@@ -190,6 +194,7 @@ export function App() {
 
   return (
     <main
+      className="app-shell"
       style={{
         fontFamily: "system-ui, sans-serif",
         minHeight: "100vh",
@@ -198,10 +203,11 @@ export function App() {
       }}
     >
       <div
+        className="app-header"
         style={{
           padding: "0.6rem 1rem",
-          background: "#fafafa",
-          borderBottom: "1px solid #ddd",
+          background: "var(--surface)",
+          borderBottom: "1px solid var(--border)",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -224,7 +230,7 @@ export function App() {
         <label
           style={{ display: "flex", flexDirection: "column", gap: "0.15rem" }}
         >
-          <span style={{ fontSize: "0.75rem", color: "#555" }}>Event</span>
+          <span style={{ fontSize: "0.75rem", color: "var(--muted)" }}>Event</span>
           <select
             value={eventChoice}
             onChange={(e) => {
@@ -253,7 +259,7 @@ export function App() {
           <label
             style={{ display: "flex", flexDirection: "column", gap: "0.15rem" }}
           >
-            <span style={{ fontSize: "0.75rem", color: "#555" }}>Event ID (6 chars)</span>
+            <span style={{ fontSize: "0.75rem", color: "var(--muted)" }}>Event ID (6 chars)</span>
             <input
               type="text"
               maxLength={6}
@@ -268,7 +274,7 @@ export function App() {
         <label
           style={{ display: "flex", flexDirection: "column", gap: "0.15rem" }}
         >
-          <span style={{ fontSize: "0.75rem", color: "#555" }}>Dashboard</span>
+          <span style={{ fontSize: "0.75rem", color: "var(--muted)" }}>Dashboard</span>
           <select
             value={dashboardId}
             onChange={(e) => {
@@ -302,16 +308,21 @@ export function App() {
         )}
 
         {selection && active && (
-          <span style={{ color: "#666", fontSize: "0.9rem" }}>
+          <span style={{ color: "var(--muted)", fontSize: "0.9rem" }}>
               {active.title} · event {selection.eventId}
             </span>
           )}
         </form>
 
+        <div className="theme-controls">
+          <DisplayToggle label="Automatic day/night" checked={automatic} onChange={setAutomatic} />
+          {!automatic && <DisplayToggle label="Night mode" checked={manualTheme === "night"} onChange={(night) => setManualTheme(night ? "night" : "day")} />}
+        </div>
         <EventLogo logoFile={PREDEFINED_EVENTS.find((e) => e.id === eventId)?.logoFile} />
       </div>
 
       <div
+        className="app-content"
         style={{
           flex: 1,
           minHeight: 0,
@@ -333,13 +344,13 @@ export function App() {
         )}
 
         {selection && !active && (
-          <p style={{ color: "crimson" }}>
+          <p style={{ color: "var(--danger)" }}>
             Unknown dashboard: {selection.dashboardId}
           </p>
         )}
 
         {!selection && (
-          <p style={{ color: "#666" }}>
+          <p style={{ color: "var(--muted)" }}>
             Choose an event and a dashboard above.
           </p>
         )}
@@ -348,14 +359,14 @@ export function App() {
       <footer
         style={{
           padding: "0.6rem 1rem",
-          background: "#fafafa",
-          borderTop: "1px solid #ddd",
+          background: "var(--surface)",
+          borderTop: "1px solid var(--border)",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           gap: "0.75rem",
           fontSize: "0.85rem",
-          color: "#555",
+          color: "var(--muted)",
           letterSpacing: "0.04em",
         }}
       >

@@ -33,9 +33,9 @@ import {
 } from "./jerseyRanking";
 
 const TABLE_BG: Record<"pink" | "green" | "yellow", string> = {
-  pink: "#fce7f3",
-  green: "#dcfce7",
-  yellow: "#fef9c3",
+  pink: "var(--pink-surface)",
+  green: "var(--green-surface)",
+  yellow: "var(--yellow-surface)",
 };
 const TABLE_LABEL: Record<"pink" | "green" | "yellow", string> = {
   pink: "Pink jersey",
@@ -297,10 +297,10 @@ function JerseyTable({
       style={{
         flex: "1 1 28rem",
         minWidth: "20rem",
-        border: "1px solid #ddd",
+        border: "1px solid var(--border)",
         borderRadius: "0.4rem",
         overflow: "hidden",
-        background: "white",
+        background: "var(--page)",
       }}
     >
       <div
@@ -316,13 +316,13 @@ function JerseyTable({
       >
         <span>
           {TABLE_LABEL[jersey]} — {sexLabel}
-          <span style={{ fontWeight: 400, color: "#555", marginLeft: "0.4rem" }}>
+          <span style={{ fontWeight: 400, color: "var(--muted)", marginLeft: "0.4rem" }}>
             (ends at loop {endsAt})
           </span>
           <StatusBadge status={status ?? null} />
         </span>
         {note && (
-          <span style={{ fontSize: "0.8rem", fontWeight: 400, color: "#666" }}>
+          <span style={{ fontSize: "0.8rem", fontWeight: 400, color: "var(--muted)" }}>
             {note}
           </span>
         )}
@@ -351,7 +351,7 @@ function JerseyTable({
             <col style={{ width: "6rem" }} />
           </colgroup>
           <thead>
-            <tr style={{ background: "#fafafa" }}>
+            <tr style={{ background: "var(--surface)" }}>
               <th style={thSticky}>#</th>
               <th style={thSticky}>Bib</th>
               <th style={{ ...thSticky, textAlign: "left" }}>Name</th>
@@ -362,13 +362,13 @@ function JerseyTable({
           <tbody>
             {rows.length === 0 ? (
               <tr>
-                <td colSpan={5} style={{ ...td, color: "#888", textAlign: "center" }}>
+                <td colSpan={5} style={{ ...td, color: "var(--muted)", textAlign: "center" }}>
                   No data
                 </td>
               </tr>
             ) : (
               rows.map((r, i) => (
-                <tr key={`${r.bib}-${i}`} style={i % 2 ? { background: "#fafafa" } : undefined}>
+                <tr key={`${r.bib}-${i}`} style={i % 2 ? { background: "var(--surface)" } : undefined}>
                   <td style={tdNum}>{r.rank}</td>
                   <td style={tdNum}>{r.bib}</td>
                   <td style={td}>
@@ -398,7 +398,7 @@ function JerseyTable({
                   <td style={tdNum}>
                     {r.value}
                     {r.sub && (
-                      <span style={{ color: "#888", fontSize: "0.85em" }}> {r.sub}</span>
+                      <span style={{ color: "var(--muted)", fontSize: "0.85em" }}> {r.sub}</span>
                     )}
                   </td>
                 </tr>
@@ -418,8 +418,8 @@ function WinnerBanner({ winner }: { winner: WinnerRow | null }) {
   return (
     <div
       style={{
-        background: "#fffbeb",
-        border: "2px solid #facc15",
+        background: "var(--yellow-surface)",
+        border: "2px solid var(--stat-yellow)",
         borderRadius: "0.5rem",
         padding: "0.5rem 0.75rem",
         display: "flex",
@@ -427,10 +427,10 @@ function WinnerBanner({ winner }: { winner: WinnerRow | null }) {
         gap: "0.25rem",
       }}
     >
-      <div style={{ fontWeight: 800, color: "#1f2937" }}>
+      <div style={{ fontWeight: 800, color: "var(--text)" }}>
         🏆 Overall winner
         <span
-          style={{ color: "#666", fontWeight: 400, fontSize: "0.85em", marginLeft: "0.5rem" }}
+          style={{ color: "var(--muted)", fontWeight: 400, fontSize: "0.85em", marginLeft: "0.5rem" }}
         >
           fastest lap on the highest loop completed within the time limit
         </span>
@@ -443,10 +443,10 @@ function WinnerBanner({ winner }: { winner: WinnerRow | null }) {
           fontSize: "0.95rem",
         }}
       >
-        <span style={{ fontWeight: 800, color: "#111" }}>
+        <span style={{ fontWeight: 800, color: "var(--text)" }}>
           #{winner.bib} {winner.name}
         </span>
-        <span style={{ color: "#555", fontVariantNumeric: "tabular-nums" }}>
+        <span style={{ color: "var(--muted)", fontVariantNumeric: "tabular-nums" }}>
           loop {winner.lap} · {formatHms(winner.lapSec)} (total {formatHms(winner.totalSec)})
         </span>
       </div>
@@ -910,7 +910,7 @@ export function Jerseys({ eventId, eventName }: { eventId: string; eventName?: s
     return (
       <section style={{ width: "100%", textAlign: "center", padding: "2rem" }}>
         <h1>Jerseys</h1>
-        <p style={{ color: "#888" }}>
+        <p style={{ color: "var(--muted)" }}>
           Jerseys dashboard is only available in frontyard mode.
         </p>
       </section>
@@ -930,7 +930,7 @@ export function Jerseys({ eventId, eventName }: { eventId: string; eventName?: s
       }}
     >
       {eventName && (
-        <h2 style={{ margin: 0, fontWeight: 500, color: "#555" }}>{eventName}</h2>
+        <h2 style={{ margin: 0, fontWeight: 500, color: "var(--muted)" }}>{eventName}</h2>
       )}
       <h1 style={{ margin: 0 }}>Jerseys</h1>
 
@@ -942,7 +942,7 @@ export function Jerseys({ eventId, eventName }: { eventId: string; eventName?: s
           fontSize: "0.95rem",
         }}
       >
-        <span style={{ color: "#555" }}>View:</span>
+        <span style={{ color: "var(--muted)" }}>View:</span>
         <select
           value={detailView}
           onChange={(e) =>
@@ -950,9 +950,9 @@ export function Jerseys({ eventId, eventName }: { eventId: string; eventName?: s
           }
           style={{
             padding: "0.25rem 0.5rem",
-            border: "1px solid #ccc",
+            border: "1px solid var(--border)",
             borderRadius: "0.25rem",
-            background: "white",
+            background: "var(--page)",
             fontSize: "0.95rem",
           }}
         >
@@ -964,9 +964,9 @@ export function Jerseys({ eventId, eventName }: { eventId: string; eventName?: s
       </label>
 
       {loading && data === null && <p>Loading…</p>}
-      {error && <p style={{ color: "crimson" }}>Error: {error}</p>}
+      {error && <p style={{ color: "var(--danger)" }}>Error: {error}</p>}
       {lastUpdated && (
-        <p style={{ margin: 0, fontSize: "0.85rem", color: "#888" }}>
+        <p style={{ margin: 0, fontSize: "0.85rem", color: "var(--muted)" }}>
           Last updated: {lastUpdated.toLocaleTimeString()}
         </p>
       )}
@@ -999,8 +999,8 @@ export function Jerseys({ eventId, eventName }: { eventId: string; eventName?: s
             alignItems: "center",
             gap: "0.5rem",
             padding: "0.4rem 0.6rem",
-            background: effectiveViewLoop !== null ? "#fff7ed" : "#f3f3f3",
-            border: "1px solid #ddd",
+            background: effectiveViewLoop !== null ? "var(--replay)" : "var(--surface-strong)",
+            border: "1px solid var(--border)",
             borderRadius: "0.3rem",
           }}
         >
@@ -1362,10 +1362,10 @@ function JerseyDetail({
     return (
       <div
         style={{
-          border: "1px solid #ddd",
+          border: "1px solid var(--border)",
           borderRadius: "0.4rem",
           overflow: "hidden",
-          background: "white",
+          background: "var(--page)",
         }}
       >
         <div
@@ -1381,12 +1381,12 @@ function JerseyDetail({
         >
           <span>
             {TABLE_LABEL[jersey]} — {sexLabel}
-            <span style={{ fontWeight: 400, color: "#555", marginLeft: "0.4rem" }}>
+            <span style={{ fontWeight: 400, color: "var(--muted)", marginLeft: "0.4rem" }}>
               (ends at loop {endsAt})
             </span>
             <StatusBadge status={statuses[sex]} />
           </span>
-          <span style={{ fontSize: "0.8rem", fontWeight: 400, color: "#666" }}>
+          <span style={{ fontSize: "0.8rem", fontWeight: 400, color: "var(--muted)" }}>
             {isYellow
               ? `per-loop split time · cumulative through loop ${maxLoop}`
               : `per-loop points · accumulated through loop ${maxLoop}`}
@@ -1413,7 +1413,7 @@ function JerseyDetail({
               ))}
             </colgroup>
             <thead>
-              <tr style={{ background: "#fafafa" }}>
+              <tr style={{ background: "var(--surface)" }}>
                 <th style={th} title="Loops held as jersey holder">
                   Held
                 </th>
@@ -1434,7 +1434,7 @@ function JerseyDetail({
                 <tr>
                   <td
                     colSpan={6 + loops.length}
-                    style={{ ...td, color: "#888", textAlign: "center" }}
+                    style={{ ...td, color: "var(--muted)", textAlign: "center" }}
                   >
                     No data
                   </td>
@@ -1443,7 +1443,7 @@ function JerseyDetail({
                 rows.map((r, i) => (
                   <tr
                     key={`${r.bib}-${i}`}
-                    style={i % 2 ? { background: "#fafafa" } : undefined}
+                    style={i % 2 ? { background: "var(--surface)" } : undefined}
                   >
                     <td style={{ ...tdNum, padding: "0.2rem 0.3rem" }}>
                       <CountBadge jersey={jersey} count={r.heldCount} />
@@ -1465,7 +1465,7 @@ function JerseyDetail({
                     {r.cells.map((c, j) => (
                       <td
                         key={j}
-                        style={{ ...tdNum, color: c.text ? "#222" : "#ccc" }}
+                        style={{ ...tdNum, color: c.text ? "var(--text)" : "var(--border)" }}
                       >
                         <span
                           style={{
@@ -1517,7 +1517,7 @@ function Row({ children }: { children: React.ReactNode }) {
 
 const th: React.CSSProperties = {
   padding: "0.4rem 0.6rem",
-  borderBottom: "1px solid #ddd",
+  borderBottom: "1px solid var(--border)",
   textAlign: "right",
   fontVariantNumeric: "tabular-nums",
 };
@@ -1525,12 +1525,12 @@ const thSticky: React.CSSProperties = {
   ...th,
   position: "sticky",
   top: 0,
-  background: "#fafafa",
+  background: "var(--surface)",
   zIndex: 1,
 };
 const td: React.CSSProperties = {
   padding: "0.35rem 0.6rem",
-  borderBottom: "1px solid #f0f0f0",
+  borderBottom: "1px solid var(--subtle-border)",
   textAlign: "left",
   whiteSpace: "nowrap",
   overflow: "hidden",

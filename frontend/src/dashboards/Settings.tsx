@@ -240,18 +240,18 @@ export function Settings({ eventId, eventName, eventLocation }: { eventId: strin
           style={{
             padding: "0.4rem 0.6rem",
             fontSize: "1rem",
-            border: "1px solid #ccc",
+            border: "1px solid var(--border)",
             borderRadius: "0.25rem",
           }}
         />
-        <span style={{ fontSize: "0.85rem", color: "#666", fontFamily: "monospace" }}>
+        <span style={{ fontSize: "0.85rem", color: "var(--muted)", fontFamily: "monospace" }}>
           ISO: {startPicker ? startPicker.replace("T", " ") : "—"}
         </span>
       </label>
 
       <fieldset
         style={{
-          border: "1px solid #ddd",
+          border: "1px solid var(--border)",
           borderRadius: "0.4rem",
           padding: "0.5rem 1rem",
           display: "flex",
@@ -259,7 +259,7 @@ export function Settings({ eventId, eventName, eventLocation }: { eventId: strin
           width: "100%",
         }}
       >
-        <legend style={{ padding: "0 0.4rem", color: "#555" }}>
+        <legend style={{ padding: "0 0.4rem", color: "var(--muted)" }}>
           Mode{raceFinished && " · race finished"}
         </legend>
         <label style={{ display: "flex", gap: "0.4rem", cursor: "pointer" }}>
@@ -373,7 +373,7 @@ export function Settings({ eventId, eventName, eventLocation }: { eventId: strin
           gap: "0.5rem",
           width: "100%",
           padding: "0.5rem 0.75rem",
-          border: "1px solid #ddd",
+          border: "1px solid var(--border)",
           borderRadius: "0.4rem",
           cursor: "pointer",
         }}
@@ -388,7 +388,7 @@ export function Settings({ eventId, eventName, eventLocation }: { eventId: strin
         </span>
       </label>
 
-      <p style={{ margin: 0, color: "#888", fontSize: "0.85rem", textAlign: "center" }}>
+      <p style={{ margin: 0, color: "var(--muted)", fontSize: "0.85rem", textAlign: "center" }}>
         Settings are saved automatically and used by the Dashboard.
       </p>
     </section>
@@ -451,7 +451,7 @@ export function SettingsGated(props: {
       }}
     >
       <h1 style={{ margin: 0, fontSize: "1.25rem" }}>Organizer access required</h1>
-      <p style={{ margin: 0, textAlign: "center", color: "#475569" }}>
+      <p style={{ margin: 0, textAlign: "center", color: "var(--muted)" }}>
         Enter the organizer passphrase to edit race settings.
       </p>
       <form
@@ -476,12 +476,12 @@ export function SettingsGated(props: {
           style={{
             padding: "0.5rem 0.7rem",
             fontSize: "1rem",
-            border: `1px solid ${error ? "#dc2626" : "#cbd5e1"}`,
+            border: `1px solid ${error ? "#dc2626" : "var(--border)"}`,
             borderRadius: "0.375rem",
           }}
         />
         {error && (
-          <span style={{ color: "#dc2626", fontSize: "0.875rem" }}>
+          <span style={{ color: "var(--danger)", fontSize: "0.875rem" }}>
             Wrong passphrase.
           </span>
         )}

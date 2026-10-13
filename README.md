@@ -3,9 +3,10 @@
 A web app that reads live data from [RaceResult](https://my.raceresult.com)
 events and shows it in a set of race dashboards — Overview, Leaderboard,
 Timer and Jersey standings — for both **Backyard Ultra** and **Frontyard Ultra**
-events. The backend polls RaceResult every 10 s (or at loop boundaries
-when a start time is configured) and auto-detects event mode, start time
-and location from the event's public page.
+events. Live dashboards refresh results every 10 s, with loop-boundary
+refreshes when a start time is configured. The backend fetches RaceResult
+data on demand and auto-detects event mode, start time and location from
+the event's public page.
 
 - **Backend:** Python + FastAPI + Uvicorn ([backend/app/main.py](backend/app/main.py))
 - **Frontend:** Vite + React + TypeScript ([frontend/](frontend))
@@ -23,20 +24,70 @@ The navigation bar shows two logos:
 
 ## Event selection
 
-On load the **Event** dropdown shows a "Select an event…" placeholder —
-no event is pre-selected and nothing is restored from `localStorage`, so
-the user must always make a conscious choice. Predefined events:
+At the root URL, the **Event** dropdown shows a "Select an event…"
+placeholder. No event is restored from `localStorage`; a dashboard deep
+link restores its event from the URL instead. Predefined events:
 
 | Label | ID |
 |---|---|
 | Rotvollfjæra Frontyard Ultra 2026 | 374847 |
 | Hell Backyard Ultra 2026 | 337633 |
 | Rondane Backyard Ultra 2026 | 352401 |
+| Muruvik Backyard Ultra 2026 | 361312 |
 
-Selecting a predefined event immediately opens its **Settings** dashboard.
+Selecting a predefined event immediately opens the selected dashboard;
+**Settings** is the initial dashboard choice.
 Choosing **Other…** reveals a 6-character alphanumeric ID input; the
 **Open** button is enabled only when exactly 6 characters have been
 entered.
+
+## Display options
+
+The shared header's **Automatic day/night** switch enables a Norwegian-time
+schedule: night mode from **17:00 to 08:00**, and day mode from **08:00 to
+17:00**. It uses `Europe/Oslo`, including daylight-saving changes, and
+updates while the page is open. Automatic mode is initially On; an explicitly
+saved Off choice is preserved. In manual mode, the **Night mode** switch
+chooses between white backgrounds
+with dark text and black backgrounds with light text; day is the initial
+manual default. Returning to manual mode restores the saved manual choice.
+Both settings persist across navigation, event changes and reloads, and
+synchronize between tabs.
+
+Three independent display switches default to **On** and remember their
+settings across events:
+
+- **Overview: Show participant info** controls the starting and remaining
+  detailed counts, female/male breakdowns and registered count. Turning it
+  off keeps the total **Still in**, current loop, accumulated distance and
+  replay controls visible.
+- **Dashboard: Show top-15** adds a compact results table beneath the timer:
+  bib, name, last/fastest/average lap and accumulated time. Enabling it
+  compacts timer and jersey panels; disabling it restores their spacious
+  layout.
+- **Leaderboard: Show top-15 plot** displays each selected runner's lap time
+  against loop number at the bottom of the page, below the sortable results
+  table. Fifteen distinct colors, supplemented by matching line patterns in
+  the plot and upper-right legend, stay with runners as ranks change. Colored
+  name tags connect to each runner's last available plotted point; full names
+  are also available in the legend and on hover. The results table scrolls
+  independently so the bottom plot stays visible on desktop and laptop.
+
+Both top-15 views select up to 15 remaining runners from overall standings,
+independently of the full Leaderboard's sorting or gender grouping. Live
+withdrawn/DNF/DNS/DQ runners are excluded; pre-race DNF placeholders are
+retained. Replay uses only runners and times from the selected completed
+loop, and final views retain the last-loop finishers. Live snapshots advance
+after completed loops, with continued polling for late corrections.
+
+The plot requires RaceResult's published per-loop Details data. Missing
+splits appear as gaps; events without splits show **Lap split data unavailable**
+instead of inferred lap history.
+
+The compact Dashboard fits 15 rows without scrolling at **1366 x 768** and
+**1920 x 1080**, including frontyard jersey standings and replay controls.
+The complete plot and legend also fit those viewports; the full Leaderboard
+table remains scrollable. Smaller screens use a readable, scrollable layout.
 
 ## Dashboards
 
@@ -57,7 +108,7 @@ The dashboard dropdown lists, in order: **Settings**, **Overview**,
   finished a `⏮ ◀ Loop N / max ▶ ⏭ Live` playback bar appears and
   the still-in counters / accumulated distance follow the selected loop.
 - **Leaderboard** — sortable, 10 s-polled table:
-  Total Rank, Bib, Full Name, Club, Country (flag), Gender, Laps,
+  Total Rank, Bib, Full Name, Club, Country (flag), Laps,
   Gap, Last (lap), Fastest, Slowest, Average, Total Time,
   Total Distance, Status. Distance uses the loop length for the
   current Timer mode (6.706 km backyard, 3 km frontyard). In
@@ -280,12 +331,6 @@ finished:
 
 Mid-race "current leader" states show no trophy.
 
-The front page lets you pick a predefined event or type a custom
-6-character alphanumeric RaceResult event ID, pick a dashboard from a
-dropdown, and open it. The chosen event ID and dashboard are saved in
-`localStorage` so other tabs / deep links continue to work, but the
-dropdown always starts empty on a fresh load.
-
 ### URL routing
 
 Each dashboard has a URL slug that matches its menu label, so you can
@@ -303,11 +348,17 @@ Visiting `/<slug>/<eventId>` — e.g. `/jerseys/374847` — opens that
 dashboard for the given event. The event ID segment accepts up to
 10 alphanumeric characters. Submitting the front-page form updates
 the URL via `history.pushState`, and the browser back/forward buttons
-re-sync the dashboard via a `popstate` listener. The FastAPI backend
+re-sync the active dashboard via a `popstate` listener. Event/dashboard
+choices are also saved in `localStorage`, but the URL, not these saved
+choices, determines the initial view. The FastAPI backend
 serves `index.html` for any unknown path so client-side routing works
 in the Docker / production build too.
 
 ## Run
+
+Requirements: **Python 3.12+**, [uv](https://docs.astral.sh/uv/), and
+**Node.js 18+** with npm. Run the backend and frontend in separate
+terminals from the repository root.
 
 ### Backend
 
@@ -487,16 +538,18 @@ on demand.
 
 ## Testing
 
-The jersey ranking pipeline ships with a deterministic end-to-end unit
-test plus a CLI script that replays the same simulated race
-loop-by-loop. Both consume the shared
+The frontend has five Vitest suites covering jersey rankings, status and
+winner rules, top-15 snapshots and plots, and display preferences. The
+jersey ranking pipeline also has a CLI script that replays a simulated
+race loop-by-loop. The simulation tests and CLI consume the shared
 [frontend/src/dashboards/simulateRace.ts](frontend/src/dashboards/simulateRace.ts)
 module, so any seed reproduces identical fixtures in both places.
 
 ### Prerequisites
 
 - Node 18+.
-- Install frontend deps once: `cd frontend; npm install`.
+- Install frontend dependencies once: `npm --prefix frontend ci` from the
+  repository root.
 
 ### Unit tests
 
@@ -541,8 +594,21 @@ What the suite asserts:
   `lockAfter`), and the strict `isWinnerFinal` gate that withholds
   the trophy until the race is actually decided (end-loop reached or
   a later loop attempt produced no qualifying finishers).
+- **Top-15 snapshots and plot helpers**
+  ([frontend/src/dashboards/__tests__/raceResults.test.ts](frontend/src/dashboards/__tests__/raceResults.test.ts)):
+  covers remaining-runner eligibility, overall selection, replay caps,
+  late data, missing lap counts and splits, stable colors, dash patterns,
+  last-point labels and contrasting tag text. Historical snapshots must
+  not borrow future ranks or times.
+- **Display preferences and automatic theme**
+  ([frontend/src/dashboards/__tests__/displayPreferences.test.ts](frontend/src/dashboards/__tests__/displayPreferences.test.ts)):
+  covers validated storage values, unavailable storage, automatic-On
+  defaults, saved Off choices, manual theme restoration, and the exact
+  08:00/17:00 boundaries in Norwegian summer and winter time, including
+  daylight-saving transition dates.
 
-A green run prints `122 passed`.
+A successful run has no failed tests across all five suites. The test
+count can grow as coverage is added.
 
 ### Loop-by-loop simulation script
 
@@ -577,4 +643,78 @@ line whenever the rank-1 runner changes from the previous loop, so the
 shifting jersey ownership is easy to spot. The script does not touch
 the backend — it computes everything locally from the seeded
 simulation.
+
+## Development
+
+### Source ownership
+
+| Area | Owning source |
+| --- | --- |
+| Backend endpoints and RaceResult parsing | [backend/app/main.py](backend/app/main.py) |
+| Event menu, routing and shared header | [frontend/src/App.tsx](frontend/src/App.tsx) |
+| Theme schedule, storage synchronization and display switches | [frontend/src/theme.tsx](frontend/src/theme.tsx) |
+| Theme tokens and responsive layouts | [frontend/src/styles.css](frontend/src/styles.css) |
+| Remaining-runner selection, loop snapshots and plot helpers | [frontend/src/dashboards/raceResults.ts](frontend/src/dashboards/raceResults.ts) |
+| Lazy-loaded chart, runner tags and matching legend | [frontend/src/dashboards/Top15Plot.tsx](frontend/src/dashboards/Top15Plot.tsx) |
+| Shared clocks, race settings and replay controls | [frontend/src/dashboards/timerCore.tsx](frontend/src/dashboards/timerCore.tsx) |
+| Jersey standings and winner rules | [frontend/src/dashboards/jerseyRanking.ts](frontend/src/dashboards/jerseyRanking.ts) |
+
+### Display preferences
+
+These keys are global, not keyed by event ID. Values are JSON-encoded
+in `localStorage` and validated before use:
+
+| Key | Default | Meaning |
+| --- | --- | --- |
+| `raceresult.themeAutomatic` | `true` | Use the Europe/Oslo day/night schedule |
+| `raceresult.theme` | `"day"` | Saved manual theme: `"day"` or `"night"` |
+| `raceresult.overview.showParticipantInfo` | `true` | Show detailed participant counts |
+| `raceresult.dashboard.showTop15` | `true` | Show compact top-15 results |
+| `raceresult.leaderboard.showTop15Plot` | `true` | Show the bottom lap-time plot |
+
+Updates notify same-tab consumers through `raceresult.preferenceChanged`
+and other tabs through the browser's `storage` event. Invalid or missing
+values use the documented defaults. Storage failures must not prevent
+controls from working in the current tab. Automatic theme refreshes every
+second and on focus/visibility changes; it never overwrites the manual
+theme preference. Race configuration and replay position remain per-event.
+
+### Snapshot rules
+
+Keep selection in the shared results module rather than deriving it from
+the full Leaderboard's current sort or gender group. Cap live snapshots
+to published, completed loops; replay must only use data through the
+selected loop. Keep polling for late corrections. Missing splits are
+unavailable, not zero-duration laps or inferred historical results.
+
+The chart assigns stable colors by bib. Lines, name tags and legend
+swatches share one appearance definition, and name tags connect to the
+last available split at or before the snapshot. Preserve the reserved
+label lane and local horizontal scrolling on small screens.
+
+### Validation
+
+Run from the repository root before merging changes:
+
+```powershell
+npm --prefix frontend run test
+npm --prefix frontend run build
+git diff --check
+```
+
+There is no frontend lint script; the production build includes the
+TypeScript check. Builds regenerate the tracked TypeScript metadata in
+`frontend/tsconfig.tsbuildinfo`; avoid unrelated generated metadata churn.
+For changes to Python code, the configured development checks are:
+
+```powershell
+uv run ruff check backend
+uv run mypy
+```
+
+For display changes, verify both **1366 x 768** and **1920 x 1080** at
+normal zoom, plus a narrow mobile viewport. Check all 15 Dashboard rows,
+the bottom plot, tag/legend agreement, page overflow, both themes and
+replay. Confirm automatic-On behavior with no saved preference and that
+a saved Off choice still restores manual mode.
 
