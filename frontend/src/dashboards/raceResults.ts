@@ -1,5 +1,7 @@
 import { frontyardElapsedAtLoopStart, frontyardState, LOOP_SECONDS, type Mode } from "./timerCore";
 
+type LapSplit = { loop: number; time: string; lapSec?: number; totalSec?: number };
+
 export type ResultRow = {
   place: number | null;
   bib: string;
@@ -18,10 +20,11 @@ export type ResultRow = {
   lapsBehind: number | null;
   total: string;
   totalSec?: number;
-  perLoop?: { loop: number; time: string; lapSec?: number; totalSec?: number }[];
+  perLoop?: LapSplit[];
 };
 
 export type ResultsResponse = { eventName?: string; raceFinished?: boolean; rows: ResultRow[] };
+export type LiveSplitHistory = Map<string, LapSplit[]>;
 export type Snapshot = { loop: number; replay: boolean; finished: boolean };
 export type RankedRunner = ResultRow & {
   snapshotRank: number;
@@ -70,6 +73,75 @@ export function lapSeconds(lap: { time?: string; lapSec?: number }): number | nu
   if (numbers.slice(1).some((part) => part >= 60)) return null;
   const seconds = numbers.reduce((total, part) => total * 60 + part, 0);
   return seconds > 0 ? seconds : null;
+}
+
+export function collectLiveSplits(rows: ResultRow[], history: LiveSplitHistory = new Map()): {
+  rows: ResultRow[]; history: LiveSplitHistory;
+} {
+  const nextHistory = new Map(history);
+  const recordedRows = rows.map((row) => {
+    if (!row.bib) return row;
+    const completed = row.lapsCompleted;
+    const knownCount = typeof completed === "number" && Number.isInteger(completed) && completed >= 0;
+    const splits = new Map<number, LapSplit>();
+    for (const split of history.get(row.bib) ?? []) {
+      if (isLapSplit(split) && (!knownCount || split.loop <= completed)) splits.set(split.loop, split);
+    }
+    const latestSeconds = lapSeconds({ time: row.lastLap });
+    if (knownCount && completed > 0 && latestSeconds !== null) {
+      splits.set(completed, {
+        loop: completed, time: row.lastLap, lapSec: latestSeconds,
+        ...(typeof row.totalSec === "number" && Number.isFinite(row.totalSec) && row.totalSec > 0
+          ? { totalSec: row.totalSec } : {}),
+      });
+    }
+    for (const split of row.perLoop ?? []) {
+      if (isLapSplit(split) && (!knownCount || split.loop <= completed)) splits.set(split.loop, split);
+    }
+    const perLoop = [...splits.values()].sort((first, second) => first.loop - second.loop);
+    if (!perLoop.length) {
+      nextHistory.delete(row.bib);
+      return row.perLoop?.length ? { ...row, perLoop: [] } : row;
+    }
+    nextHistory.set(row.bib, perLoop);
+    return { ...row, perLoop };
+  });
+  return { rows: recordedRows, history: nextHistory };
+}
+
+function liveSplitKey(eventId: string, startMs: number | null): string {
+  return `raceresult.leaderboard.liveSplits.${eventId}.${startMs ?? "unknown"}`;
+}
+
+function isLapSplit(value: unknown): value is LapSplit {
+  if (!value || typeof value !== "object") return false;
+  const split = value as Partial<LapSplit>;
+  return Number.isInteger(split.loop) && (split.loop ?? 0) > 0 && typeof split.time === "string"
+    && (split.lapSec === undefined || (Number.isFinite(split.lapSec) && split.lapSec >= 0))
+    && (split.totalSec === undefined || (Number.isFinite(split.totalSec) && split.totalSec >= 0))
+    && lapSeconds(split) !== null;
+}
+
+export function readLiveSplits(eventId: string, startMs: number | null): LiveSplitHistory {
+  const history: LiveSplitHistory = new Map();
+  try {
+    const value: unknown = JSON.parse(window.localStorage.getItem(liveSplitKey(eventId, startMs)) ?? "[]");
+    if (!Array.isArray(value)) return history;
+    for (const entry of value) {
+      if (!Array.isArray(entry) || typeof entry[0] !== "string" || !entry[0] || !Array.isArray(entry[1])) continue;
+      const splits = entry[1].filter(isLapSplit);
+      if (splits.length) history.set(entry[0], splits);
+    }
+  } catch {}
+  return history;
+}
+
+export function saveLiveSplits(eventId: string, startMs: number | null, history: LiveSplitHistory): void {
+  try {
+    const key = liveSplitKey(eventId, startMs);
+    const value = JSON.stringify([...history]);
+    if (window.localStorage.getItem(key) !== value) window.localStorage.setItem(key, value);
+  } catch {}
 }
 
 export function publishedLoop(rows: ResultRow[]): number {

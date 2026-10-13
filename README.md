@@ -86,9 +86,23 @@ retained. Replay uses only runners and times from the selected completed
 loop, and final views retain the last-loop finishers. Live snapshots advance
 after completed loops, with continued polling for late corrections.
 
-The plot requires RaceResult's published per-loop Details data. Missing
-splits appear as gaps; events without splits show **Lap split data unavailable**
-instead of inferred lap history.
+The plot prefers RaceResult's published per-loop Details data. While the
+Leaderboard is open, each results poll also records valid last-lap times
+against the runner's published completed-loop count. These observations are
+saved in this browser's `localStorage`, separately for each event and configured
+race start time, and remain available after navigation or reload. Recording
+continues when the plot is hidden or replay is selected; replay still displays
+only the selected completed loops. Published Details splits override recorded
+values when available.
+
+Only observed laps are recorded: opening the Leaderboard late, closing it,
+or missing a poll can leave gaps. The history is not shared between devices
+or the local and Cloud Run sites, and changing the configured start time
+selects a separate history. If browser storage is unavailable, observations
+last only while the Leaderboard stays mounted. Missing splits remain gaps,
+and isolated observations appear as points. Events with neither published
+splits nor valid observed last-lap times show **Lap split data unavailable**;
+aggregate fastest/average times are never used to invent lap history.
 
 The compact Dashboard fits 15 rows without scrolling at **1366 x 768** and
 **1920 x 1080**, including frontyard jersey standings and replay controls.
@@ -516,11 +530,34 @@ gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregi
 ```
 
 Cloud Build compiles the Dockerfile in the cloud (~2–3 min), pushes the image
-to Artifact Registry, and deploys a new Cloud Run revision. The service URL is
-printed at the end.
+to Artifact Registry; the deployment script then deploys a new Cloud Run
+revision and prints the service URL. The Cloud Build configuration itself
+only builds and pushes the image.
 
 > `deploy.ps1` is listed in `.gitignore` so your credentials are never
 > committed to version control.
+
+For an existing service, the following direct commands deploy the exact
+built image without changing its runtime environment variables or access
+policy. Run from the repository root, with an authenticated `gcloud` CLI:
+
+```powershell
+$projectId = "<PROJECT_ID>"
+$region = "europe-north1"
+$buildId = gcloud builds submit . --config cloudbuild.yaml --project $projectId --suppress-logs --format="value(id)"
+if ($LASTEXITCODE -ne 0) { throw "Cloud Build failed" }
+$digest = gcloud builds describe $buildId --project $projectId --format="value(results.images[0].digest)"
+if ($LASTEXITCODE -ne 0 -or -not $digest) { throw "Built image digest unavailable" }
+$image = "$region-docker.pkg.dev/$projectId/cloud-run-source-deploy/yardsviewer"
+gcloud run deploy yardsviewer --image "$image@$digest" --project $projectId --region $region
+if ($LASTEXITCODE -ne 0) { throw "Cloud Run deployment failed" }
+gcloud run services describe yardsviewer --project $projectId --region $region --format="yaml(status.latestReadyRevisionName,status.traffic,status.url)"
+```
+
+Build success alone does not confirm deployment. Verify that the new revision
+is ready and receives traffic, then check `/api/health` and the deployed UI.
+The source upload must exclude private `.env` files and `deploy.ps1`; the
+repository's ignore rules cover these files.
 
 ### Deploy to any other container PaaS
 
@@ -604,8 +641,11 @@ What the suite asserts:
   ([frontend/src/dashboards/__tests__/raceResults.test.ts](frontend/src/dashboards/__tests__/raceResults.test.ts)):
   covers remaining-runner eligibility, overall selection, replay caps,
   late data, missing lap counts and splits, stable colors, dash patterns,
-  last-point labels and contrasting tag text. Historical snapshots must
-  not borrow future ranks or times.
+  last-point labels and contrasting tag text. Live-recording tests cover
+  observed-only history, missed-loop gaps, corrections, published-split
+  precedence, and storage isolation by event and start time. Malformed or
+  unavailable browser storage must not break recording. Historical
+  snapshots must not borrow future ranks or times or sum incomplete history.
 - **Display preferences and automatic theme**
   ([frontend/src/dashboards/__tests__/displayPreferences.test.ts](frontend/src/dashboards/__tests__/displayPreferences.test.ts)):
   covers validated storage values, unavailable storage, automatic-On
@@ -660,7 +700,8 @@ simulation.
 | Event menu, routing and shared header | [frontend/src/App.tsx](frontend/src/App.tsx) |
 | Theme schedule, storage synchronization and display switches | [frontend/src/theme.tsx](frontend/src/theme.tsx) |
 | Theme tokens and responsive layouts | [frontend/src/styles.css](frontend/src/styles.css) |
-| Remaining-runner selection, loop snapshots and plot helpers | [frontend/src/dashboards/raceResults.ts](frontend/src/dashboards/raceResults.ts) |
+| Remaining-runner selection, loop snapshots, live split storage and plot helpers | [frontend/src/dashboards/raceResults.ts](frontend/src/dashboards/raceResults.ts) |
+| Results polling, live split collection and results table | [frontend/src/dashboards/Leaderboard.tsx](frontend/src/dashboards/Leaderboard.tsx) |
 | Lazy-loaded chart, runner tags and matching legend | [frontend/src/dashboards/Top15Plot.tsx](frontend/src/dashboards/Top15Plot.tsx) |
 | Shared clocks, race settings and replay controls | [frontend/src/dashboards/timerCore.tsx](frontend/src/dashboards/timerCore.tsx) |
 | Jersey standings and winner rules | [frontend/src/dashboards/jerseyRanking.ts](frontend/src/dashboards/jerseyRanking.ts) |
@@ -684,6 +725,30 @@ values use the documented defaults. Storage failures must not prevent
 controls from working in the current tab. Automatic theme refreshes every
 second and on focus/visibility changes; it never overwrites the manual
 theme preference. Race configuration and replay position remain per-event.
+
+### Live split storage
+
+Leaderboard polling merges valid published Details splits with observed
+last-lap values before rendering. A last-lap observation requires a positive
+integer completed-loop count and a valid lap time. It is assigned only to
+that loop; missed loops are never interpolated. Published Details values
+take precedence within each poll, and repeated or corrected observations
+replace the same bib/loop entry rather than duplicating it.
+
+The cache key is `raceresult.leaderboard.liveSplits.<eventId>.<startMs>`,
+where `startMs` is the configured start instant in epoch milliseconds, or
+`unknown` when no start time is configured. Its JSON value is an array of
+`[bib, splits]` entries; it stores no runner names or credentials. Unchanged
+history does not trigger another storage write. Corrupt cache entries are
+ignored, and storage errors leave the current in-memory history usable.
+
+This cache belongs to the browser and site origin, not to the backend or
+Cloud Run container. It does not alter `/api/results` or jersey API data.
+Recording requires an open Leaderboard and valid published lap values;
+leaving the page pauses collection. A completed race with no published
+history cannot be reconstructed from fastest, average or aggregate times.
+Clearing site data removes recorded history. To remove one event's cache,
+delete only keys with its `raceresult.leaderboard.liveSplits.<eventId>.` prefix.
 
 ### Snapshot rules
 

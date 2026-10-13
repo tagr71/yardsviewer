@@ -12,7 +12,7 @@ import {
 } from "./timerCore";
 import { friendlyFetchError } from "../utils/fetchError";
 import { DisplayToggle, useDisplayPreference } from "../theme";
-import { clockCompletedLoops, resultSnapshot, resultsPollDelay, selectTop15, type ResultRow, type ResultsResponse } from "./raceResults";
+import { clockCompletedLoops, collectLiveSplits, readLiveSplits, resultSnapshot, resultsPollDelay, saveLiveSplits, selectTop15, type ResultRow, type ResultsResponse } from "./raceResults";
 import {
   computeOverallWinner,
   isWinnerFinal,
@@ -202,6 +202,7 @@ export function Leaderboard({ eventId }: { eventId: string }) {
   useEffect(() => {
     let cancelled = false;
     let timer: number | null = null;
+    let history = readLiveSplits(eventId, raceStartMs);
     function scheduleNext() {
       if (cancelled) return;
       timer = window.setTimeout(load, resultsPollDelay(raceStartMs, Date.now(), mode, fyLock, fyMax));
@@ -217,7 +218,10 @@ export function Leaderboard({ eventId }: { eventId: string }) {
         }
         const data: ResultsResponse = await res.json();
         if (cancelled) return;
-        setRows(data.rows ?? []);
+        const recorded = collectLiveSplits(data.rows ?? [], history);
+        history = recorded.history;
+        saveLiveSplits(eventId, raceStartMs, history);
+        setRows(recorded.rows);
         setEventName(data.eventName ?? "");
         setRaceFinished(Boolean(data.raceFinished));
         setError(null);
@@ -377,7 +381,7 @@ export function Leaderboard({ eventId }: { eventId: string }) {
           const last = capped[capped.length - 1];
           if (typeof last.totalSec === "number" && last.totalSec > 0) {
             accTimeSec = last.totalSec;
-          } else {
+          } else if (capped.length === last.loop && capped.every((split, index) => split.loop === index + 1)) {
             const sum = capped.reduce(
               (acc, p) => acc + (typeof p.lapSec === "number" ? p.lapSec : 0),
               0,
@@ -387,7 +391,8 @@ export function Leaderboard({ eventId }: { eventId: string }) {
         }
       }
       // Fall back to the row-level total time when per-loop data is absent.
-      if (accTimeSec === null && typeof r.totalSec === "number" && r.totalSec > 0) {
+      if (accTimeSec === null && typeof r.totalSec === "number" && r.totalSec > 0
+        && (effectiveViewLoop === null || (r.lapsCompleted !== null && effectiveViewLoop >= r.lapsCompleted))) {
         accTimeSec = r.totalSec;
       }
       const accTime = accTimeSec === null ? "" : formatHms(accTimeSec);

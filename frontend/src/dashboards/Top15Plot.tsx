@@ -106,7 +106,7 @@ function Top15PlotContent({ runners, loop }: { runners: RankedRunner[]; loop: nu
                   strokeWidth={2}
                   strokeDasharray={dash}
                   connectNulls={false}
-                  dot={loop <= 2 ? { r: 3 } : false}
+                  dot={{ r: 2 }}
                   activeDot={{ r: 4 }}
                   isAnimationActive={false}
                 >

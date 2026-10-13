@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { clockCompletedLoops, contrastText, lapSeconds, lineDash, plotData, plotLineLabels, plotSignature, remainingRunner, resultSnapshot, resultsPollDelay, runnerColors, selectTop15, type ResultRow } from "../raceResults";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { clockCompletedLoops, collectLiveSplits, contrastText, lapSeconds, lineDash, plotData, plotLineLabels, plotSignature, readLiveSplits, remainingRunner, resultSnapshot, resultsPollDelay, runnerColors, saveLiveSplits, selectTop15, type ResultRow } from "../raceResults";
 
 function runner(bib: number, changes: Partial<ResultRow> = {}): ResultRow {
   return { place: bib, bib: String(bib), name: `Runner ${bib}`, club: "", country: "NOR", sex: "M",
@@ -9,6 +9,115 @@ function runner(bib: number, changes: Partial<ResultRow> = {}): ResultRow {
       { loop: 2, time: "20:00", lapSec: 1200, totalSec: 2340 }], ...changes };
 }
 const live = { loop: 2, replay: false, finished: false };
+
+afterEach(() => vi.unstubAllGlobals());
+
+describe("live split recording", () => {
+  it("records only the observed last lap and leaves earlier loops empty", () => {
+    const result = collectLiveSplits([runner(1, { perLoop: undefined })]);
+    expect(result.rows[0].perLoop).toEqual([{ loop: 2, time: "20:00", lapSec: 1200, totalSec: 2340 }]);
+    expect(plotData(result.rows, 2)).toEqual([{ loop: 1, "bib:1": null }, { loop: 2, "bib:1": 1200 }]);
+  });
+  it("keeps observed laps across polls without filling missed loops", () => {
+    const first = collectLiveSplits([runner(1, { perLoop: undefined })]);
+    const next = collectLiveSplits([runner(1, { lapsCompleted: 4, lastLap: "22:00", totalSec: 4800, perLoop: [] })], first.history);
+    expect(next.rows[0].perLoop?.map((split) => split.loop)).toEqual([2, 4]);
+    expect(plotData(next.rows, 4).map((point) => point["bib:1"])).toEqual([null, 1200, null, 1320]);
+    expect(first.history.get("1")).toHaveLength(1);
+  });
+  it("accepts corrections without duplicating a recorded loop", () => {
+    const first = collectLiveSplits([runner(1, { perLoop: [] })]);
+    const corrected = collectLiveSplits([runner(1, { lastLap: "21:00", totalSec: 2400, perLoop: [] })], first.history);
+    expect(corrected.rows[0].perLoop).toEqual([{ loop: 2, time: "21:00", lapSec: 1260, totalSec: 2400 }]);
+  });
+  it("prefers published Details splits over the last-lap fallback", () => {
+    const first = collectLiveSplits([runner(1, { perLoop: [] })]);
+    const published = collectLiveSplits([runner(1, { lastLap: "25:00" })], first.history);
+    expect(published.rows[0].perLoop).toEqual(runner(1).perLoop);
+  });
+  it("applies the same validation to cached and published splits", () => {
+    const invalid = [{ loop: 1, time: "20:00", lapSec: -1 }, { loop: 2, time: "20:00", totalSec: -1 }];
+    const rows = [runner(1, { lastLap: "", perLoop: invalid })];
+    const result = collectLiveSplits(rows, new Map([["1", invalid]]));
+    expect(result.history.size).toBe(0);
+    expect(result.rows[0].perLoop).toEqual([]);
+  });
+  it.each([null, 0, -1, 1.5, NaN])("does not associate a last lap with invalid or zero count %s", (lapsCompleted) => {
+    expect(collectLiveSplits([runner(1, { lapsCompleted, perLoop: undefined })]).history.size).toBe(0);
+  });
+  it.each(["", "DNF", "2:99", "0:00"])("does not record an invalid last lap %s", (lastLap) => {
+    expect(collectLiveSplits([runner(1, { lastLap, perLoop: undefined })]).history.size).toBe(0);
+  });
+  it("preserves observations when a later response omits the last-lap value", () => {
+    const first = collectLiveSplits([runner(1, { perLoop: [] })]);
+    const missing = collectLiveSplits([runner(1, { lastLap: "", perLoop: [] })], first.history);
+    expect(missing.rows[0].perLoop).toEqual(first.rows[0].perLoop);
+    expect(collectLiveSplits([], first.history).history.get("1")).toEqual(first.rows[0].perLoop);
+  });
+  it("drops recorded future laps if the published completed count is corrected", () => {
+    const first = collectLiveSplits([runner(1)]);
+    const corrected = collectLiveSplits([runner(1, { lapsCompleted: 1, lastLap: "19:00", totalSec: 1140, perLoop: [] })], first.history);
+    expect(corrected.rows[0].perLoop?.map((split) => split.loop)).toEqual([1]);
+  });
+  it("records all runners rather than only the current top fifteen", () => {
+    expect(collectLiveSplits(Array.from({ length: 20 }, (_, index) => runner(index + 1, { perLoop: [] }))).history.size).toBe(20);
+  });
+  it("does not infer an accumulated time or average from incomplete recorded history", () => {
+    const result = collectLiveSplits([runner(1, { perLoop: [], totalSec: 0 })]);
+    const snapshot = selectTop15(result.rows, { ...live, replay: true })[0];
+    expect(snapshot.snapshotTotal).toBeNull();
+    expect(snapshot.snapshotAverage).toBeNull();
+  });
+});
+
+describe("live split storage", () => {
+  it("restores observations after reload and separates event IDs and start times", () => {
+    const values = new Map<string, string>();
+    vi.stubGlobal("window", { localStorage: {
+      getItem: (key: string) => values.get(key) ?? null,
+      setItem: (key: string, value: string) => values.set(key, value),
+    } });
+    const first = collectLiveSplits([runner(1, { perLoop: [] })]);
+    saveLiveSplits("361312", 1000, first.history);
+    expect(readLiveSplits("361312", 1000)).toEqual(first.history);
+    expect(readLiveSplits("423509", 1000).size).toBe(0);
+    expect(readLiveSplits("361312", 2000).size).toBe(0);
+    expect(readLiveSplits("361312", null).size).toBe(0);
+    const next = collectLiveSplits([runner(1, { lapsCompleted: 3, lastLap: "21:00", perLoop: [] })], readLiveSplits("361312", 1000));
+    expect(next.rows[0].perLoop?.map((split) => split.loop)).toEqual([2, 3]);
+    expect([...values.values()].join(" ")).not.toContain("Runner");
+  });
+  it("does not rewrite unchanged history", () => {
+    let stored: string | null = null;
+    const setItem = vi.fn((_key: string, value: string) => { stored = value; });
+    vi.stubGlobal("window", { localStorage: { getItem: () => stored, setItem } });
+    const history = collectLiveSplits([runner(1)]).history;
+    saveLiveSplits("361312", null, history);
+    saveLiveSplits("361312", null, history);
+    expect(setItem).toHaveBeenCalledTimes(1);
+  });
+  it.each(["invalid", "null", "{}", '[null, [1, []], ["1", null]]'])("ignores malformed storage %s", (stored) => {
+    vi.stubGlobal("window", { localStorage: { getItem: () => stored } });
+    expect(readLiveSplits("361312", null).size).toBe(0);
+  });
+  it("validates stored loop numbers, time values and optional numeric fields", () => {
+    const stored = JSON.stringify([["1", [null, { loop: 0, time: "20:00" }, { loop: 1, time: null },
+      { loop: 1.5, time: "20:00" }, { loop: 1, time: "DNF" }, { loop: 1, time: "20:00", lapSec: "1200" },
+      { loop: 1, time: "20:00", totalSec: "1200" }, { loop: 2, time: "20:00" }]]]);
+    vi.stubGlobal("window", { localStorage: { getItem: () => stored } });
+    expect(readLiveSplits("361312", null).get("1")).toEqual([{ loop: 2, time: "20:00" }]);
+  });
+  it("continues without persistence when storage is unavailable", () => {
+    vi.stubGlobal("window", { localStorage: {
+      getItem: () => { throw new Error("Storage disabled"); },
+      setItem: () => { throw new Error("Storage disabled"); },
+    } });
+    const first = collectLiveSplits([runner(1, { perLoop: [] })], readLiveSplits("361312", null));
+    expect(() => saveLiveSplits("361312", null, first.history)).not.toThrow();
+    const next = collectLiveSplits([runner(1, { lapsCompleted: 3, perLoop: [] })], first.history);
+    expect(next.rows[0].perLoop?.map((split) => split.loop)).toEqual([2, 3]);
+  });
+});
 
 describe("top-15 snapshots", () => {
   it("keeps the plot signature stable across unchanged polls and unrelated metadata changes", () => {
