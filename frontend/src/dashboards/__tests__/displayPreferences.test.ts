@@ -34,6 +34,10 @@ describe("display preferences", () => {
     vi.stubGlobal("window", { localStorage: { getItem: () => "true" } });
     expect(readPreference("raceresult.dashboard.showTop15", false, (value): value is boolean => typeof value === "boolean")).toBe(true);
   });
+  it.each([null, "true", "false"])("defaults cumulative loops to On and preserves saved choice %s", (raw) => {
+    vi.stubGlobal("window", { localStorage: { getItem: () => raw } });
+    expect(readPreference("raceresult.leaderboard.showCumulativeLoops", true, (value): value is boolean => typeof value === "boolean")).toBe(raw !== "false");
+  });
   it("restores an explicit Off", () => {
     vi.stubGlobal("window", { localStorage: { getItem: () => "false" } });
     expect(readPreference("view", true, (value): value is boolean => typeof value === "boolean")).toBe(false);

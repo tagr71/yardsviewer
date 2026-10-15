@@ -45,6 +45,22 @@ Choosing **Other…** reveals a 6-character alphanumeric ID input; the
 **Open** button is enabled only when exactly 6 characters have been
 entered.
 
+### Pre-Race Data
+
+Production dashboards read RaceResult's published data; the Norway event has
+no application-side simulator. Organizers may publish trial results before
+race day. Before `eventStartTime`, `/api/results` keeps the entrants and DNS
+statuses but clears lap counts, splits, times and ranks, and reports
+`raceFinished: false`. LIVE and lap-detail requests are skipped until the
+scheduled start, interpreted in `Europe/Oslo` with daylight-saving support.
+Normal result collection resumes automatically at that instant.
+
+The schedule comes from RaceResult metadata. When only a date is published,
+the existing defaults are 09:00 for backyard and 10:00 for frontyard events;
+confirm these against the organizer's schedule. This guard does not delete
+trial data at RaceResult: the organizer must reset its published results
+before the live event.
+
 ## Display options
 
 The shared header's **Automatic day/night** switch enables a Norwegian-time
@@ -58,8 +74,8 @@ manual default. Returning to manual mode restores the saved manual choice.
 Both settings persist across navigation, event changes and reloads, and
 synchronize between tabs.
 
-Three independent display switches remember their settings across events.
-Participant information and the Leaderboard plot default to **On**;
+Four independent display switches remember their settings across events.
+Participant information, the Leaderboard plot and cumulative loops default to **On**;
 Dashboard top-15 results default to **Off**. Explicit saved choices are
 preserved:
 
@@ -78,6 +94,25 @@ preserved:
   name tags connect to each runner's last available plotted point; full names
   are also available in the legend and on hover. The results table scrolls
   independently so the bottom plot stays visible on desktop and laptop.
+- **Leaderboard: Show cumulative loops** is available only for races with
+  at most 15 original starters (DNS entries are excluded). It adds a
+  **Cumulative Loops** column immediately after **Country**, showing the
+  race-wide sum of completed laps through the viewed loop on each row.
+  All starters remain visible, including retired runners. **Total Rank**
+  uses completed laps only, with shared dense ranks and numeric bib order
+  within each tie; times never break ties. For 15 first-loop finishers the
+  total is 15 and everyone ranks 1. If one runner stops before completing
+  loop 2, the total is 29, the 14 finishers rank 1 and the retired runner
+  ranks 2. Turning the mode off restores normal sorting and replay filtering.
+
+The Leaderboard plot switch is disabled whenever more than 15 runners remain
+in the viewed live or replay snapshot. Replay uses the same count as the replay
+controls: runners present at the start of the viewed loop, not just its finishers.
+Its saved preference is retained while disabled.
+Opening the plot refreshes lap history for all runners and plots
+each remaining runner's individual lap times from loop 1 through the viewed
+completed loop, without changing the replay position. Loading and request
+errors are shown before the plot is drawn.
 
 Both top-15 views select up to 15 remaining runners from overall standings,
 independently of the full Leaderboard's sorting or gender grouping. Live
@@ -86,7 +121,11 @@ retained. Replay uses only runners and times from the selected completed
 loop, and final views retain the last-loop finishers. Live snapshots advance
 after completed loops, with continued polling for late corrections.
 
-The plot prefers RaceResult's published per-loop Details data. While the
+The plot prefers RaceResult's published per-loop data, using an advertised
+**Details-API** results list when available. For fields of at most 15 runners,
+it also reads the current participant-view lap details, with at most four
+requests in flight; the legacy Details page remains a fallback. These are
+published individual lap times, not estimates from aggregate totals. While the
 Leaderboard is open, each results poll also records valid last-lap times
 against the runner's published completed-loop count. These observations are
 saved in this browser's `localStorage`, separately for each event and configured
@@ -95,8 +134,9 @@ continues when the plot is hidden or replay is selected; replay still displays
 only the selected completed loops. Published Details splits override recorded
 values when available.
 
-Only observed laps are recorded: opening the Leaderboard late, closing it,
-or missing a poll can leave gaps. The history is not shared between devices
+When published lap history is unavailable, only observed laps are recorded:
+opening the Leaderboard late, closing it, or missing a poll can leave gaps.
+The recorded history is not shared between devices
 or the local and Cloud Run sites, and changing the configured start time
 selects a separate history. If browser storage is unavailable, observations
 last only while the Leaderboard stays mounted. Missing splits remain gaps,
@@ -587,6 +627,8 @@ jersey ranking pipeline also has a CLI script that replays a simulated
 race loop-by-loop. The simulation tests and CLI consume the shared
 [frontend/src/dashboards/simulateRace.ts](frontend/src/dashboards/simulateRace.ts)
 module, so any seed reproduces identical fixtures in both places.
+These fixtures use fictitious runners and are development-only: neither
+the app nor the backend imports them or substitutes them for event data.
 
 ### Prerequisites
 
@@ -601,6 +643,16 @@ cd frontend
 npm test           # one-shot run
 npm run test:watch # re-run on change
 ```
+
+Backend regression tests use Python's standard `unittest` framework:
+
+```powershell
+uv run python -m unittest discover -s backend/tests -v
+```
+
+They cover published Details-API lists, participant-view lap history,
+partial request failures, small-field request limits, and pre-race data
+suppression with exact summer/winter Oslo start boundaries.
 
 What the suite asserts:
 
@@ -646,6 +698,8 @@ What the suite asserts:
   precedence, and storage isolation by event and start time. Malformed or
   unavailable browser storage must not break recording. Historical
   snapshots must not borrow future ranks or times or sum incomplete history.
+  Cumulative-loop coverage checks original starter counts, shared dense ranks,
+  numeric bib ordering, retained retirees, and race-wide replay totals.
 - **Display preferences and automatic theme**
   ([frontend/src/dashboards/__tests__/displayPreferences.test.ts](frontend/src/dashboards/__tests__/displayPreferences.test.ts)):
   covers validated storage values, unavailable storage, automatic-On
@@ -700,7 +754,7 @@ simulation.
 | Event menu, routing and shared header | [frontend/src/App.tsx](frontend/src/App.tsx) |
 | Theme schedule, storage synchronization and display switches | [frontend/src/theme.tsx](frontend/src/theme.tsx) |
 | Theme tokens and responsive layouts | [frontend/src/styles.css](frontend/src/styles.css) |
-| Remaining-runner selection, loop snapshots, live split storage and plot helpers | [frontend/src/dashboards/raceResults.ts](frontend/src/dashboards/raceResults.ts) |
+| Remaining-runner selection, cumulative standings, snapshots, split storage and plot helpers | [frontend/src/dashboards/raceResults.ts](frontend/src/dashboards/raceResults.ts) |
 | Results polling, live split collection and results table | [frontend/src/dashboards/Leaderboard.tsx](frontend/src/dashboards/Leaderboard.tsx) |
 | Lazy-loaded chart, runner tags and matching legend | [frontend/src/dashboards/Top15Plot.tsx](frontend/src/dashboards/Top15Plot.tsx) |
 | Shared clocks, race settings and replay controls | [frontend/src/dashboards/timerCore.tsx](frontend/src/dashboards/timerCore.tsx) |
@@ -718,6 +772,7 @@ in `localStorage` and validated before use:
 | `raceresult.overview.showParticipantInfo` | `true` | Show detailed participant counts |
 | `raceresult.dashboard.showTop15` | `false` | Show compact top-15 results |
 | `raceresult.leaderboard.showTop15Plot` | `true` | Show the bottom lap-time plot |
+| `raceresult.leaderboard.showCumulativeLoops` | `true` | Use cumulative totals and shared lap ranks when at most 15 runners started |
 
 Updates notify same-tab consumers through `raceresult.preferenceChanged`
 and other tabs through the browser's `storage` event. Invalid or missing
@@ -774,6 +829,7 @@ Run from the repository root before merging changes:
 ```powershell
 npm --prefix frontend run test
 npm --prefix frontend run build
+uv run python -m unittest discover -s backend/tests -v
 git diff --check
 ```
 

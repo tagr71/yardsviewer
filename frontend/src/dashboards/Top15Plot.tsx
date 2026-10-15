@@ -2,7 +2,18 @@ import { memo, useEffect, useState } from "react";
 import { CartesianGrid, LabelList, Line, LineChart, ResponsiveContainer, Tooltip, usePlotArea, XAxis, YAxis } from "recharts";
 import { useTheme } from "../theme";
 import { formatHms } from "./timerCore";
-import { contrastText, lineDash, plotData, plotLineLabels, plotSignature, runnerColors, type RankedRunner } from "./raceResults";
+import {
+  collectLiveSplits,
+  contrastText,
+  fetchLapHistory,
+  lineDash,
+  plotData,
+  plotLineLabels,
+  plotSignature,
+  runnerColors,
+  type LiveSplitHistory,
+  type RankedRunner,
+} from "./raceResults";
 
 const DAY_COLORS = ["#0072b2", "#c43d00", "#008059", "#ab4791", "#9b7100", "#0094a4", "#d52b49", "#6952b5", "#577c10", "#ba5c1c", "#007e85", "#ae3c69", "#626d0b", "#555555", "#6c54e0"];
 const NIGHT_COLORS = ["#56b4e9", "#ff914d", "#40d6a1", "#e093d0", "#f0d23d", "#39d4e7", "#ff6b81", "#b69bff", "#a7d452", "#eab676", "#66d6c4", "#ff9bbd", "#d2d878", "#d4d4d4", "#9589ff"];
@@ -48,8 +59,27 @@ function RunnerTag({ name, bib, color, dash, lastLoop, slot, count, index, viewB
   );
 }
 
-function Top15PlotContent({ runners, loop }: { runners: RankedRunner[]; loop: number }) {
+function Top15PlotContent({ eventId, runners, loop }: { eventId: string; runners: RankedRunner[]; loop: number }) {
   const [theme] = useTheme();
+  const [history, setHistory] = useState<LiveSplitHistory>(new Map());
+  const [loadingHistory, setLoadingHistory] = useState(loop > 0);
+  const [historyError, setHistoryError] = useState<string | null>(null);
+  useEffect(() => {
+    if (loop < 1) {
+      setLoadingHistory(false);
+      return;
+    }
+    const controller = new AbortController();
+    setLoadingHistory(true);
+    setHistoryError(null);
+    fetchLapHistory(eventId, controller.signal)
+      .then((next) => { if (!controller.signal.aborted) setHistory(next); })
+      .catch((error: unknown) => {
+        if (!controller.signal.aborted) setHistoryError(error instanceof Error ? error.message : String(error));
+      })
+      .finally(() => { if (!controller.signal.aborted) setLoadingHistory(false); });
+    return () => controller.abort();
+  }, [eventId, loop]);
   const [colors, setColors] = useState(() => runnerColors(runners.map((runner) => runner.bib), new Map()));
   const activeColors = runnerColors(runners.map((runner) => runner.bib), colors);
   useEffect(() => {
@@ -59,11 +89,14 @@ function Top15PlotContent({ runners, loop }: { runners: RankedRunner[]; loop: nu
     });
   }, [runners]);
   const palette = theme === "night" ? NIGHT_COLORS : DAY_COLORS;
-  const data = plotData(runners, loop);
-  const labels = plotLineLabels(runners, loop);
+  const recorded = collectLiveSplits(runners, history).rows;
+  const data = plotData(recorded, loop);
+  const labels = plotLineLabels(recorded, loop);
   const hasSplits = data.some((point) => Object.entries(point).some(([key, value]) => key !== "loop" && value !== null));
   if (loop === 0) return <p style={{ color: "var(--muted)" }}>Waiting for the first completed loop</p>;
   if (!runners.length) return <p style={{ color: "var(--muted)" }}>No remaining runners</p>;
+  if (loadingHistory) return <p role="status">Loading lap history...</p>;
+  if (historyError) return <p role="alert" style={{ color: "var(--danger)" }}>Unable to load lap history: {historyError}</p>;
   if (!hasSplits) return <p style={{ color: "var(--muted)" }}>Lap split data unavailable</p>;
   const series = runners.map((runner, index) => {
     const colorIndex = activeColors.get(runner.bib) ?? index;
@@ -144,6 +177,7 @@ function Top15PlotContent({ runners, loop }: { runners: RankedRunner[]; loop: nu
 }
 
 export const Top15Plot = memo(Top15PlotContent, (previous, next) =>
-  previous.loop === next.loop
+  previous.eventId === next.eventId
+  && previous.loop === next.loop
   && plotSignature(previous.runners, previous.loop) === plotSignature(next.runners, next.loop),
 );

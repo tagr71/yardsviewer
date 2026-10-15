@@ -1,4 +1,5 @@
 import { frontyardElapsedAtLoopStart, frontyardState, LOOP_SECONDS, type Mode } from "./timerCore";
+import { friendlyFetchError } from "../utils/fetchError";
 
 type LapSplit = { loop: number; time: string; lapSec?: number; totalSec?: number };
 
@@ -109,6 +110,13 @@ export function collectLiveSplits(rows: ResultRow[], history: LiveSplitHistory =
   return { rows: recordedRows, history: nextHistory };
 }
 
+export async function fetchLapHistory(eventId: string, signal: AbortSignal): Promise<LiveSplitHistory> {
+  const response = await fetch(`/api/results?event_id=${encodeURIComponent(eventId)}`, { signal });
+  if (!response.ok) throw await friendlyFetchError(response);
+  const data: ResultsResponse = await response.json();
+  return collectLiveSplits(data.rows ?? []).history;
+}
+
 function liveSplitKey(eventId: string, startMs: number | null): string {
   return `raceresult.leaderboard.liveSplits.${eventId}.${startMs ?? "unknown"}`;
 }
@@ -157,6 +165,29 @@ export function resultSnapshot(
     replay: viewLoop !== null,
     finished,
   };
+}
+
+export function canShowTop15Plot(rows: ResultRow[], snapshot: Snapshot): boolean {
+  return rows.filter((row) => snapshot.replay
+    ? typeof row.lapsCompleted !== "number" || row.lapsCompleted >= snapshot.loop - 1
+    : remainingRunner(row, snapshot)).length <= 15;
+}
+
+export function cumulativeLoopStandings(rows: ResultRow[], loop: number | null) {
+  const runners = rows.filter((row) => !/dns/i.test(row.status)).map((row) => ({
+    bib: row.bib,
+    laps: Math.min(resultLaps(row), Math.max(0, loop ?? Infinity)),
+    rank: 0,
+  })).sort((first, second) => second.laps - first.laps
+    || first.bib.localeCompare(second.bib, undefined, { numeric: true }));
+  let rank = 0;
+  let previousLaps: number | null = null;
+  for (const runner of runners) {
+    if (runner.laps !== previousLaps) rank += 1;
+    runner.rank = rank;
+    previousLaps = runner.laps;
+  }
+  return { runners, totalLoops: runners.reduce((total, runner) => total + runner.laps, 0) };
 }
 
 export function selectTop15(rows: ResultRow[], snapshot: Snapshot): RankedRunner[] {

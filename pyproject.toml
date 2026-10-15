@@ -9,6 +9,7 @@ dependencies = [
     "httpx==0.28.1",
     "python-dotenv==1.2.2",
     "truststore>=0.9.2",
+    "tzdata>=2025.2",
 ]
 
 [dependency-groups]
@@ -38,6 +39,7 @@ ignore = []
 [tool.mypy]
 python_version = "3.12"
 files = ["backend"]
+explicit_package_bases = true
 strict = true
 warn_unused_ignores = true
 warn_redundant_casts = true

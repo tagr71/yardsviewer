@@ -2,12 +2,15 @@
 endpoints for the local dashboards (participant count, leaderboard, ...)."""
 from __future__ import annotations
 
+import asyncio
 import logging
 import os
 import re
 import ssl
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
 import httpx
 import truststore
@@ -265,14 +268,19 @@ async def _fetch_list(
 
 
 async def _fetch_details_list(
-    event_id: str, page: str, contest: str = "0"
+    event_id: str, page: str, contest: str = "0", *, bibs: list[str] | None = None
 ) -> dict[str, Any] | None:
     """Fetch the per-lap "Details" list for `event_id`. Returns the raw
     payload or None if not available.
 
+    Prefer a published Details-API results list, which exposes all runners
+    and laps through the normal list endpoint. For fields of at most 15
+    supplied bibs, also try the advertised participant view's embedded list.
+
     RaceResult exposes per-runner lap times through a sub-page (e.g.
-    ``details1``) of the main results page.  The correct URL is
-    ``https://{server}/{event}/details1/list?…&page=details1&r=all``.
+    ``details1``) of the main results page. Current templates use
+    ``https://{server}/{event}/details1/view?bib=...``. The legacy bulk-list
+    fallback uses ``details1/list`` with ``page=details1&r=all``.
 
     Discovery happens in two steps:
 
@@ -306,10 +314,72 @@ async def _fetch_details_list(
         server = cfg.get("server") or server
         lists = (cfg.get("TabConfig") or {}).get("Lists") or []
         for lst in lists:
+            name = str(lst.get("Name") or "")
+            if not key or not (name == "Details-API" or name.endswith("|Details-API")):
+                continue
+            try:
+                resp = await client.get(
+                    f"https://{server}/{event_id}/{page}/list",
+                    params={
+                        "key": key,
+                        "listname": name,
+                        "page": page,
+                        "contest": str(lst.get("Contest") or contest),
+                        "r": "all",
+                    },
+                )
+                resp.raise_for_status()
+                payload = resp.json()
+                if _parse_lap_times(payload):
+                    return payload  # type: ignore[no-any-return]
+            except httpx.HTTPError:
+                continue
+        for lst in lists:
             d = lst.get("Details", "")
             if isinstance(d, str) and d.strip() and d.strip() != "details0":
                 details_page = d.strip()
                 break
+
+    runner_bibs = list(dict.fromkeys(bib for bib in (bibs or []) if bib))
+    if details_page and 0 < len(runner_bibs) <= 15:
+        async with httpx.AsyncClient(timeout=15.0, verify=_SSL_CONTEXT) as client:
+            limit = asyncio.Semaphore(4)
+
+            async def participant_laps(bib: str) -> list[list[Any]]:
+                try:
+                    async with limit:
+                        response = await client.get(
+                            f"https://{server}/{event_id}/{details_page}/view",
+                            params={"bib": bib, "lang": "en", "contest": contest},
+                        )
+                        response.raise_for_status()
+                        view = response.json()
+                    for entry in ((view.get("Data") or {}).get("Lists") or {}).values():
+                        fields = entry.get("DataFields") or []
+                        if "BIB" not in fields or "[Lap{n}]" not in fields:
+                            continue
+                        bib_index = fields.index("BIB")
+                        lap_index = fields.index("[Lap{n}]")
+                        total_index = fields.index("[Total{n}]") if "[Total{n}]" in fields else -1
+                        return [
+                            [
+                                bib, raw[lap_index],
+                                raw[total_index] if 0 <= total_index < len(raw) else "",
+                            ]
+                            for raw in _iter_data_rows({"data": entry.get("Data")})
+                            if len(raw) > max(bib_index, lap_index) and str(raw[bib_index]) == bib
+                        ]
+                except (httpx.HTTPError, ValueError):
+                    return []
+                return []
+
+            histories = await asyncio.gather(*(participant_laps(bib) for bib in runner_bibs))
+        participant_payload = {
+            "DataFields": ["BIB", "[Lap{n}]", "[Total{n}]"],
+            "data": dict(zip(runner_bibs, histories, strict=True)),
+        }
+        if _parse_lap_times(participant_payload):
+            return participant_payload
 
     if not key or not details_page:
         return None
@@ -696,6 +766,18 @@ async def participants_count(event_id: str | None = None) -> dict[str, object]:
     }
 
 
+def _event_has_started(event_start_time: str, now: datetime | None = None) -> bool:
+    if not event_start_time:
+        return True
+    try:
+        start = datetime.fromisoformat(event_start_time)
+    except ValueError:
+        return True
+    if start.tzinfo is None:
+        start = start.replace(tzinfo=ZoneInfo("Europe/Oslo"))
+    return (now or datetime.now(UTC)) >= start
+
+
 @app.get("/api/results")
 async def results(
     event_id: str | None = None,
@@ -708,6 +790,8 @@ async def results(
     publishes NumberOfLaps/MinLap/AvgLap/MaxLap. When the default is used
     we additionally fetch the "LIVE" list and merge in each runner's
     `lastLap` (LIVE is the only list that carries it), keyed by BIB.
+    Before the scheduled Oslo start, return entrants without published
+    test laps, rankings or finish status, and skip LIVE/details requests.
     """
     _validate_listname(listname)
     resolved = event_id or RACERESULT_EVENT_ID
@@ -730,6 +814,64 @@ async def results(
         except HTTPException:
             event_name = event_location = event_date = event_time = ""
         rows = []
+
+    event_start_time = ""
+    iso_date = ""
+    m_date = re.match(r"^(\d{4})-(\d{1,2})-(\d{1,2})$", event_date)
+    if m_date:
+        y, mo, d = m_date.groups()
+        iso_date = f"{y}-{mo.zfill(2)}-{d.zfill(2)}"
+    else:
+        m_date = re.match(r"^(\d{1,2})[.\-/](\d{1,2})[.\-/](\d{4})$", event_date)
+        if m_date:
+            d, mo, y = m_date.groups()
+            iso_date = f"{y}-{mo.zfill(2)}-{d.zfill(2)}"
+    iso_time = ""
+    m_time = re.match(r"^(\d{1,2}):(\d{2})(?::(\d{2}))?$", event_time)
+    if m_time:
+        h, mi, s = m_time.groups()
+        iso_time = f"{h.zfill(2)}:{mi}:{(s or '00').zfill(2)}"
+
+    event_mode = ""
+    name_lc = event_name.lower()
+    if "frontyard" in name_lc:
+        event_mode = "frontyard"
+    elif "backyard" in name_lc:
+        event_mode = "backyard"
+    default_time = "09:00:00" if event_mode == "backyard" else DEFAULT_EVENT_START_TIME
+    if iso_date:
+        event_start_time = f"{iso_date}T{iso_time or default_time}"
+
+    response: dict[str, object] = {
+        "eventName": event_name,
+        "eventLocation": event_location,
+        "eventId": resolved,
+        "raceFinished": False,
+        "eventStartTime": event_start_time,
+        "eventMode": event_mode,
+        "rows": rows,
+    }
+    if not _event_has_started(event_start_time):
+        response["rows"] = [
+            {
+                **row,
+                "place": None,
+                "totalRank": None,
+                "lapsCompleted": 0,
+                "lastLap": "",
+                "fastestLap": "",
+                "slowestLap": "",
+                "averageLap": "",
+                "total": "",
+                "totalSec": 0,
+                "gap": "",
+                "lapsBehind": 0,
+                "perLoop": [],
+                "status": "DNS" if re.search("dns", str(row.get("status") or ""), re.I) else "",
+            }
+            for row in rows
+        ]
+        return response
 
     # Enrich with lastLap from the LIVE list when caller didn't override.
     if listname is None:
@@ -756,7 +898,9 @@ async def results(
     # Enrich each row with `perLoop` = list of `{loop, time, lapSec, totalSec}`
     # from the Details sub-page when available. Callers may use this for
     # per-loop analysis; it is also used by /api/jerseys independently.
-    details_payload = await _fetch_details_list(resolved, "results")
+    details_payload = await _fetch_details_list(
+        resolved, "results", bibs=[str(row.get("bib") or "") for row in rows]
+    )
     lap_times_by_bib = _parse_lap_times(details_payload)
     if lap_times_by_bib:
         for row in rows:
@@ -785,51 +929,8 @@ async def results(
                 bool(r.get("lapsCompleted")) for r in survivors
             )
 
-    # Combine the RaceResult event date + start time into an ISO timestamp
-    # (yyyy-MM-ddTHH:MM:SS) so the frontend can auto-fill the Timer setup.
-    event_start_time = ""
-    iso_date = ""
-    m_date = re.match(r"^(\d{4})-(\d{1,2})-(\d{1,2})$", event_date)
-    if m_date:
-        y, mo, d = m_date.groups()
-        iso_date = f"{y}-{mo.zfill(2)}-{d.zfill(2)}"
-    else:
-        m_date = re.match(r"^(\d{1,2})[.\-/](\d{1,2})[.\-/](\d{4})$", event_date)
-        if m_date:
-            d, mo, y = m_date.groups()
-            iso_date = f"{y}-{mo.zfill(2)}-{d.zfill(2)}"
-    iso_time = ""
-    m_time = re.match(r"^(\d{1,2}):(\d{2})(?::(\d{2}))?$", event_time)
-    if m_time:
-        h, mi, s = m_time.groups()
-        iso_time = f"{h.zfill(2)}:{mi}:{(s or '00').zfill(2)}"
-
-    # Detect backyard vs frontyard early so we can pick the right default
-    # start time below.
-    event_mode = ""
-    name_lc = event_name.lower()
-    if "frontyard" in name_lc:
-        event_mode = "frontyard"
-    elif "backyard" in name_lc:
-        event_mode = "backyard"
-
-    # Backyard races traditionally start at 09:00; frontyard at 10:00.
-    _default_time = "09:00:00" if event_mode == "backyard" else DEFAULT_EVENT_START_TIME
-
-    if iso_date and iso_time:
-        event_start_time = f"{iso_date}T{iso_time}"
-    elif iso_date:
-        event_start_time = f"{iso_date}T{_default_time}"
-
-    return {
-        "eventName": event_name,
-        "eventLocation": event_location,
-        "eventId": resolved,
-        "raceFinished": race_finished,
-        "eventStartTime": event_start_time,
-        "eventMode": event_mode,
-        "rows": rows,
-    }
+    response["raceFinished"] = race_finished
+    return response
 
 
 @app.get("/api/health")

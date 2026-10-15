@@ -52,7 +52,8 @@ RUN pip install --no-cache-dir \
         "uvicorn[standard]==0.49.0" \
         "httpx==0.28.1" \
         "python-dotenv==1.2.2" \
-        "truststore>=0.9.2"
+        "truststore>=0.9.2" \
+        "tzdata>=2025.2"
 
 # Backend source.
 COPY backend/ ./backend/

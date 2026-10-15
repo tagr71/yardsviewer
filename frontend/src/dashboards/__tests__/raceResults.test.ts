@@ -1,5 +1,25 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { clockCompletedLoops, collectLiveSplits, contrastText, lapSeconds, lineDash, plotData, plotLineLabels, plotSignature, readLiveSplits, remainingRunner, resultSnapshot, resultsPollDelay, runnerColors, saveLiveSplits, selectTop15, type ResultRow } from "../raceResults";
+import {
+  canShowTop15Plot,
+  clockCompletedLoops,
+  collectLiveSplits,
+  contrastText,
+  cumulativeLoopStandings,
+  fetchLapHistory,
+  lapSeconds,
+  lineDash,
+  plotData,
+  plotLineLabels,
+  plotSignature,
+  readLiveSplits,
+  remainingRunner,
+  resultSnapshot,
+  resultsPollDelay,
+  runnerColors,
+  saveLiveSplits,
+  selectTop15,
+  type ResultRow,
+} from "../raceResults";
 
 function runner(bib: number, changes: Partial<ResultRow> = {}): ResultRow {
   return { place: bib, bib: String(bib), name: `Runner ${bib}`, club: "", country: "NOR", sex: "M",
@@ -70,6 +90,33 @@ describe("live split recording", () => {
   });
 });
 
+describe("lap history loading", () => {
+  it("fetches history once for all runners and plots every loop through the selected loop", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ rows: [runner(1), runner(2)] })));
+    vi.stubGlobal("fetch", fetchMock);
+    const controller = new AbortController();
+    const history = await fetchLapHistory("374847", controller.signal);
+    const recorded = collectLiveSplits([runner(1, { perLoop: [] }), runner(2, { perLoop: [] })], history);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledWith("/api/results?event_id=374847", { signal: controller.signal });
+    expect(plotData(recorded.rows, 2)).toEqual([
+      { loop: 1, "bib:1": 1140, "bib:2": 1140 },
+      { loop: 2, "bib:1": 1200, "bib:2": 1200 },
+    ]);
+    expect(plotData(recorded.rows, 1)).toEqual([{ loop: 1, "bib:1": 1140, "bib:2": 1140 }]);
+  });
+  it("does not assign another runner's history or invent missing laps", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ rows: [runner(2)] }))));
+    const history = await fetchLapHistory("374847", new AbortController().signal);
+    const recorded = collectLiveSplits([runner(1, { perLoop: [] })], history);
+    expect(plotData(recorded.rows, 2)).toEqual([{ loop: 1, "bib:1": null }, { loop: 2, "bib:1": 1200 }]);
+  });
+  it("reports failed history requests", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("Unavailable", { status: 502 })));
+    await expect(fetchLapHistory("374847", new AbortController().signal)).rejects.toThrow();
+  });
+});
+
 describe("live split storage", () => {
   it("restores observations after reload and separates event IDs and start times", () => {
     const values = new Map<string, string>();
@@ -80,7 +127,7 @@ describe("live split storage", () => {
     const first = collectLiveSplits([runner(1, { perLoop: [] })]);
     saveLiveSplits("361312", 1000, first.history);
     expect(readLiveSplits("361312", 1000)).toEqual(first.history);
-    expect(readLiveSplits("423509", 1000).size).toBe(0);
+    expect(readLiveSplits("123456", 1000).size).toBe(0);
     expect(readLiveSplits("361312", 2000).size).toBe(0);
     expect(readLiveSplits("361312", null).size).toBe(0);
     const next = collectLiveSplits([runner(1, { lapsCompleted: 3, lastLap: "21:00", perLoop: [] })], readLiveSplits("361312", 1000));
@@ -119,7 +166,88 @@ describe("live split storage", () => {
   });
 });
 
+describe("cumulative loop standings", () => {
+  it("totals 15 loops and gives every runner rank 1 after loop 1", () => {
+    const rows = Array.from({ length: 15 }, (_, index) => runner(15 - index));
+    const standings = cumulativeLoopStandings(rows, 1);
+    expect(standings.totalLoops).toBe(15);
+    expect(standings.runners.map((entry) => entry.rank)).toEqual(Array(15).fill(1));
+    expect(standings.runners.map((entry) => entry.bib)).toEqual(Array.from({ length: 15 }, (_, index) => String(index + 1)));
+  });
+  it("totals 29 loops with 14 rank-1 finishers and one rank-2 retiree after loop 2", () => {
+    const rows = Array.from({ length: 15 }, (_, index) => runner(index + 1));
+    rows[0] = runner(1, { lapsCompleted: 1, status: "DNF" });
+    const standings = cumulativeLoopStandings(rows, 2);
+    expect(standings.totalLoops).toBe(29);
+    expect(standings.runners.slice(0, 14).map((entry) => entry.rank)).toEqual(Array(14).fill(1));
+    expect(standings.runners[14]).toEqual({ bib: "1", laps: 1, rank: 2 });
+  });
+  it("uses dense shared ranks without lap-time, overall-rank or bib tie-breaking", () => {
+    const standings = cumulativeLoopStandings([
+      runner(10, { lapsCompleted: 3, totalRank: 1, totalSec: 1 }),
+      runner(2, { lapsCompleted: 3, totalRank: 9, totalSec: 9000 }),
+      runner(3, { lapsCompleted: 1, status: "DNF" }),
+      runner(4, { lapsCompleted: 0, status: "DNF" }),
+    ], null);
+    expect(standings.runners).toEqual([
+      { bib: "2", laps: 3, rank: 1 }, { bib: "10", laps: 3, rank: 1 },
+      { bib: "3", laps: 1, rank: 2 }, { bib: "4", laps: 0, rank: 3 },
+    ]);
+    expect(standings.totalLoops).toBe(7);
+  });
+  it("counts original starters rather than survivors and excludes DNS entries", () => {
+    const rows = Array.from({ length: 16 }, (_, index) => runner(index + 1, { status: index ? "DNF" : "" }));
+    expect(cumulativeLoopStandings(rows, 1).runners).toHaveLength(16);
+    rows[15].status = "DNS";
+    expect(cumulativeLoopStandings(rows, 1).runners).toHaveLength(15);
+  });
+  it("keeps retired runners in later snapshots and uses split counts when laps are missing", () => {
+    const standings = cumulativeLoopStandings([
+      runner(1, { lapsCompleted: 1, status: "DNF" }),
+      runner(2, { lapsCompleted: null }),
+    ], 5);
+    expect(standings.totalLoops).toBe(3);
+    expect(standings.runners).toEqual([{ bib: "2", laps: 2, rank: 1 }, { bib: "1", laps: 1, rank: 2 }]);
+    expect(cumulativeLoopStandings([runner(1)], 0).totalLoops).toBe(0);
+  });
+});
+
 describe("top-15 snapshots", () => {
+  it.each([1, 14, 15, 16, 20])("enables the plot only with at most 15 remaining runners (%i)", (count) => {
+    const rows = Array.from({ length: count }, (_, index) => runner(index + 1));
+    expect(canShowTop15Plot(rows, live)).toBe(count <= 15);
+  });
+  it("counts remaining runners before the top-15 selection is capped", () => {
+    const rows = Array.from({ length: 16 }, (_, index) => runner(index + 1));
+    expect(selectTop15(rows, live)).toHaveLength(15);
+    expect(canShowTop15Plot(rows, live)).toBe(false);
+    rows[15].status = "DNF";
+    expect(canShowTop15Plot(rows, live)).toBe(true);
+  });
+  it("reevaluates eligibility for the viewed loop rather than final status", () => {
+    const rows = Array.from({ length: 16 }, (_, index) => runner(index + 1, {
+      status: "DNF", lapsCompleted: index === 15 ? 1 : 2,
+    }));
+    expect(canShowTop15Plot(rows, { ...live, loop: 1, replay: true })).toBe(false);
+    expect(canShowTop15Plot(rows, { ...live, replay: true })).toBe(false);
+    expect(canShowTop15Plot(rows, { ...live, loop: 3, replay: true })).toBe(true);
+    expect(canShowTop15Plot(rows, { ...live, finished: true })).toBe(true);
+  });
+  it("disables the plot for 16 replay starters even when only 15 finish the loop", () => {
+    const rows = Array.from({ length: 16 }, (_, index) => runner(index + 1, {
+      status: "DNF", lapsCompleted: index === 15 ? 1 : 2,
+    }));
+    const snapshot = { ...live, replay: true };
+    expect(selectTop15(rows, snapshot)).toHaveLength(15);
+    expect(canShowTop15Plot(rows, snapshot)).toBe(false);
+    rows[15].lapsCompleted = 0;
+    expect(canShowTop15Plot(rows, snapshot)).toBe(true);
+  });
+  it("includes unknown lap counts in the replay count just like the leaderboard", () => {
+    const rows = Array.from({ length: 16 }, (_, index) => runner(index + 1));
+    rows[15] = runner(16, { lapsCompleted: null, perLoop: [] });
+    expect(canShowTop15Plot(rows, { ...live, replay: true })).toBe(false);
+  });
   it("keeps the plot signature stable across unchanged polls and unrelated metadata changes", () => {
     const original = runner(1);
     const refreshed = runner(1, { club: "Updated club", totalRank: 2, status: "DNF", totalSec: 2400 });

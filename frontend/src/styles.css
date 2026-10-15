@@ -53,9 +53,12 @@ a { color: var(--link); }
 .display-toggle input:checked { background: #16834e; border-color: #16834e; }
 .display-toggle input:checked::after { left: 0.95rem; background: #fff; }
 .display-toggle input:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; }
+.display-toggle:has(input:disabled) { opacity: 0.5; cursor: not-allowed; }
+.display-toggle input:disabled { cursor: not-allowed; }
 .theme-controls { display: flex; flex-direction: column; align-items: flex-start; gap: 0.35rem; }
 .page-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; width: 100%; }
 .page-heading h1 { margin: 0; }
+.leaderboard-display-options { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem 1rem; }
 .top15-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 0.8125rem; font-variant-numeric: tabular-nums; }
 .top15-table th, .top15-table td { height: 20px; line-height: 16px; padding: 1px 6px; text-align: right; border-bottom: 1px solid var(--subtle-border); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .top15-table th { background: var(--surface-strong); font-weight: 600; }

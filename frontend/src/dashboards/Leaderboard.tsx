@@ -12,7 +12,19 @@ import {
 } from "./timerCore";
 import { friendlyFetchError } from "../utils/fetchError";
 import { DisplayToggle, useDisplayPreference } from "../theme";
-import { clockCompletedLoops, collectLiveSplits, readLiveSplits, resultSnapshot, resultsPollDelay, saveLiveSplits, selectTop15, type ResultRow, type ResultsResponse } from "./raceResults";
+import {
+  canShowTop15Plot,
+  clockCompletedLoops,
+  collectLiveSplits,
+  cumulativeLoopStandings,
+  readLiveSplits,
+  resultSnapshot,
+  resultsPollDelay,
+  saveLiveSplits,
+  selectTop15,
+  type ResultRow,
+  type ResultsResponse,
+} from "./raceResults";
 import {
   computeOverallWinner,
   isWinnerFinal,
@@ -33,6 +45,7 @@ type DerivedRow = ResultRow & {
   greenPts: number | null;
   greenApiPts: number | null;
   pinkPts: number | null;
+  cumulativeLoops: number | null;
 };
 
 type JerseyPointsByBib = Map<string, Map<number, number>>;
@@ -93,6 +106,7 @@ const columns: { key: SortKey; label: string; numeric?: boolean }[] = [
   { key: "gap", label: "Gap" },
   { key: "club", label: "Club" },
   { key: "country", label: "Country" },
+  { key: "cumulativeLoops", label: "Cumulative Loops", numeric: true },
   { key: "laps", label: "Laps", numeric: true },
   { key: "lastLap", label: "Last" },
   { key: "rankNow", label: "Rank Last", numeric: true },
@@ -132,6 +146,7 @@ function compare(a: DerivedRow, b: DerivedRow, key: SortKey, dir: SortDir): numb
 
 export function Leaderboard({ eventId }: { eventId: string }) {
   const [showPlot, setShowPlot] = useDisplayPreference("leaderboard.showTop15Plot");
+  const [showCumulativeLoops, setShowCumulativeLoops] = useDisplayPreference("leaderboard.showCumulativeLoops", true);
   const { mode, startTime, fyLock, fyMax, jerseyGreen, jerseyPink, jerseyYellow } =
     useTimerSettings(eventId);
   const { viewLoop, setViewLoop } = useViewLoop(eventId);
@@ -164,10 +179,6 @@ export function Leaderboard({ eventId }: { eventId: string }) {
           ])
         : new Set(),
     [mode],
-  );
-  const visibleColumns = useMemo(
-    () => columns.filter((c) => !hiddenCols.has(c.key)),
-    [hiddenCols],
   );
   // If the current sort column is hidden, fall back to a sort key that
   // is always visible. "totalRank" works for both modes.
@@ -328,6 +339,15 @@ export function Leaderboard({ eventId }: { eventId: string }) {
       ? Math.min(Math.max(1, viewLoop), maxLoop)
       : null;
 
+  const cumulative = useMemo(() => cumulativeLoopStandings(rows, effectiveViewLoop), [rows, effectiveViewLoop]);
+  const cumulativeEnabled = !loading && cumulative.runners.length > 0 && cumulative.runners.length <= 15;
+  const cumulativeActive = cumulativeEnabled && showCumulativeLoops;
+  const visibleColumns = useMemo(
+    () => columns.filter((column) => !hiddenCols.has(column.key)
+      && (column.key !== "cumulativeLoops" || cumulativeActive)),
+    [hiddenCols, cumulativeActive],
+  );
+
   const derivedRows = useMemo(() => {
     // Lap count comes straight from RaceResult's `NumberOfLaps` field
     // (exposed by the backend as `lapsCompleted`). Last-resort fallback:
@@ -340,8 +360,10 @@ export function Leaderboard({ eventId }: { eventId: string }) {
     const leader = rows.find((r) => r.totalRank === 1);
     const leaderLaps = leader?.lapsCompleted ?? null;
 
-    const visible =
-      effectiveViewLoop === null
+    const cumulativeByBib = new Map(cumulative.runners.map((runner) => [runner.bib, runner]));
+    const visible = cumulativeActive
+      ? rows.filter((row) => cumulativeByBib.has(row.bib))
+      : effectiveViewLoop === null
         ? rows
         : rows.filter((r) =>
             typeof r.lapsCompleted === "number"
@@ -361,6 +383,7 @@ export function Leaderboard({ eventId }: { eventId: string }) {
       if (effectiveViewLoop !== null && laps !== null) {
         laps = Math.min(laps, effectiveViewLoop);
       }
+      if (cumulativeActive) laps = cumulativeByBib.get(r.bib)?.laps ?? 0;
       // When replaying, the "Last" column shows the lap time of the
       // selected loop (the loop that was just completed at that point in
       // the race) rather than the runner's most recent lap.
@@ -414,6 +437,8 @@ export function Leaderboard({ eventId }: { eventId: string }) {
           : null;
       return {
         ...r,
+        totalRank: cumulativeActive ? cumulativeByBib.get(r.bib)?.rank ?? null : r.totalRank,
+        cumulativeLoops: cumulativeActive ? cumulative.totalLoops : null,
         lastLap,
         laps,
         distanceKm: laps === null ? null : laps * loopKm,
@@ -428,7 +453,7 @@ export function Leaderboard({ eventId }: { eventId: string }) {
       };
     });
     return derived;
-  }, [rows, mode, effectiveViewLoop, maxLoop, greenByBib, greenApiByBib, pinkByBib]);
+  }, [rows, mode, effectiveViewLoop, maxLoop, greenByBib, greenApiByBib, pinkByBib, cumulative, cumulativeActive]);
 
   // Identify the current jersey holder per sex for pink/green/yellow, so
   // the leaderboard can show jersey-color icons next to that runner's name.
@@ -955,8 +980,11 @@ export function Leaderboard({ eventId }: { eventId: string }) {
     // (or male) on that loop as reference -- not the overall fastest.
     const diffLoop = effectiveViewLoop ?? (maxLoop >= 1 ? maxLoop : null);
     const withDiff = augmentWithDiff(rowsToShow, diffLoop);
-    const sorted = assignRankLast(withDiff, diffLoop).sort((a, b) =>
-      compare(a, b, sortKey, sortDir),
+    const sorted = assignRankLast(withDiff, diffLoop).sort((first, second) =>
+      cumulativeActive
+        ? (first.totalRank ?? Infinity) - (second.totalRank ?? Infinity)
+          || first.bib.localeCompare(second.bib, undefined, { numeric: true })
+        : compare(first, second, sortKey, sortDir),
     );
     return (
       <div
@@ -1064,20 +1092,20 @@ export function Leaderboard({ eventId }: { eventId: string }) {
       <thead>
         <tr style={{ background: "var(--surface-strong)" }}>
           {visibleColumns.map((col) => {
-            const active = col.key === sortKey;
+            const active = !cumulativeActive && col.key === sortKey;
             const arrow = active ? (sortDir === "asc" ? " ▲" : " ▼") : "";
             return (
               <th
                 key={col.key}
-                onClick={() => toggleSort(col.key)}
+                onClick={cumulativeActive ? undefined : () => toggleSort(col.key)}
                 style={{
                   ...th,
-                  cursor: "pointer",
+                  cursor: cumulativeActive ? "default" : "pointer",
                   textAlign: col.numeric ? "right" : "left",
                   userSelect: "none",
                   whiteSpace: "nowrap",
                 }}
-                title="Click to sort"
+                title={col.key === "cumulativeLoops" ? "Total completed loops across all starters" : cumulativeActive ? undefined : "Click to sort"}
               >
                 {col.label}
                 <span style={{ color: "var(--muted)" }}>{arrow}</span>
@@ -1135,6 +1163,7 @@ export function Leaderboard({ eventId }: { eventId: string }) {
             r.country
           )}
         </td>
+        {cumulativeActive && <td style={tdNum}>{r.cumulativeLoops}</td>}
         <td style={tdNum}>{r.laps ?? "—"}</td>
         <td style={td}>{r.lastLap || "—"}</td>
         {!hiddenCols.has("rankNow") && (
@@ -1264,13 +1293,15 @@ export function Leaderboard({ eventId }: { eventId: string }) {
   const top15Snapshot = resultSnapshot(rows, raceStartMs === null ? null : liveCompletedLoops, effectiveViewLoop,
     mode === "backyard" ? raceFinished : raceStartMs !== null && liveCompletedLoops >= fyMax);
   const top15 = selectTop15(rows, top15Snapshot);
+  const plotEnabled = !loading && canShowTop15Plot(rows, top15Snapshot);
+  const plotVisible = showPlot && plotEnabled;
   // `derivedRows` is the unsorted set of rows for the current view loop
   // (in-place sorting happens inside `renderTable` so each subset can
   // compute its own Diff column).
 
   return (
     <section
-      className={showPlot ? "leaderboard-with-plot" : undefined}
+      className={plotVisible ? "leaderboard-with-plot" : undefined}
       style={{
         width: "100%",
         maxWidth: "2100px",
@@ -1287,7 +1318,22 @@ export function Leaderboard({ eventId }: { eventId: string }) {
       )}
       <div className="page-heading">
         <h1>Leaderboard</h1>
-        <DisplayToggle label="Show top-15 plot" checked={showPlot} onChange={setShowPlot} />
+        <div className="leaderboard-display-options">
+          {cumulativeEnabled && (
+            <DisplayToggle
+              label="Show cumulative loops"
+              checked={cumulativeActive}
+              onChange={setShowCumulativeLoops}
+            />
+          )}
+          <DisplayToggle
+            label="Show top-15 plot"
+            checked={plotVisible}
+            onChange={setShowPlot}
+            disabled={!plotEnabled}
+            title={plotEnabled ? undefined : "Available when at most 15 runners remain"}
+          />
+        </div>
       </div>
 
       {loading && rows.length === 0 && <p>Loading…</p>}
@@ -1419,7 +1465,7 @@ export function Leaderboard({ eventId }: { eventId: string }) {
             : `Updated ${lastUpdated.toLocaleTimeString()} · auto-refresh every ${REFRESH_MS / 1000}s · ${derivedRows.length} entries`}
         </p>
       )}
-      {showPlot && <Suspense fallback={<p>Loading plot...</p>}><Top15Plot key={eventId} runners={top15} loop={top15Snapshot.loop} /></Suspense>}
+      {plotVisible && <Suspense fallback={<p>Loading plot...</p>}><Top15Plot key={eventId} eventId={eventId} runners={top15} loop={top15Snapshot.loop} /></Suspense>}
     </section>
   );
 }

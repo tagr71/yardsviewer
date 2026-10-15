@@ -86,12 +86,12 @@ export function useDisplayPreference(name: string, fallback = true) {
   return usePreference(`raceresult.${name}`, fallback, isBoolean);
 }
 
-export function DisplayToggle({ label, checked, onChange }: {
-  label: string; checked: boolean; onChange: (value: boolean) => void;
+export function DisplayToggle({ label, checked, onChange, disabled = false, title }: {
+  label: string; checked: boolean; onChange: (value: boolean) => void; disabled?: boolean; title?: string;
 }) {
   return (
-    <label className="display-toggle">
-      <input type="checkbox" role="switch" checked={checked} onChange={(event) => onChange(event.target.checked)} />
+    <label className="display-toggle" title={title}>
+      <input type="checkbox" role="switch" checked={checked} disabled={disabled} onChange={(event) => onChange(event.target.checked)} />
       <span>{label}</span>
     </label>
   );
