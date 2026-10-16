@@ -81,8 +81,9 @@ preserved:
 
 - **Overview: Show participant info** controls the starting and remaining
   detailed counts, female/male breakdowns and registered count. Turning it
-  off keeps the total **Still in**, current loop, accumulated distance and
-  replay controls visible.
+  off shows the total **Still in**, current loop, **Acc. loops**, accumulated
+  distance and replay controls. Accumulated loops and distance follow the
+  selected replay loop and include completed loops from retired runners.
 - **Dashboard: Show top-15** (default Off) adds a compact results table beneath
   the timer: bib, name, last/fastest/average lap and accumulated time. Enabling it
   compacts timer and jersey panels; disabling it restores their spacious
@@ -164,13 +165,18 @@ The dashboard dropdown lists, in order: **Settings**, **Overview**,
   runners still in competition per gender — each cell's label includes
   the percentage still in (e.g. `Still in (75.6%)`); the bottom row
   shows the current loop (teal), accumulated distance summed across
-  completed loops (green) and registered participants (neutral). Before
+  completed loops (green) and registered participants (neutral).
+  With **Show participant info** off, a responsive metrics grid shows
+  **Still in**, **Current loop**, **Acc. loops** and **Acc. distance (km)**.
+  The accumulated totals include all starters' completed loops, including
+  retired runners, and exclude DNS entries. Before
   the race starts (no completed loops yet) the still-in counters equal
   the starting counts — RaceResult pre-populates all registered runners
   as DNF before the race begins, so the dashboard uses DNS-only
-  exclusion instead of the usual DNF/DNS/DQ filter. When the race is
-  finished a `⏮ ◀ Loop N / max ▶ ⏭ Live` playback bar appears and
-  the still-in counters / accumulated distance follow the selected loop.
+  exclusion instead of the usual DNF/DNS/DQ filter. Once completed loops
+  are available, a `⏮ ◀ Loop N / max ▶ ⏭ Live` playback bar appears.
+  The still-in counters, accumulated loops in the compact view and
+  accumulated distance follow the selected loop.
 - **Leaderboard** — sortable, 10 s-polled table:
   Total Rank, Bib, Full Name, Club, Country (flag), Laps,
   Gap, Last (lap), Fastest, Slowest, Average, Total Time,

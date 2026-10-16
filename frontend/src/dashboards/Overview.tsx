@@ -111,7 +111,8 @@ export function Overview({ eventId }: { eventId: string }) {
   const stillIn = rows.filter(isStillIn).length;
   const femaleStillIn = rows.filter((r) => sexOf(r) === "K" && isStillIn(r)).length;
   const maleStillIn = rows.filter((r) => sexOf(r) === "M" && isStillIn(r)).length;
-  const accKm = cumulativeLoopStandings(rows, effectiveViewLoop).totalLoops * loopKm;
+  const accLoops = cumulativeLoopStandings(rows, effectiveViewLoop).totalLoops;
+  const accKm = accLoops * loopKm;
   const currentLoop = effectiveViewLoop ?? maxLoop;
   const hasResults = rows.length > 0;
   const fmt = (n: number) => (hasResults ? n.toString() : "—");
@@ -248,9 +249,15 @@ export function Overview({ eventId }: { eventId: string }) {
             <StatCard label={`Female still in${fmtPct(femaleStillIn, female)}`} value={fmt(femaleStillIn)} bg="#dc2626" color="white" />
             <StatCard label={`Men still in${fmtPct(maleStillIn, male)}`} value={fmt(maleStillIn)} bg="#2563eb" color="white" />
           </div>}
-          <div className="overview-metrics" style={statGridBottom}>
+          <div className="overview-metrics" style={{
+            ...statGridBottom,
+            gridTemplateColumns: showInfo
+              ? statGridBottom.gridTemplateColumns
+              : "repeat(auto-fit, minmax(min(100%, 18rem), 1fr))",
+          }}>
             {!showInfo && <StatCard label={`Still in${fmtPct(stillIn, starting)}`} value={fmt(stillIn)} bg="var(--stat-yellow)" color="var(--text)" />}
             <StatCard label="Current loop" value={fmt(currentLoop)} bg="#0f766e" color="white" />
+            {!showInfo && <StatCard label="Acc. loops" value={fmt(accLoops)} valueStyle={{ fontSize: "4rem" }} />}
             <StatCard label="Acc. distance (km)" value={fmtKm(accKm)} bg="#117a3a" color="white" valueStyle={{ fontSize: "4rem" }} />
             {showInfo && <StatCard label="Registered participants" value={fmt(count)} />}
           </div>
