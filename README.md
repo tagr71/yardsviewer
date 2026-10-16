@@ -427,7 +427,7 @@ in the Docker / production build too.
 ## Run
 
 Requirements: **Python 3.12+**, [uv](https://docs.astral.sh/uv/), and
-**Node.js 22.12+ (22.x) or 24+** with npm. Docker and CI use Node 24.
+**Node.js 22.12+ (22.x), 24.x, or 26+** with npm. Docker and CI use Node 24.
 Run the backend and frontend in separate
 terminals from the repository root.
 
@@ -648,7 +648,7 @@ the app nor the backend imports them or substitutes them for event data.
 
 ### Prerequisites
 
-- Node 22.12+ (22.x) or 24+.
+- Node 22.12+ (22.x), 24.x, or 26+.
 - Install frontend dependencies once: `npm --prefix frontend ci` from the
   repository root.
 

@@ -48,12 +48,12 @@ WORKDIR /app
 # [project].dependencies). Pinning here keeps the image reproducible and
 # avoids needing a build backend at install time.
 RUN pip install --no-cache-dir \
-        "fastapi==0.139.0" \
-        "uvicorn[standard]==0.49.0" \
+        "fastapi==0.143.2" \
+        "uvicorn[standard]==0.54.0" \
         "httpx==0.28.1" \
-        "python-dotenv==1.2.2" \
-        "truststore>=0.9.2" \
-        "tzdata>=2025.2"
+        "python-dotenv==1.2.4" \
+        "truststore>=0.10.5" \
+        "tzdata>=2026.5"
 
 # Backend source.
 COPY backend/ ./backend/
