@@ -17,7 +17,9 @@ import {
   clockCompletedLoops,
   collectLiveSplits,
   cumulativeLoopStandings,
+  publishedLoop,
   readLiveSplits,
+  resultLaps,
   resultSnapshot,
   resultsPollDelay,
   saveLiveSplits,
@@ -326,13 +328,7 @@ export function Leaderboard({ eventId }: { eventId: string }) {
     };
   }, [eventId]);
 
-  const maxLoop = useMemo(() => {
-    let m = 0;
-    for (const r of rows) {
-      if (typeof r.lapsCompleted === "number" && r.lapsCompleted > m) m = r.lapsCompleted;
-    }
-    return m;
-  }, [rows]);
+  const maxLoop = useMemo(() => publishedLoop(rows), [rows]);
 
   const effectiveViewLoop =
     viewLoop !== null && maxLoop >= 1
@@ -375,6 +371,8 @@ export function Leaderboard({ eventId }: { eventId: string }) {
       let laps: number | null;
       if (r.lapsCompleted !== null) {
         laps = r.lapsCompleted;
+      } else if (r.perLoop?.length) {
+        laps = resultLaps(r);
       } else if (leaderLaps !== null && r.lapsBehind !== null) {
         laps = Math.max(0, leaderLaps - r.lapsBehind);
       } else {

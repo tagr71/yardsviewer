@@ -30,7 +30,7 @@ import {
   useViewLoop,
 } from "./timerCore";
 import { DisplayToggle, useDisplayPreference } from "../theme";
-import { resultSnapshot, resultsPollDelay, selectTop15, type ResultRow, type ResultsResponse } from "./raceResults";
+import { cumulativeLoopStandings, resultLaps, resultSnapshot, resultsPollDelay, selectTop15, type ResultRow, type ResultsResponse } from "./raceResults";
 
 export function Dashboard({ eventId, eventName, eventLocation }: { eventId: string; eventName?: string; eventLocation?: string }) {
   const [showTop15, setShowTop15] = useDisplayPreference("dashboard.showTop15", false);
@@ -66,7 +66,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
   // and for the "race finished" detection that drives playback mode.
   const [raceFinished, setRaceFinished] = useState(false);
   const [resultRows, setResultRows] = useState<ResultRow[]>([]);
-  const finalLaps = resultRows.map((row) => row.lapsCompleted ?? 0);
+  const finalLaps = resultRows.map(resultLaps);
   const finalStatuses = resultRows.map((row) => row.status ?? "");
   useEffect(() => {
     let cancelled = false;
@@ -208,6 +208,12 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
     : (backyardCompleted + 1) * BACKYARD_LOOP_KM;
   const frontyardCompleted = beforeStart ? 0 : fy.loopsCompleted;
   const frontyardDistance = frontyardCompleted * FRONTYARD_LOOP_KM;
+  const completedSnapshotLoop = beforeStart ? 0 : effectiveViewLoop === null ? null
+    : mode === "backyard" ? backyardCompleted : frontyardCompleted;
+  const { totalLoops } = cumulativeLoopStandings(resultRows, completedSnapshotLoop);
+  const totalDistance = totalLoops * (mode === "backyard" ? BACKYARD_LOOP_KM : FRONTYARD_LOOP_KM);
+  const totalLoopsDisplay = <span className="stat-total">({totalLoops} total)</span>;
+  const totalDistanceDisplay = <span className="stat-total">({formatKm(totalDistance)} total)</span>;
   const top15Snapshot = resultSnapshot(resultRows,
     startInstant ? beforeStart ? 0 : mode === "backyard" ? Math.floor(liveElapsedSec / LOOP_SECONDS)
       : frontyardState(liveElapsedSec, fyLock, fyMax).loopsCompleted : null,
@@ -1201,6 +1207,8 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
               <StatCard
                 label="Loops completed"
                 value={String(backyardCompleted)}
+                sub={totalLoopsDisplay}
+                subColor="white"
               bg="#117a3a" valueColor="white" labelColor="white" />
               <StatCard
                 label="Current loop"
@@ -1210,6 +1218,8 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
               <StatCard
                 label="Distance completed"
                 value={formatKm(backyardDistance)}
+                sub={totalDistanceDisplay}
+                subColor="white"
               bg="#117a3a" valueColor="white" labelColor="white" />
               <StatCard
                 label="Distance this loop"
@@ -1249,6 +1259,8 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                   <StatCard
                     label="Loops completed"
                     value="0"
+                    sub={totalLoopsDisplay}
+                    subColor="white"
                   bg="#117a3a" valueColor="white" labelColor="white" />
                   <StatCard label="Current loop" value="1" bg="var(--stat-yellow)" valueColor="var(--text)" labelColor="var(--text)" />
                   <StatCard
@@ -1268,6 +1280,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                   <StatCard
                     label="Distance (km) completed"
                     value={formatKm(0)}
+                    sub={totalDistanceDisplay}
                   valueColor="var(--text)" labelColor="var(--text)" />
                   {(() => {
                     const r = requiredPace(FRONTYARD_START_MIN, FRONTYARD_LOOP_KM);
@@ -1293,6 +1306,8 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                   <StatCard
                     label="Loops completed"
                     value={String(frontyardCompleted)}
+                    sub={totalLoopsDisplay}
+                    subColor="white"
                   bg="#117a3a" valueColor="white" labelColor="white" />
                   <StatCard label="Current loop" value="—" bg="var(--stat-yellow)" valueColor="var(--text)" labelColor="var(--text)" />
                   <StatCard label="Loop time-limit (min)" value="—" bg="#dc2626" valueColor="white" labelColor="white" />
@@ -1301,6 +1316,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                   <StatCard
                     label="Distance (km) completed"
                     value={formatKm(frontyardDistance)}
+                    sub={totalDistanceDisplay}
                   valueColor="var(--text)" labelColor="var(--text)" />
                   <StatCard
                     label="Speed min:sec per km"
@@ -1322,6 +1338,8 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                   <StatCard
                     label="Loops completed"
                     value={String(frontyardCompleted)}
+                    sub={totalLoopsDisplay}
+                    subColor="white"
                   bg="#117a3a" valueColor="white" labelColor="white" />
                   <StatCard
                     label="Current loop"
@@ -1344,6 +1362,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                   <StatCard
                     label="Distance completed"
                     value={formatKm(frontyardDistance)}
+                    sub={totalDistanceDisplay}
                   valueColor="var(--text)" labelColor="var(--text)" />
                   {(() => {
                     const r = requiredPace(fy.loopLengthMin, FRONTYARD_LOOP_KM);

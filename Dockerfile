@@ -2,7 +2,7 @@
 #
 # Multi-stage build for yardsviewer.
 #
-#   Stage 1 (web)     — Node 20: install JS deps + run `vite build`.
+#   Stage 1 (web)     — Node 24: install JS deps + run `vite build`.
 #                       Output ends up at /web/dist.
 #   Stage 2 (runtime) — Python 3.12: install backend deps, copy the
 #                       FastAPI source and the pre-built SPA bundle, and
@@ -19,7 +19,7 @@
 # ---------------------------------------------------------------------------
 # Stage 1 — build the Vite/React bundle
 # ---------------------------------------------------------------------------
-FROM node:20-alpine AS web
+FROM node:24-alpine AS web
 WORKDIR /web
 
 # Install deps with the lockfile only first so this layer caches when

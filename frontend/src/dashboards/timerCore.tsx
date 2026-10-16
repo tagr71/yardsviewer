@@ -329,13 +329,15 @@ export function StatCard({
   value,
   valueColor,
   sub,
+  subColor,
   bg,
   labelColor,
 }: {
   label: string;
   value: string;
   valueColor?: string;
-  sub?: string;
+  sub?: React.ReactNode;
+  subColor?: string;
   bg?: string;
   labelColor?: string;
 }) {
@@ -343,7 +345,7 @@ export function StatCard({
     <div className="stat-card" style={{ ...panel, background: bg ?? panel.background }}>
       <p title={label} style={{ ...panelLabel, color: labelColor ?? panelLabel.color }}>{label}</p>
       <div className="stat-value" style={{ ...bigClock, color: valueColor ?? bigClock.color }}>{value}</div>
-      {sub && <p style={panelSub}>{sub}</p>}
+      {sub && <p style={{ ...panelSub, color: subColor ?? panelSub.color }}>{sub}</p>}
     </div>
   );
 }

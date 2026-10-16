@@ -9,7 +9,7 @@ import re
 import ssl
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 from zoneinfo import ZoneInfo
 
 import httpx
@@ -100,6 +100,13 @@ def _auth_headers() -> dict[str, str]:
     return {"Authorization": f"Bearer {RACERESULT_API_KEY}"} if RACERESULT_API_KEY else {}
 
 
+def _json_object(response: httpx.Response) -> dict[str, Any]:
+    payload: object = response.json()
+    if not isinstance(payload, dict):
+        raise ValueError("RaceResult response must be a JSON object")
+    return payload
+
+
 async def _fetch_list(
     event_id: str,
     page: str,
@@ -126,8 +133,8 @@ async def _fetch_list(
         try:
             resp = await client.get(config_url)
             resp.raise_for_status()
-            config = resp.json()
-        except httpx.HTTPError as exc:
+            config = _json_object(resp)
+        except (httpx.HTTPError, ValueError) as exc:
             raise HTTPException(
                 status_code=502, detail=f"RaceResult config request failed: {exc}"
             ) from exc
@@ -258,8 +265,8 @@ async def _fetch_list(
         try:
             resp = await client.get(list_url, params=params)
             resp.raise_for_status()
-            payload = resp.json()
-        except httpx.HTTPError as exc:
+            payload = _json_object(resp)
+        except (httpx.HTTPError, ValueError) as exc:
             raise HTTPException(
                 status_code=502, detail=f"RaceResult list request failed: {exc}"
             ) from exc
@@ -274,8 +281,8 @@ async def _fetch_details_list(
     payload or None if not available.
 
     Prefer a published Details-API results list, which exposes all runners
-    and laps through the normal list endpoint. For fields of at most 15
-    supplied bibs, also try the advertised participant view's embedded list.
+    and laps through the normal list endpoint. For up to 15 supplied bibs,
+    also try the advertised participant view's embedded list.
 
     RaceResult exposes per-runner lap times through a sub-page (e.g.
     ``details1``) of the main results page. Current templates use
@@ -307,8 +314,8 @@ async def _fetch_details_list(
         try:
             resp = await client.get(results_config_url)
             resp.raise_for_status()
-            cfg = resp.json()
-        except httpx.HTTPError:
+            cfg = _json_object(resp)
+        except (httpx.HTTPError, ValueError):
             return None
         key = cfg.get("key") or ""
         server = cfg.get("server") or server
@@ -329,10 +336,10 @@ async def _fetch_details_list(
                     },
                 )
                 resp.raise_for_status()
-                payload = resp.json()
+                payload = _json_object(resp)
                 if _parse_lap_times(payload):
-                    return payload  # type: ignore[no-any-return]
-            except httpx.HTTPError:
+                    return payload
+            except (httpx.HTTPError, ValueError):
                 continue
         for lst in lists:
             d = lst.get("Details", "")
@@ -340,8 +347,8 @@ async def _fetch_details_list(
                 details_page = d.strip()
                 break
 
-    runner_bibs = list(dict.fromkeys(bib for bib in (bibs or []) if bib))
-    if details_page and 0 < len(runner_bibs) <= 15:
+    runner_bibs = list(dict.fromkeys(bib for bib in (bibs or []) if bib))[:15]
+    if details_page and runner_bibs:
         async with httpx.AsyncClient(timeout=15.0, verify=_SSL_CONTEXT) as client:
             limit = asyncio.Semaphore(4)
 
@@ -353,7 +360,7 @@ async def _fetch_details_list(
                             params={"bib": bib, "lang": "en", "contest": contest},
                         )
                         response.raise_for_status()
-                        view = response.json()
+                        view = _json_object(response)
                     for entry in ((view.get("Data") or {}).get("Lists") or {}).values():
                         fields = entry.get("DataFields") or []
                         if "BIB" not in fields or "[Lap{n}]" not in fields:
@@ -393,8 +400,8 @@ async def _fetch_details_list(
                 f"https://my2.raceresult.com/{event_id}/RRPublish/data/config"
             )
             resp.raise_for_status()
-            rrp = resp.json()
-        except httpx.HTTPError:
+            rrp = _json_object(resp)
+        except (httpx.HTTPError, ValueError):
             return None
         for lst in rrp.get("lists") or []:
             ref = lst.get("Details") if isinstance(lst, dict) else None
@@ -426,8 +433,8 @@ async def _fetch_details_list(
                 },
             )
             resp.raise_for_status()
-            return resp.json()  # type: ignore[no-any-return]
-        except httpx.HTTPError:
+            return _json_object(resp)
+        except (httpx.HTTPError, ValueError):
             return None
 
 
@@ -445,8 +452,7 @@ def _count_rows(payload: Any) -> int:
                     for inner in value.values():
                         if isinstance(inner, list):
                             total += len(inner)
-            if total:
-                return total
+            return total
     if isinstance(payload, list):
         return len(payload)
     raise ValueError("Could not determine row count from response")
@@ -474,11 +480,16 @@ def _parse_hms(s: str) -> int | None:
     s = s.strip()
     if not s:
         return None
-    m = re.match(r"^(?:(\d+):)?(\d{1,2}):(\d{2})(?:[.,]\d+)?$", s)
-    if not m:
+    time_match = re.fullmatch(r"(?:(\d+):)?(\d+):(\d{2})(?:[.,]\d+)?", s)
+    if not time_match:
+        seconds_match = re.fullmatch(r"(\d+)(?:[.,]\d+)?", s)
+        return int(seconds_match.group(1)) if seconds_match else None
+    hours = int(time_match.group(1)) if time_match.group(1) else 0
+    minutes = int(time_match.group(2))
+    seconds = int(time_match.group(3))
+    if seconds >= 60 or (time_match.group(1) is not None and minutes >= 60):
         return None
-    h = int(m.group(1)) if m.group(1) else 0
-    return h * 3600 + int(m.group(2)) * 60 + int(m.group(3))
+    return hours * 3600 + minutes * 60 + seconds
 
 
 def _format_hms(seconds: int) -> str:
@@ -898,8 +909,16 @@ async def results(
     # Enrich each row with `perLoop` = list of `{loop, time, lapSec, totalSec}`
     # from the Details sub-page when available. Callers may use this for
     # per-loop analysis; it is also used by /api/jerseys independently.
+    detail_rows = sorted(
+        rows,
+        key=lambda row: (
+            bool(_OUT_PATTERN_RE.search(str(row.get("status") or ""))),
+            -cast(int, row.get("lapsCompleted") or 0),
+            row.get("totalRank") or float("inf"),
+        ),
+    )
     details_payload = await _fetch_details_list(
-        resolved, "results", bibs=[str(row.get("bib") or "") for row in rows]
+        resolved, "results", bibs=[str(row.get("bib") or "") for row in detail_rows]
     )
     lap_times_by_bib = _parse_lap_times(details_payload)
     if lap_times_by_bib:
@@ -907,6 +926,13 @@ async def results(
             laps = lap_times_by_bib.get(str(row.get("bib") or ""))
             if laps:
                 row["perLoop"] = laps
+                if not row.get("lastLap"):
+                    completed = row.get("lapsCompleted")
+                    last_split = next(
+                        (lap for lap in reversed(laps) if lap["loop"] == completed), None
+                    )
+                    if last_split and last_split["lapSec"] > 0:
+                        row["lastLap"] = last_split["time"]
 
     # Heuristic "race finished" detection: a backyard/frontyard race is
     # considered finished once every row except at most one is marked DNF/
@@ -1068,42 +1094,26 @@ def _parse_lap_times(
     if bib_i < 0 or lap_i < 0:
         return {}
     out: dict[str, list[dict[str, Any]]] = {}
-    data = payload.get("data")
-    # Data is a dict of group -> list-of-rows; each row is one lap.
-    groups: list[list[Any]] = []
-    if isinstance(data, dict):
-        for v in data.values():
-            if isinstance(v, list):
-                groups.append(v)
-    elif isinstance(data, list):
-        groups.append(data)
-    for rows in groups:
-        for raw in rows:
-            if not isinstance(raw, list):
-                continue
-            bib = str(raw[bib_i]).strip() if bib_i < len(raw) else ""
-            if not bib:
-                continue
-            lap_time = str(raw[lap_i]).strip() if lap_i < len(raw) else ""
-            if not lap_time:
-                continue
-            lst = out.setdefault(bib, [])
-            loop_n = len(lst) + 1
-            total_text = (
-                str(raw[total_i]).strip()
-                if 0 <= total_i < len(raw)
-                else ""
-            )
-            total_sec = _parse_hms(total_text) or 0
-            lap_sec = _parse_hms(lap_time)
-            lst.append(
-                {
-                    "loop": loop_n,
-                    "time": lap_time,
-                    "lapSec": lap_sec if lap_sec is not None else 0,
-                    "totalSec": total_sec,
-                }
-            )
+    loop_counts: dict[str, int] = {}
+    for raw in _iter_data_rows(payload):
+        bib = str(raw[bib_i]).strip() if bib_i < len(raw) else ""
+        if not bib:
+            continue
+        loop_n = loop_counts.get(bib, 0) + 1
+        loop_counts[bib] = loop_n
+        lap_time = str(raw[lap_i]).strip() if lap_i < len(raw) else ""
+        lap_sec = _parse_hms(lap_time)
+        if lap_sec is None or lap_sec <= 0:
+            continue
+        total_text = str(raw[total_i]).strip() if 0 <= total_i < len(raw) else ""
+        out.setdefault(bib, []).append(
+            {
+                "loop": loop_n,
+                "time": lap_time,
+                "lapSec": lap_sec,
+                "totalSec": _parse_hms(total_text) or 0,
+            }
+        )
     return out
 
 
@@ -1191,7 +1201,7 @@ def _safe_int(text: str) -> int:
         return 0
     try:
         return int(float(t))
-    except ValueError:
+    except (ValueError, OverflowError):
         return 0
 
 
@@ -1485,6 +1495,20 @@ async def root() -> RedirectResponse | FileResponse:
 # directory is absent and the block is skipped — Vite on :5173 keeps
 # proxying /api/* during development.
 _DIST = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
+
+
+async def _spa_fallback(full_path: str) -> FileResponse:
+    if full_path == "api" or full_path.startswith("api/") or "\\" in full_path:
+        raise HTTPException(status_code=404, detail="Not Found")
+    root = _DIST.resolve()
+    candidate = (root / full_path).resolve()
+    if not candidate.is_relative_to(root):
+        raise HTTPException(status_code=404, detail="Not Found")
+    if full_path and candidate.is_file():
+        return FileResponse(candidate)
+    return FileResponse(root / "index.html")
+
+
 if _DIST.is_dir():
     from fastapi.staticfiles import StaticFiles
 
@@ -1496,12 +1520,5 @@ if _DIST.is_dir():
     # SPA fallback: any unknown path that isn't an /api/* route returns
     # index.html so client-side routing works. Real files under dist/
     # (favicon, public images, etc.) are served as-is.
-    @app.get("/{full_path:path}", include_in_schema=False)
-    async def _spa_fallback(full_path: str) -> FileResponse:
-        if full_path.startswith("api/"):
-            raise HTTPException(status_code=404, detail="Not Found")
-        candidate = _DIST / full_path
-        if full_path and candidate.is_file():
-            return FileResponse(candidate)
-        return FileResponse(_DIST / "index.html")
+    app.add_api_route("/{full_path:path}", _spa_fallback, include_in_schema=False)
 

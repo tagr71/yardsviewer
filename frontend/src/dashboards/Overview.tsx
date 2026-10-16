@@ -9,17 +9,11 @@ import {
 } from "./timerCore";
 import { friendlyFetchError } from "../utils/fetchError";
 import { DisplayToggle, useDisplayPreference } from "../theme";
-import { remainingRunner } from "./raceResults";
+import { cumulativeLoopStandings, publishedLoop, remainingRunner, type ResultRow } from "./raceResults";
 
 type CountResponse = { count: number; eventName?: string };
-type ResultRow = {
-  sex?: string;
-  status?: string;
-  lapsCompleted?: number | null;
-};
 type ResultsResponse = { raceFinished?: boolean; rows?: ResultRow[] };
 
-const OUT_PATTERN = /dnf|dns|dq|withdrawn/i;
 const DNS_PATTERN = /dns/i;
 
 const REFRESH_MS = 10_000;
@@ -52,10 +46,11 @@ export function Overview({ eventId }: { eventId: string }) {
         if (!countRes.ok) {
           throw await friendlyFetchError(countRes);
         }
+        if (!resultsRes.ok) {
+          throw await friendlyFetchError(resultsRes);
+        }
         const countData: CountResponse = await countRes.json();
-        const resultsData: ResultsResponse = resultsRes.ok
-          ? await resultsRes.json()
-          : {};
+        const resultsData: ResultsResponse = await resultsRes.json();
         if (cancelled || idRef.current !== id) return;
         setCount(countData.count);
         setRows(resultsData.rows ?? []);
@@ -90,15 +85,7 @@ export function Overview({ eventId }: { eventId: string }) {
   }, [eventId]);
 
   const loopKm = mode === "frontyard" ? FRONTYARD_LOOP_KM : BACKYARD_LOOP_KM;
-  const maxLoop = useMemo(() => {
-    let max = 0;
-    for (const r of rows) {
-      if (typeof r.lapsCompleted === "number" && r.lapsCompleted > max) {
-        max = r.lapsCompleted;
-      }
-    }
-    return max;
-  }, [rows]);
+  const maxLoop = useMemo(() => publishedLoop(rows), [rows]);
   const effectiveViewLoop =
     viewLoop !== null && maxLoop >= 1
       ? Math.min(Math.max(1, viewLoop), maxLoop)
@@ -124,22 +111,7 @@ export function Overview({ eventId }: { eventId: string }) {
   const stillIn = rows.filter(isStillIn).length;
   const femaleStillIn = rows.filter((r) => sexOf(r) === "K" && isStillIn(r)).length;
   const maleStillIn = rows.filter((r) => sexOf(r) === "M" && isStillIn(r)).length;
-  // Effective completed laps: DNF/DNS/DQ/withdrawn runners did not complete
-  // the final lap they're recorded against, so cap them at maxLoop - 1.
-  const completedLaps = (r: ResultRow) => {
-    if (typeof r.lapsCompleted !== "number") return 0;
-    if (OUT_PATTERN.test(r.status ?? "") && maxLoop >= 1) {
-      return Math.min(r.lapsCompleted, maxLoop - 1);
-    }
-    return r.lapsCompleted;
-  };
-  const accKm = rows.reduce((sum, r) => {
-    const laps =
-      effectiveViewLoop !== null
-        ? Math.min(completedLaps(r), effectiveViewLoop)
-        : completedLaps(r);
-    return sum + laps * loopKm;
-  }, 0);
+  const accKm = cumulativeLoopStandings(rows, effectiveViewLoop).totalLoops * loopKm;
   const currentLoop = effectiveViewLoop ?? maxLoop;
   const hasResults = rows.length > 0;
   const fmt = (n: number) => (hasResults ? n.toString() : "—");

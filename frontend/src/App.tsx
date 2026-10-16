@@ -157,10 +157,14 @@ export function App() {
   function applySelection(nextEventId: string, nextDashboardId: string) {
     const trimmed = nextEventId.trim();
     if (!trimmed) return;
+    const label = PREDEFINED_EVENTS.find((event) => event.id === trimmed)?.label ?? "";
+    const resolvedDashboard = nextDashboardId === "jerseys" && isBackyardEvent(trimmed, label)
+      ? "settings" : nextDashboardId;
     localStorage.setItem(EVENT_ID_KEY, trimmed);
-    localStorage.setItem(DASHBOARD_KEY, nextDashboardId);
-    const next = { eventId: trimmed, dashboardId: nextDashboardId };
+    localStorage.setItem(DASHBOARD_KEY, resolvedDashboard);
+    const next = { eventId: trimmed, dashboardId: resolvedDashboard };
     window.history.pushState({}, "", pathFor(next));
+    setDashboardId(resolvedDashboard);
     setSelection(next);
   }
 
@@ -173,6 +177,11 @@ export function App() {
   useEffect(() => {
     function onPop() {
       const parsed = parsePath();
+      const nextEventId = parsed.eventId ?? "";
+      setEventId(nextEventId);
+      setEventChoice(!nextEventId ? NONE_OPTION
+        : PREDEFINED_EVENTS.some((event) => event.id === nextEventId) ? nextEventId : OTHER_OPTION);
+      setDashboardId(parsed.dashboardId ?? "settings");
       if (!parsed.dashboardId || !parsed.eventId) {
         setSelection(null);
         return;
@@ -351,6 +360,7 @@ export function App() {
       >
         {selection && active && (
           <active.component
+            key={selection.eventId}
             eventId={selection.eventId}
             eventName={eventName}
             eventLocation={eventLocation}

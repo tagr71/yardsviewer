@@ -122,9 +122,13 @@ loop, and final views retain the last-loop finishers. Live snapshots advance
 after completed loops, with continued polling for late corrections.
 
 The plot prefers RaceResult's published per-loop data, using an advertised
-**Details-API** results list when available. For fields of at most 15 runners,
-it also reads the current participant-view lap details, with at most four
-requests in flight; the legacy Details page remains a fallback. These are
+**Details-API** results list when available. Otherwise it reads up to 15
+participant-view histories per request, prioritizing active runners followed
+by runners with the most completed loops, with at most four requests in flight.
+This also loads full top-15 histories for finished races with larger starting
+fields. A missing **Last Lap** is filled from the published split matching that
+runner's completed-loop count. Without Details-API, this recovery is limited to
+the selected 15 runners. The legacy Details page remains a fallback. These are
 published individual lap times, not estimates from aggregate totals. While the
 Leaderboard is open, each results poll also records valid last-lap times
 against the runner's published completed-loop count. These observations are
@@ -210,6 +214,12 @@ The dashboard dropdown lists, in order: **Settings**, **Overview**,
 - **Dashboard (race timer)** — live race clock (`dd.hh.mm.ss`,
   ticked every wall-clock second) alongside the current Oslo
   wall-clock time (`hh:mm:ss`). Per-loop stat cards depend on mode:
+
+  The completed-loop and completed-distance cards also show totals across
+  all runners in parentheses, including retired runners but excluding DNS
+  entries. Live totals use published completed laps; replay totals are
+  capped at the Dashboard's completed-loop count. Both totals are zero
+  before the start, and distance uses the selected mode's loop length.
 
   **Backyard mode** — *Loops completed* (green), *Current loop*
   (yellow), *Distance completed* (green, accumulated km across all
@@ -417,7 +427,8 @@ in the Docker / production build too.
 ## Run
 
 Requirements: **Python 3.12+**, [uv](https://docs.astral.sh/uv/), and
-**Node.js 18+** with npm. Run the backend and frontend in separate
+**Node.js 22.12+ (22.x) or 24+** with npm. Docker and CI use Node 24.
+Run the backend and frontend in separate
 terminals from the repository root.
 
 ### Backend
@@ -505,7 +516,7 @@ backend in a Python stage — one image, one process, one port.
 docker build -t rotvoll:latest .
 ```
 
-The first build pulls `node:20-alpine` and `python:3.12-slim` from
+The first build pulls `node:24-alpine` and `python:3.12-slim` from
 Docker Hub; subsequent builds are cached. Expect a small image
 (~150 MB) because the Node toolchain is discarded after `vite build`.
 
@@ -581,8 +592,13 @@ For an existing service, the following direct commands deploy the exact
 built image without changing its runtime environment variables or access
 policy. Run from the repository root, with an authenticated `gcloud` CLI:
 
+The Norway deployment uses project `backyardultranorway2026`, service
+`yardsviewer`, in `europe-north1`. The older Rondane project hosts a separate
+deployment. Check the project configured in your local deployment script;
+the commands below explicitly target Norway.
+
 ```powershell
-$projectId = "<PROJECT_ID>"
+$projectId = "backyardultranorway2026"
 $region = "europe-north1"
 $buildId = gcloud builds submit . --config cloudbuild.yaml --project $projectId --suppress-logs --format="value(id)"
 if ($LASTEXITCODE -ne 0) { throw "Cloud Build failed" }
@@ -632,7 +648,7 @@ the app nor the backend imports them or substitutes them for event data.
 
 ### Prerequisites
 
-- Node 18+.
+- Node 22.12+ (22.x) or 24+.
 - Install frontend dependencies once: `npm --prefix frontend ci` from the
   repository root.
 
@@ -651,8 +667,10 @@ uv run python -m unittest discover -s backend/tests -v
 ```
 
 They cover published Details-API lists, participant-view lap history,
-partial request failures, small-field request limits, and pre-race data
-suppression with exact summer/winter Oslo start boundaries.
+partial request failures, capped history requests for large fields, missing
+split positions, malformed upstream JSON, numeric cell validation, empty
+participant lists, static-file path containment, and pre-race data suppression
+with exact summer/winter Oslo start boundaries.
 
 What the suite asserts:
 
@@ -830,6 +848,8 @@ Run from the repository root before merging changes:
 npm --prefix frontend run test
 npm --prefix frontend run build
 uv run python -m unittest discover -s backend/tests -v
+npm --prefix frontend audit
+uv run --with pip-audit pip-audit --progress-spinner off
 git diff --check
 ```
 
@@ -839,9 +859,12 @@ TypeScript check. Builds regenerate the tracked TypeScript metadata in
 For changes to Python code, the configured development checks are:
 
 ```powershell
-uv run ruff check backend
-uv run mypy
+uv run ruff check .
+uv run mypy backend server.py
 ```
+
+GitHub Actions runs the frontend tests and production build, Python lint,
+type checks, and backend tests before building the Docker image.
 
 For display changes, verify both **1366 x 768** and **1920 x 1080** at
 normal zoom, plus a narrow mobile viewport. Check all 15 Dashboard rows,

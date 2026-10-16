@@ -56,6 +56,7 @@ a { color: var(--link); }
 .display-toggle:has(input:disabled) { opacity: 0.5; cursor: not-allowed; }
 .display-toggle input:disabled { cursor: not-allowed; }
 .theme-controls { display: flex; flex-direction: column; align-items: flex-start; gap: 0.35rem; }
+.stat-total { display: block; font-size: 1.75rem; font-weight: 600; line-height: 1.2; font-variant-numeric: tabular-nums; white-space: normal; overflow-wrap: anywhere; }
 .page-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; width: 100%; }
 .page-heading h1 { margin: 0; }
 .leaderboard-display-options { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem 1rem; }
@@ -101,6 +102,7 @@ a { color: var(--link); }
   .dashboard-compact .stat-card > p { font-size: 0.75rem !important; line-height: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left !important; }
   .dashboard-compact .stat-card > p:last-child:not(:first-child) { grid-column: 1/-1; }
   .dashboard-compact .stat-value { font-size: 1.125rem !important; line-height: 20px; }
+  .dashboard-compact .stat-total { font-size: 1.25rem; }
   .dashboard-compact[data-race-mode="backyard"] {
     grid-template-columns: minmax(0,1fr) auto;
     grid-template-areas: "heading heading" "now replay" "label label" "clock clock" "meta meta" "metrics metrics" "results results";
