@@ -56,10 +56,11 @@ scheduled start, interpreted in `Europe/Oslo` with daylight-saving support.
 Normal result collection resumes automatically at that instant.
 
 The schedule comes from RaceResult metadata. When only a date is published,
-the existing defaults are 09:00 for backyard and 10:00 for frontyard events;
-confirm these against the organizer's schedule. This guard does not delete
-trial data at RaceResult: the organizer must reset its published results
-before the live event.
+the defaults are 14:00 for Backyard Ultra Norway (`423509`), 09:00 for other
+backyard events and 10:00 for frontyard events; confirm these against the
+organizer's schedule. Explicit published start times take precedence.
+This guard does not delete trial data at RaceResult: the organizer must
+reset its published results before the live event.
 
 ## Display options
 
@@ -210,13 +211,13 @@ The dashboard dropdown lists, in order: **Settings**, **Overview**,
   from the landing page (JSON-LD `startDate` or plain text
   `DD/MM/YYYY`); the mode is inferred from the event name (`frontyard`
   / `backyard` substring); the location is taken from the event config.
-  When no explicit start time is published, the default is **09:00**
-  for backyard events and **10:00** for frontyard. The "user-edited" guard uses
-  `sessionStorage`, so the server value wins on every page reload but
-  manual edits are preserved within the session. When the results
-  list is not yet published (e.g. a future event) the endpoint falls
-  back to the participants list to recover the event date and
-  location.
+  When no explicit start time is published, Backyard Ultra Norway (`423509`)
+  defaults to **14:00:00 (02:00:00 PM)** in `Europe/Oslo`. Other backyard
+  events default to **09:00** and frontyard events to **10:00**.
+  The "user-edited" guard uses `sessionStorage`, so the server value wins
+  on every page reload but manual edits are preserved within the session.
+  If the results tab is unavailable, the endpoint tries the live tab
+  before falling back to the participants list for event metadata.
 - **Dashboard (race timer)** — live race clock (`dd.hh.mm.ss`,
   ticked every wall-clock second) alongside the current Oslo
   wall-clock time (`hh:mm:ss`). Per-loop stat cards depend on mode:
@@ -489,13 +490,15 @@ FastAPI backend on port 8000.
   `dnf|dns|dq|withdrawn` status **and** the last standing runner has
   completed at least one loop (preventing false positives when an
   organiser pre-populates the list with everyone marked DNF before the
-  race starts). When the results list is not yet published the endpoint
-  falls back to the participants list for event metadata and returns
-  `rows: []` with `raceFinished: false`.
+  race starts). If the results tab is unavailable, the endpoint tries
+  the event's live tab for standings and lap details. If neither tab is
+  published, it falls back to the participants list for event metadata
+  and returns `rows: []` with `raceFinished: false`.
   `eventStartTime` is an ISO timestamp (`YYYY-MM-DDTHH:MM:SS`) from
   the public landing page (JSON-LD `startDate` or plain-text
   `DD/MM/YYYY`); when no explicit time is found the default is
-  `09:00:00` for backyard events and `10:00:00` for frontyard. Either
+  `14:00:00` for Backyard Ultra Norway (`423509`), `09:00:00` for other
+  backyard events and `10:00:00` for frontyard. Either
   field is `""` when not detectable.
 
   Without `listname` the backend fetches the `Resultatliste` list
@@ -503,6 +506,10 @@ FastAPI backend on port 8000.
   time) and merges in `lastLap` from the `LIVE` list (the only list
   that publishes it), keyed by BIB. Passing `listname` (suffix match,
   e.g. `LIVE`) skips the merge and uses only that list.
+  Standard `details0` and custom participant views provide published
+  lap histories. Missing lap counts are recovered from these splits;
+  missing fastest/slowest/average and total times are filled only when
+  the completed-lap history is complete.
 - `GET /` — in the production Docker build, serves the Vite SPA
   (`index.html`). In local dev (no `frontend/dist/` present) redirects
   to `/api/participants/count`.

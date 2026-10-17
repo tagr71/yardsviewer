@@ -343,7 +343,7 @@ async def _fetch_details_list(
                 continue
         for lst in lists:
             d = lst.get("Details", "")
-            if isinstance(d, str) and d.strip() and d.strip() != "details0":
+            if isinstance(d, str) and d.strip():
                 details_page = d.strip()
                 break
 
@@ -361,7 +361,9 @@ async def _fetch_details_list(
                         )
                         response.raise_for_status()
                         view = _json_object(response)
-                    for entry in ((view.get("Data") or {}).get("Lists") or {}).values():
+                    view_data = view.get("Data") or {}
+                    participant_data = view_data.get("Data") or view_data
+                    for entry in (participant_data.get("Lists") or {}).values():
                         fields = entry.get("DataFields") or []
                         if "BIB" not in fields or "[Lap{n}]" not in fields:
                             continue
@@ -803,21 +805,23 @@ async def results(
     `lastLap` (LIVE is the only list that carries it), keyed by BIB.
     Before the scheduled Oslo start, return entrants without published
     test laps, rankings or finish status, and skip LIVE/details requests.
+    Events publishing a live tab instead of results use that tab for
+    both standings and lap details.
     """
     _validate_listname(listname)
     resolved = event_id or RACERESULT_EVENT_ID
     effective = listname or "Resultatliste"
 
-    # Try the results list first. If it isn't published yet (e.g. a future
-    # race), fall back to the participants list which is available earlier
-    # and carries the event name, location, and date we need for Settings
-    # auto-fill.
-    try:
-        payload, event_name, event_location, event_date, event_time = await _fetch_list(
-            resolved, "results", listname_match=effective
-        )
-        rows = _flatten_results(payload)
-    except HTTPException:
+    for results_page in ("results", "live"):
+        try:
+            payload, event_name, event_location, event_date, event_time = await _fetch_list(
+                resolved, results_page, listname_match=effective
+            )
+            rows = _flatten_results(payload)
+            break
+        except HTTPException:
+            continue
+    else:
         try:
             _, event_name, event_location, event_date, event_time = await _fetch_list(
                 resolved, "participants"
@@ -850,6 +854,8 @@ async def results(
     elif "backyard" in name_lc:
         event_mode = "backyard"
     default_time = "09:00:00" if event_mode == "backyard" else DEFAULT_EVENT_START_TIME
+    if resolved == "423509":
+        default_time = "14:00:00"
     if iso_date:
         event_start_time = f"{iso_date}T{iso_time or default_time}"
 
@@ -885,7 +891,7 @@ async def results(
         return response
 
     # Enrich with lastLap from the LIVE list when caller didn't override.
-    if listname is None:
+    if listname is None and results_page == "results":
         try:
             live_payload, _, _, _, _ = await _fetch_list(
                 resolved, "results", listname_match="LIVE"
@@ -918,7 +924,7 @@ async def results(
         ),
     )
     details_payload = await _fetch_details_list(
-        resolved, "results", bibs=[str(row.get("bib") or "") for row in detail_rows]
+        resolved, results_page, bibs=[str(row.get("bib") or "") for row in detail_rows]
     )
     lap_times_by_bib = _parse_lap_times(details_payload)
     if lap_times_by_bib:
@@ -926,6 +932,23 @@ async def results(
             laps = lap_times_by_bib.get(str(row.get("bib") or ""))
             if laps:
                 row["perLoop"] = laps
+                if row.get("lapsCompleted") is None:
+                    row["lapsCompleted"] = max(lap["loop"] for lap in laps)
+                if len(laps) == row["lapsCompleted"] and all(
+                    lap["loop"] == index and lap["lapSec"] > 0
+                    for index, lap in enumerate(laps, start=1)
+                ):
+                    seconds = [lap["lapSec"] for lap in laps]
+                    for field, value in {
+                        "fastestLap": min(seconds),
+                        "slowestLap": max(seconds),
+                        "averageLap": round(sum(seconds) / len(seconds)),
+                    }.items():
+                        if not row.get(field):
+                            row[field] = _format_hms(value)
+                    if not row.get("total") and laps[-1]["totalSec"] > 0:
+                        row["totalSec"] = laps[-1]["totalSec"]
+                        row["total"] = _format_hms(laps[-1]["totalSec"])
                 if not row.get("lastLap"):
                     completed = row.get("lapsCompleted")
                     last_split = next(

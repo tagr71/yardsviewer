@@ -93,6 +93,28 @@ class LapDetailsTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual([lap["loop"] for lap in history], [1, 2])
             self.assertEqual([lap["lapSec"] for lap in history], [1958, 1933])
 
+    async def test_reads_published_history_from_standard_details_page(self) -> None:
+        def respond(request: httpx.Request) -> httpx.Response:
+            if request.url.path.endswith("/config"):
+                self.assertEqual(request.url.path, "/423509/live/config")
+                return httpx.Response(200, json={
+                    "key": "test-key", "server": "example.test",
+                    "TabConfig": {"Lists": [{"Name": "LIVE", "Details": "details0"}]},
+                })
+            self.assertEqual(request.url.path, "/423509/details0/view")
+            return httpx.Response(200, json={"Data": {"Data": {"Lists": {"Laps": {
+                "DataFields": ["BIB", "[Lap{n}]", "[Total{n}]"],
+                "Data": [["1", "42:23", "42:23"]],
+            }}}}})
+
+        client_type = httpx.AsyncClient
+        with patch(
+            "backend.app.main.httpx.AsyncClient",
+            side_effect=lambda **kwargs: client_type(transport=httpx.MockTransport(respond)),
+        ):
+            payload = await main._fetch_details_list("423509", "live", bibs=["1"])
+        self.assertEqual(main._parse_lap_times(payload)["1"][0]["lapSec"], 2543)
+
     async def test_one_unavailable_participant_keeps_other_history(self) -> None:
         def respond(request: httpx.Request) -> httpx.Response:
             if request.url.path.endswith("/config"):
@@ -150,6 +172,7 @@ class LapDetailsTests(unittest.IsolatedAsyncioTestCase):
             {"bib": "2", "status": "DNF", "lapsCompleted": 1, "lastLap": ""},
             {"bib": "3", "status": "DNF", "lapsCompleted": 2, "lastLap": ""},
             {"bib": "4", "status": "DNF", "lapsCompleted": 1, "lastLap": "40:00"},
+            {"bib": "5", "status": "", "lapsCompleted": None, "lastLap": ""},
         ]
         payload = {
             "DataFields": ["BIB", "[Lap{n}]", "[Total{n}]"],
@@ -158,6 +181,7 @@ class LapDetailsTests(unittest.IsolatedAsyncioTestCase):
                 "two": [["2", "48:00", "48:00"]],
                 "three": [["3", "47:00", "47:00"]],
                 "four": [["4", "40:00", "40:00"]],
+                "five": [["5", "45:00", "45:00"], ["5", "46:00", "1:31:00"]],
             },
         }
         with (
@@ -171,9 +195,16 @@ class LapDetailsTests(unittest.IsolatedAsyncioTestCase):
         response_rows = response["rows"]
         assert isinstance(response_rows, list)
         self.assertEqual(
-            [row["lastLap"] for row in response_rows], ["46:00", "48:00", "", "40:00"]
+            [row["lastLap"] for row in response_rows], ["46:00", "48:00", "", "40:00", "46:00"]
         )
         self.assertEqual(len(response_rows[0]["perLoop"]), 2)
+        self.assertEqual(response_rows[4]["lapsCompleted"], 2)
+        self.assertEqual(response_rows[4]["fastestLap"], "45:00")
+        self.assertEqual(response_rows[4]["slowestLap"], "46:00")
+        self.assertEqual(response_rows[4]["averageLap"], "45:30")
+        self.assertEqual(response_rows[4]["total"], "1:31:00")
+        self.assertEqual(response_rows[4]["totalSec"], 5460)
+        self.assertNotIn("fastestLap", response_rows[2])
 
     async def test_results_prioritize_active_runners_then_deepest_histories(self) -> None:
         runners = [
@@ -228,6 +259,36 @@ class PayloadParsingTests(unittest.TestCase):
 
 
 class UpstreamResponseTests(unittest.IsolatedAsyncioTestCase):
+    async def test_live_only_event_uses_live_standings_and_details(self) -> None:
+        payload: dict[str, object] = {
+            "DataFields": ["BIB", "DisplayName", "NumberOfLaps", "LastLap"],
+            "data": [["7", "Runner Seven", "2", "45:00"]],
+        }
+
+        async def fetch_list(
+            event_id: str, page: str, *, listname_match: str | None = None
+        ) -> tuple[dict[str, object], str, str, str, str]:
+            if page == "results":
+                raise HTTPException(status_code=502, detail="tab not found: results")
+            self.assertEqual(page, "live")
+            return payload, "Backyard Ultra Norway", "Hommelvik", "2026-10-17", ""
+
+        with (
+            patch.object(main, "_fetch_list", new=AsyncMock(side_effect=fetch_list)),
+            patch.object(main, "_event_has_started", return_value=True),
+            patch.object(main, "_fetch_details_list", new=AsyncMock(return_value=None)) as details,
+        ):
+            response = await main.results(event_id="423509")
+
+        response_rows = response["rows"]
+        assert isinstance(response_rows, list)
+        self.assertEqual(len(response_rows), 1)
+        self.assertEqual(response_rows[0]["bib"], "7")
+        self.assertEqual(response_rows[0]["lapsCompleted"], 2)
+        self.assertEqual(response_rows[0]["lastLap"], "45:00")
+        self.assertEqual(response["eventStartTime"], "2026-10-17T14:00:00")
+        details.assert_awaited_once_with("423509", "live", bibs=["7"])
+
     async def test_invalid_config_is_reported_as_bad_gateway(self) -> None:
         for content in (b"not json", b"[]", b"null"):
             with self.subTest(content=content):
@@ -277,8 +338,33 @@ class UpcomingRaceTests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(main._event_has_started(
             "2026-01-17T09:00:00", datetime(2026, 1, 17, 8, tzinfo=UTC)
         ))
+        self.assertFalse(main._event_has_started(
+            "2026-10-17T14:00:00", datetime(2026, 10, 17, 11, 59, 59, tzinfo=UTC)
+        ))
+        self.assertTrue(main._event_has_started(
+            "2026-10-17T14:00:00", datetime(2026, 10, 17, 12, tzinfo=UTC)
+        ))
         self.assertTrue(main._event_has_started(""))
         self.assertTrue(main._event_has_started("unknown"))
+
+    async def test_event_start_defaults_preserve_published_times(self) -> None:
+        cases = (
+            ("423509", "Backyard Ultra Norway", "", "14:00:00"),
+            ("352401", "Rondane Backyard", "", "09:00:00"),
+            ("374847", "Rotvoll Frontyard", "", "10:00:00"),
+            ("423509", "Backyard Ultra Norway", "08:30", "08:30:00"),
+        )
+        for event_id, event_name, event_time, expected_time in cases:
+            with (
+                self.subTest(event_id=event_id, event_time=event_time),
+                patch.object(main, "_fetch_list", new=AsyncMock(return_value=(
+                    {}, event_name, "", "2026-10-17", event_time
+                ))),
+                patch.object(main, "_flatten_results", return_value=[]),
+                patch.object(main, "_event_has_started", return_value=False),
+            ):
+                result = await main.results(event_id=event_id)
+                self.assertEqual(result["eventStartTime"], f"2026-10-17T{expected_time}")
 
     async def test_hides_prestart_test_results_but_keeps_entrants(self) -> None:
         runner = {
