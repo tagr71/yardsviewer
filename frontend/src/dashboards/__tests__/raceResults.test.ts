@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { nextLoopRemainingSeconds } from "../timerCore";
 import {
   canShowTop15Plot,
   clockCompletedLoops,
@@ -31,6 +32,20 @@ function runner(bib: number, changes: Partial<ResultRow> = {}): ResultRow {
 const live = { loop: 2, replay: false, finished: false };
 
 afterEach(() => vi.unstubAllGlobals());
+
+describe("next-loop countdown", () => {
+  it.each([
+    [-61, 61], [0, 3600], [3599, 1], [3600, 3600], [7325, 3475],
+  ])("counts backyard seconds at elapsed %s", (elapsed, expected) => {
+    expect(nextLoopRemainingSeconds(elapsed, "backyard", 17, 27)).toBe(expected);
+  });
+  it.each([
+    [-1, 1], [0, 1800], [1799, 1], [1800, 1740],
+    [3540, 1740], [5280, 1740], [7020, null],
+  ])("uses shrinking and locked frontyard loops at elapsed %s", (elapsed, expected) => {
+    expect(nextLoopRemainingSeconds(elapsed, "frontyard", 2, 4)).toBe(expected);
+  });
+});
 
 describe("live split recording", () => {
   it("records only the observed last lap and leaves earlier loops empty", () => {

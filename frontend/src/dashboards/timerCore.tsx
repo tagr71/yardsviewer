@@ -58,6 +58,18 @@ export function frontyardState(
   };
 }
 
+export function nextLoopRemainingSeconds(
+  elapsedSec: number,
+  mode: Mode,
+  lockAfter: number,
+  maxLoops: number,
+): number | null {
+  if (elapsedSec < 0) return -elapsedSec;
+  if (mode === "backyard") return LOOP_SECONDS - (elapsedSec % LOOP_SECONDS);
+  const state = frontyardState(elapsedSec, lockAfter, maxLoops);
+  return state.finished ? null : state.remainingSec;
+}
+
 export function startTimeKey(eventId: string) {
   return `raceresult.startTime.${eventId}`;
 }

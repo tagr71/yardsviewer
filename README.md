@@ -161,6 +161,10 @@ The dashboard dropdown lists, in order: **Settings**, **Overview**,
 **Leaderboard**, **Dashboard** (race timer), **Jerseys**.
 
 - **Overview** — live participant counters with auto-refresh.
+  A timer row shows the current Oslo time (`hh:mm:ss`) and the next-loop
+  countdown (`mm:ss`), both updated every second. Before the start it
+  counts down to the race start; during replay or after the race finishes,
+  the live countdown is unavailable.
   Colour-coded cells for starting runners (yellow), starting females
   (red) and males (blue); a second row mirrors the three cells for
   runners still in competition per gender — each cell's label includes

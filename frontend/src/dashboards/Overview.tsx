@@ -2,8 +2,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   BACKYARD_LOOP_KM,
   FRONTYARD_LOOP_KM,
+  formatOsloParts,
+  nextLoopRemainingSeconds,
+  osloWallClockToInstant,
+  pad,
   playbackBtn,
   playbackBarSticky,
+  useNowTick,
   useTimerSettings,
   useViewLoop,
 } from "./timerCore";
@@ -20,7 +25,8 @@ const REFRESH_MS = 10_000;
 
 export function Overview({ eventId }: { eventId: string }) {
   const [showInfo, setShowInfo] = useDisplayPreference("overview.showParticipantInfo");
-  const { mode } = useTimerSettings(eventId);
+  const { mode, startTime, fyLock, fyMax } = useTimerSettings(eventId);
+  const now = useNowTick();
   const { viewLoop, setViewLoop } = useViewLoop(eventId);
   const [count, setCount] = useState<number | null>(null);
   const [rows, setRows] = useState<ResultRow[]>([]);
@@ -90,6 +96,13 @@ export function Overview({ eventId }: { eventId: string }) {
     viewLoop !== null && maxLoop >= 1
       ? Math.min(Math.max(1, viewLoop), maxLoop)
       : null;
+  const startInstant = osloWallClockToInstant(startTime);
+  const elapsedSeconds = startInstant ? Math.floor((now.getTime() - startInstant.getTime()) / 1000) : null;
+  const remainingSeconds = elapsedSeconds === null || raceFinished || effectiveViewLoop !== null
+    ? null
+    : nextLoopRemainingSeconds(elapsedSeconds, mode, fyLock, fyMax);
+  const countdown = remainingSeconds === null ? "—"
+    : `${pad(Math.floor(remainingSeconds / 60))}:${pad(remainingSeconds % 60)}`;
 
   // "Still in" means runners who actually completed the lap we are looking
   // at — runners who started the lap but DNF'd are excluded.
@@ -143,6 +156,10 @@ export function Overview({ eventId }: { eventId: string }) {
       <div className="page-heading">
         <h1>Overview</h1>
         <DisplayToggle label="Show participant info" checked={showInfo} onChange={setShowInfo} />
+      </div>
+      <div className="overview-clocks" style={{ ...statGridBottom, gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}>
+        <StatCard label="Current time (Oslo)" value={formatOsloParts(now).time.replaceAll(".", ":")} valueStyle={{ fontSize: "3rem" }} />
+        <StatCard label={elapsedSeconds !== null && elapsedSeconds < 0 ? "Race starts in" : "Next loop in"} value={countdown} valueStyle={{ fontSize: "3rem" }} />
       </div>
       {maxLoop >= 1 && (
         <div

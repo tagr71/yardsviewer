@@ -155,5 +155,5 @@ a { color: var(--link); }
   .top15-plot { grid-template-columns: minmax(0,1fr); height: auto; }
   .plot-canvas { height: 360px; }
   .plot-legend { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }
-  .overview-metrics, .overview-participants { grid-template-columns: 1fr !important; }
+  .overview-clocks, .overview-metrics, .overview-participants { grid-template-columns: 1fr !important; }
 }
