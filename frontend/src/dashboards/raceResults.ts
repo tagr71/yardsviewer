@@ -26,7 +26,7 @@ export type ResultRow = {
 
 export type ResultsResponse = { eventName?: string; raceFinished?: boolean; rows: ResultRow[] };
 export type LiveSplitHistory = Map<string, LapSplit[]>;
-export type Snapshot = { loop: number; replay: boolean; finished: boolean };
+export type Snapshot = { loop: number; replay: boolean; finished: boolean; completedLoops?: number };
 export type RankedRunner = ResultRow & {
   snapshotRank: number;
   snapshotLaps: number;
@@ -63,7 +63,12 @@ export function remainingRunner(
 ): boolean {
   if (snapshot.loop === 0) return !/dns/i.test(row.status ?? "");
   if (snapshot.replay || snapshot.finished) return resultLaps(row) >= snapshot.loop;
-  return !/dnf|dns|dq|withdrawn/i.test(row.status ?? "");
+  if (/dnf|dns|dq|withdrawn/i.test(row.status ?? "")) return false;
+  const laps = resultLaps(row);
+  const hasLapCount = typeof row.lapsCompleted === "number"
+    && Number.isFinite(row.lapsCompleted) && row.lapsCompleted >= 0;
+  return snapshot.completedLoops === undefined || laps >= Math.min(snapshot.completedLoops, snapshot.loop)
+    || (!hasLapCount && laps === 0);
 }
 
 export function lapSeconds(lap: { time?: string; lapSec?: number }): number | null {

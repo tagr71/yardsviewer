@@ -182,8 +182,12 @@ The dashboard dropdown lists, in order: **Settings**, **Overview**,
   the race starts (no completed loops yet) the still-in counters equal
   the starting counts — RaceResult pre-populates all registered runners
   as DNF before the race begins, so the dashboard uses DNS-only
-  exclusion instead of the usual DNF/DNS/DQ filter. Once completed loops
-  are available, a `⏮ ◀ Loop N / max ▶ ⏭ Live` playback bar appears.
+  exclusion instead of the usual DNF/DNS/DQ filter. Once lap results are
+  available, Live also excludes runners who missed a completed loop even
+  if their status is blank. This check waits for published results and
+  keeps runners whose lap data is genuinely unknown. A
+  `⏮ ◀ Loop N / max ▶ ⏭ Live` playback bar appears once completed loops
+  are available.
   The still-in counters, accumulated loops in the compact view and
   accumulated distance follow the selected loop.
 - **Leaderboard** — sortable, 10 s-polled table:
@@ -305,6 +309,11 @@ Configured in the **Timer set-up** dashboard, persisted per event ID:
   Each beep lasts 0.5 seconds, with 0.5 seconds of silence between beeps.
   Warnings are suppressed before the start and during replay. The Timer
   dashboard also rings a bell at every loop rollover (and on race finish in Frontyard).
+  Warning tones sustain their volume with short fades at the edges. Each
+  sequence waits for audio to resume and uses a single audio-clock timestamp.
+  With Web Locks and local storage available, only one tab plays each event,
+  loop and minute warning; clock corrections cannot repeat it. Refresh all
+  open race tabs after an update so older versions do not play extra alerts.
 
 ### Jerseys
 

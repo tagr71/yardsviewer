@@ -79,6 +79,7 @@ describe("race loop state", () => {
 describe("loop warning beeps", () => {
   it.each([
     [181, 180, 3], [121, 120, 2], [61, 60, 1], [61, 59, 1],
+    [181, 119, 2], [121, 59, 1], [181, 59, 1],
     [null, 180, 0], [181, null, 0], [180, 180, 0],
     [180, 179, 0], [179, 178, 0], [1, 3600, 0], [1, 0, 0],
   ] as const)("selects the beep count from %s to %s", (previous, remaining, expected) => {
@@ -102,11 +103,97 @@ describe("loop warning beeps", () => {
     };
     for (const tone of tones) context.createOscillator.mockReturnValueOnce(tone);
     vi.stubGlobal("window", { AudioContext: function AudioContextMock() { return context; } });
-    playLoopWarning(beepCount);
+    expect(await playLoopWarning(beepCount)).toBe(true);
     expect(context.createOscillator).toHaveBeenCalledTimes(beepCount);
-    expect(tones.map((tone) => tone.start.mock.calls[0][0])).toEqual([10, 11, 12].slice(0, beepCount));
-    expect(tones.map((tone) => tone.stop.mock.calls[0][0])).toEqual([10.5, 11.5, 12.5].slice(0, beepCount));
+    expect(tones.map((tone) => tone.start.mock.calls[0][0])).toEqual([10.05, 11.05, 12.05].slice(0, beepCount));
+    expect(tones.map((tone) => tone.stop.mock.calls[0][0])).toEqual([10.55, 11.55, 12.55].slice(0, beepCount));
     expect(tones.map((tone) => tone.frequency.value)).toEqual([880, 880, 880].slice(0, beepCount));
+    const sustained = gain.gain.setValueAtTime.mock.calls.filter(([value]) => value === 0.3);
+    for (const [index, [, time]] of sustained.entries()) expect(time).toBeCloseTo(10.53 + index);
+    expect(sustained).toHaveLength(beepCount);
+  });
+
+  it("waits for audio to resume before scheduling a warning", async () => {
+    vi.resetModules();
+    const { playLoopWarning } = await import("../timerCore");
+    const gain = {
+      gain: { setValueAtTime: vi.fn(), exponentialRampToValueAtTime: vi.fn() },
+      connect: vi.fn(),
+    };
+    const tone = {
+      frequency: { value: 0 }, type: "", connect: vi.fn(() => gain),
+      start: vi.fn(), stop: vi.fn(),
+    };
+    const context = {
+      state: "suspended", currentTime: 10, destination: {},
+      createGain: () => gain, createOscillator: vi.fn(() => tone),
+      resume: vi.fn(async () => { context.state = "running"; context.currentTime = 20; }),
+    };
+    vi.stubGlobal("window", { AudioContext: function AudioContextMock() { return context; } });
+    const warning = playLoopWarning(2);
+    expect(context.createOscillator).not.toHaveBeenCalled();
+    expect(await warning).toBe(true);
+    expect(context.resume).toHaveBeenCalledTimes(1);
+    expect(tone.start.mock.calls.map(([time]) => time)).toEqual([20.05, 21.05]);
+  });
+
+  it("plays a shared warning once across page instances and re-arms for the next loop", async () => {
+    vi.resetModules();
+    const firstPage = await import("../timerCore");
+    vi.resetModules();
+    const secondPage = await import("../timerCore");
+    const gain = {
+      gain: { setValueAtTime: vi.fn(), exponentialRampToValueAtTime: vi.fn() },
+      connect: vi.fn(),
+    };
+    const tone = {
+      frequency: { value: 0 }, type: "", connect: vi.fn(() => gain),
+      start: vi.fn(), stop: vi.fn(),
+    };
+    const context = {
+      state: "running", currentTime: 10, destination: {},
+      createGain: () => gain, createOscillator: vi.fn(() => tone),
+    };
+    const saved = new Map<string, string>();
+    vi.stubGlobal("localStorage", {
+      getItem: (key: string) => saved.get(key) ?? null,
+      setItem: (key: string, value: string) => saved.set(key, value),
+    });
+    let lockTail = Promise.resolve();
+    const request = vi.fn((_key: string, action: () => boolean) => {
+      const result = lockTail.then(action);
+      lockTail = result.then(() => undefined);
+      return result;
+    });
+    vi.stubGlobal("navigator", { locks: { request } });
+    vi.stubGlobal("window", { AudioContext: function AudioContextMock() { return context; } });
+    expect(await Promise.all([
+      firstPage.playLoopWarning(2, "event:loop1"),
+      secondPage.playLoopWarning(2, "event:loop1"),
+    ])).toEqual([true, false]);
+    expect(context.createOscillator).toHaveBeenCalledTimes(2);
+    expect(await secondPage.playLoopWarning(1, "event:loop1")).toBe(true);
+    expect(await firstPage.playLoopWarning(1, "event:loop1")).toBe(false);
+    expect(await firstPage.playLoopWarning(2, "event:loop2")).toBe(true);
+    expect(context.createOscillator).toHaveBeenCalledTimes(5);
+    expect(request).toHaveBeenCalledTimes(5);
+  });
+
+  it("drops stale warnings if audio takes too long to resume", async () => {
+    vi.resetModules();
+    const { playLoopWarning } = await import("../timerCore");
+    const context = {
+      state: "suspended", createOscillator: vi.fn(),
+      resume: vi.fn(async () => { context.state = "running"; }),
+    };
+    vi.stubGlobal("window", { AudioContext: function AudioContextMock() { return context; } });
+    const clock = vi.spyOn(Date, "now").mockReturnValueOnce(1000).mockReturnValueOnce(7000);
+    try {
+      expect(await playLoopWarning(3)).toBe(false);
+      expect(context.createOscillator).not.toHaveBeenCalled();
+    } finally {
+      clock.mockRestore();
+    }
   });
 });
 
@@ -382,6 +469,35 @@ describe("top-15 snapshots", () => {
   it("keeps pre-race DNF placeholders but excludes DNS", () => {
     expect(remainingRunner(runner(1, { status: "DNF" }), { ...live, loop: 0 })).toBe(true);
     expect(remainingRunner(runner(1, { status: "DNS" }), { ...live, loop: 0 })).toBe(false);
+  });
+  it("excludes a stopped runner with a blank live status after a missed loop", () => {
+    const snapshot = { ...live, loop: 21, completedLoops: 21 };
+    const rows = [
+      ...Array.from({ length: 14 }, (_, index) => runner(index + 1, { lapsCompleted: 21 })),
+      runner(15, { lapsCompleted: 16 }),
+    ];
+    expect(rows.filter((row) => remainingRunner(row, snapshot))).toHaveLength(14);
+    expect(remainingRunner(rows[14], { ...snapshot, loop: 16, replay: true })).toBe(true);
+  });
+  it("keeps runners in the current loop when another runner finishes early", () => {
+    const snapshot = { ...live, loop: 22, completedLoops: 21 };
+    expect(remainingRunner(runner(1, { lapsCompleted: 21 }), snapshot)).toBe(true);
+    expect(remainingRunner(runner(2, { lapsCompleted: 22 }), snapshot)).toBe(true);
+  });
+  it("waits for published results when the clock reaches the next loop", () => {
+    const snapshot = { ...live, loop: 20, completedLoops: 21 };
+    expect(remainingRunner(runner(1, { lapsCompleted: 20 }), snapshot)).toBe(true);
+    expect(remainingRunner(runner(2, { lapsCompleted: 16 }), snapshot)).toBe(false);
+  });
+  it("uses published splits for eligibility without excluding genuinely unknown lap data", () => {
+    const snapshot = { ...live, loop: 21, completedLoops: 21 };
+    expect(remainingRunner(runner(1, { lapsCompleted: null, perLoop: [] }), snapshot)).toBe(true);
+    expect(remainingRunner(runner(2, { lapsCompleted: null, perLoop: [{ loop: 16, time: "48:19" }] }), snapshot)).toBe(false);
+  });
+  it("does not apply live clock eligibility to finished standings", () => {
+    expect(remainingRunner(runner(1, { lapsCompleted: 21 }), {
+      ...live, loop: 21, finished: true, completedLoops: 22,
+    })).toBe(true);
   });
   it("replays only finishers of the selected loop and ignores final rank/status", () => {
     const rows = [runner(1, { totalRank: 1, status: "DNF", lapsCompleted: 1 }), runner(2, { totalRank: 2 })];

@@ -961,7 +961,11 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
         : fy.finished
           ? null
           : fy.remainingSec;
-  useLoopWarnings(activeRemainingSec, beepEnabled);
+  useLoopWarnings(
+    activeRemainingSec,
+    beepEnabled,
+    `${eventId}:${mode}:${startTime}:${mode === "backyard" ? loopsCompleted + 1 : fy.loopNumber}`,
+  );
   const prevRemainingRef = useRef<number | null>(null);
   const prevFinishedRef = useRef<boolean>(false);
   useEffect(() => {

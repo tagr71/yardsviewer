@@ -107,6 +107,7 @@ export function Overview({ eventId }: { eventId: string }) {
   useLoopWarnings(
     elapsedSeconds !== null && elapsedSeconds >= 0 && effectiveViewLoop === null ? remainingSeconds : null,
     beepEnabled,
+    `${eventId}:${mode}:${startTime}:${raceClock?.loopNumber ?? 0}`,
   );
 
   // "Still in" means runners who actually completed the lap we are looking
@@ -117,10 +118,11 @@ export function Overview({ eventId }: { eventId: string }) {
   //                            incorrectly exclude everyone)
   //   - replay at loop L     → completed >= L laps
   //   - finished, static     → completed >= maxLoop laps (i.e. the winner(s))
-  //   - live                 → status is not DNF/DNS/DQ/withdrawn
+  //   - live                 → not out and eligible for the clock's current loop
   const sexOf = (r: ResultRow) => (r.sex ?? "").toUpperCase();
   const isStillIn = (r: ResultRow) => remainingRunner(r, {
     loop: effectiveViewLoop ?? maxLoop, replay: effectiveViewLoop !== null, finished: raceFinished,
+    completedLoops: raceClock?.loopsCompleted,
   });
 
   const female = rows.filter((r) => sexOf(r) === "K").length;

@@ -564,55 +564,95 @@ export function useTimerSettings(eventId: string) {
 
 export function loopWarningBeepCount(previous: number | null, remaining: number | null): number {
   if (previous === null || remaining === null || remaining <= 0 || remaining >= previous) return 0;
-  const threshold = [180, 120, 60].find((seconds) => previous > seconds && remaining <= seconds);
+  const threshold = [60, 120, 180].find((seconds) => previous > seconds && remaining <= seconds);
   return threshold === undefined ? 0 : threshold / 60;
 }
 
-export function useLoopWarnings(remaining: number | null, enabled: boolean) {
-  const previousRef = useRef<number | null>(null);
+export function useLoopWarnings(remaining: number | null, enabled: boolean, warningId: string) {
+  const previousRef = useRef<{ warningId: string; remaining: number | null } | null>(null);
   useEffect(() => {
     const previous = previousRef.current;
-    previousRef.current = remaining;
-    const beepCount = loopWarningBeepCount(previous, remaining);
-    if (enabled && beepCount > 0) playLoopWarning(beepCount);
-  }, [remaining, enabled]);
+    previousRef.current = { warningId, remaining };
+    const beepCount = loopWarningBeepCount(previous?.warningId === warningId ? previous.remaining : null, remaining);
+    if (enabled && beepCount > 0) void playLoopWarning(beepCount, warningId);
+  }, [remaining, enabled, warningId]);
+}
+
+let _audioCtx: AudioContext | null = null;
+async function readyAudioContext(): Promise<AudioContext | null> {
+  if (!_audioCtx) {
+    const Ctor =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext })
+        .webkitAudioContext;
+    if (!Ctor) return null;
+    _audioCtx = new Ctor();
+  }
+  const ctx = _audioCtx;
+  if (ctx.state === "suspended") await ctx.resume();
+  return ctx.state === "running" ? ctx : null;
+}
+
+function scheduleBeep(ctx: AudioContext, frequency: number, durationMs: number, startAt: number) {
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = "sine";
+  osc.frequency.value = frequency;
+  const dur = durationMs / 1000;
+  const fadeSec = Math.min(0.02, dur / 2);
+  gain.gain.setValueAtTime(0.0001, startAt);
+  gain.gain.exponentialRampToValueAtTime(0.3, startAt + fadeSec);
+  gain.gain.setValueAtTime(0.3, startAt + dur - fadeSec);
+  gain.gain.exponentialRampToValueAtTime(0.0001, startAt + dur);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(startAt);
+  osc.stop(startAt + dur);
 }
 
 /** Play a short beep tone via Web Audio. Returns true on success. */
-let _audioCtx: AudioContext | null = null;
-export function playBeep(frequency = 880, durationMs = 250, delayMs = 0) {
+export async function playBeep(frequency = 880, durationMs = 250, delayMs = 0) {
   try {
-    if (!_audioCtx) {
-      const Ctor =
-        window.AudioContext ||
-        (window as unknown as { webkitAudioContext: typeof AudioContext })
-          .webkitAudioContext;
-      if (!Ctor) return false;
-      _audioCtx = new Ctor();
-    }
-    const ctx = _audioCtx;
-    if (ctx.state === "suspended") ctx.resume();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = "sine";
-    osc.frequency.value = frequency;
-    const startAt = ctx.currentTime + Math.max(0, delayMs) / 1000;
-    const dur = durationMs / 1000;
-    gain.gain.setValueAtTime(0.0001, startAt);
-    gain.gain.exponentialRampToValueAtTime(0.3, startAt + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.0001, startAt + dur);
-    osc.connect(gain).connect(ctx.destination);
-    osc.start(startAt);
-    osc.stop(startAt + dur);
+    const ctx = await readyAudioContext();
+    if (!ctx) return false;
+    scheduleBeep(ctx, frequency, durationMs, ctx.currentTime + 0.05 + Math.max(0, delayMs) / 1000);
     return true;
   } catch {
     return false;
   }
 }
 
-export function playLoopWarning(beepCount: number) {
-  for (let index = 0; index < beepCount; index += 1) {
-    playBeep(880, 500, index * 1000);
+const playedWarnings = new Set<string>();
+
+export async function playLoopWarning(beepCount: number, warningId?: string) {
+  const requestedAt = Date.now();
+  try {
+    const ctx = await readyAudioContext();
+    if (!ctx) return false;
+    const key = `raceresult.loopWarning.${warningId}.${beepCount}`;
+    const schedule = () => {
+      if (Date.now() - requestedAt > 5000) return false;
+      if (warningId) {
+        if (playedWarnings.has(key)) return false;
+        try {
+          if (localStorage.getItem(key) === "played") return false;
+          localStorage.setItem(key, "played");
+        } catch {}
+        playedWarnings.add(key);
+      }
+      const startAt = ctx.currentTime + 0.05;
+      for (let index = 0; index < beepCount; index += 1) {
+        scheduleBeep(ctx, 880, 500, startAt + index);
+      }
+      return true;
+    };
+    if (warningId && typeof navigator !== "undefined" && navigator.locks) {
+      try {
+        return await navigator.locks.request(key, schedule);
+      } catch {}
+    }
+    return schedule();
+  } catch {
+    return false;
   }
 }
 
