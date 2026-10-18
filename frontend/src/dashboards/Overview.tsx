@@ -3,11 +3,11 @@ import {
   BACKYARD_LOOP_KM,
   FRONTYARD_LOOP_KM,
   formatOsloParts,
-  nextLoopRemainingSeconds,
   osloWallClockToInstant,
   pad,
   playbackBtn,
   playbackBarSticky,
+  raceLoopState,
   useNowTick,
   useTimerSettings,
   useViewLoop,
@@ -98,9 +98,8 @@ export function Overview({ eventId }: { eventId: string }) {
       : null;
   const startInstant = osloWallClockToInstant(startTime);
   const elapsedSeconds = startInstant ? Math.floor((now.getTime() - startInstant.getTime()) / 1000) : null;
-  const remainingSeconds = elapsedSeconds === null || raceFinished || effectiveViewLoop !== null
-    ? null
-    : nextLoopRemainingSeconds(elapsedSeconds, mode, fyLock, fyMax);
+  const raceClock = elapsedSeconds === null ? null : raceLoopState(elapsedSeconds, mode, fyLock, fyMax);
+  const remainingSeconds = raceFinished || raceClock?.finished ? null : raceClock?.remainingSec ?? null;
   const countdown = remainingSeconds === null ? "—"
     : `${pad(Math.floor(remainingSeconds / 60))}:${pad(remainingSeconds % 60)}`;
 
@@ -126,7 +125,7 @@ export function Overview({ eventId }: { eventId: string }) {
   const maleStillIn = rows.filter((r) => sexOf(r) === "M" && isStillIn(r)).length;
   const accLoops = cumulativeLoopStandings(rows, effectiveViewLoop).totalLoops;
   const accKm = accLoops * loopKm;
-  const currentLoop = effectiveViewLoop ?? maxLoop;
+  const currentLoop = effectiveViewLoop ?? (raceFinished ? maxLoop : raceClock?.loopNumber ?? maxLoop);
   const hasResults = rows.length > 0;
   const fmt = (n: number) => (hasResults ? n.toString() : "—");
   const fmtKm = (n: number) =>
@@ -217,7 +216,7 @@ export function Overview({ eventId }: { eventId: string }) {
           <span style={{ minWidth: "9rem", textAlign: "center" }}>
             {effectiveViewLoop !== null
               ? `Loop ${effectiveViewLoop} / ${maxLoop}`
-              : `Live · loop ${maxLoop}`}
+              : `Live · loop ${currentLoop}`}
           </span>
           <button
             type="button"

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { nextLoopRemainingSeconds } from "../timerCore";
+import { nextLoopRemainingSeconds, osloWallClockToInstant, raceLoopState } from "../timerCore";
 import {
   canShowTop15Plot,
   clockCompletedLoops,
@@ -44,6 +44,30 @@ describe("next-loop countdown", () => {
     [3540, 1740], [5280, 1740], [7020, null],
   ])("uses shrinking and locked frontyard loops at elapsed %s", (elapsed, expected) => {
     expect(nextLoopRemainingSeconds(elapsed, "frontyard", 2, 4)).toBe(expected);
+  });
+});
+
+describe("race loop state", () => {
+  it("distinguishes completed and current loops overnight in Oslo", () => {
+    const start = osloWallClockToInstant("2026-10-17T14:00:00")!;
+    const now = new Date("2026-10-18T04:28:00Z");
+    expect(raceLoopState((now.getTime() - start.getTime()) / 1000, "backyard", 17, 27))
+      .toEqual({ loopsCompleted: 16, loopNumber: 17, remainingSec: 1920, finished: false });
+  });
+  it.each([
+    [-1, 0, 0, 1], [0, 0, 1, 3600], [3599, 0, 1, 1], [3600, 1, 2, 3600],
+  ])("keeps backyard counts aligned at elapsed %s", (elapsed, completed, current, remaining) => {
+    expect(raceLoopState(elapsed, "backyard", 17, 27)).toEqual({
+      loopsCompleted: completed, loopNumber: current, remainingSec: remaining, finished: false,
+    });
+  });
+  it("uses the shrinking frontyard schedule and stops at its final loop", () => {
+    expect(raceLoopState(1800, "frontyard", 2, 4)).toMatchObject({
+      loopsCompleted: 1, loopNumber: 2, remainingSec: 1740, finished: false,
+    });
+    expect(raceLoopState(7020, "frontyard", 2, 4)).toMatchObject({
+      loopsCompleted: 4, loopNumber: 4, remainingSec: 0, finished: true,
+    });
   });
 });
 

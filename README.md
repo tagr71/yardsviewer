@@ -163,13 +163,15 @@ The dashboard dropdown lists, in order: **Settings**, **Overview**,
 - **Overview** — live participant counters with auto-refresh.
   A timer row shows the current Oslo time (`hh:mm:ss`) and the next-loop
   countdown (`mm:ss`), both updated every second. Before the start it
-  counts down to the race start; during replay or after the race finishes,
-  the live countdown is unavailable.
+  counts down to the race start. Both timers stay live while viewing
+  replay statistics; the countdown is unavailable after the race finishes
+  or when the start time is unknown.
   Colour-coded cells for starting runners (yellow), starting females
   (red) and males (blue); a second row mirrors the three cells for
   runners still in competition per gender — each cell's label includes
   the percentage still in (e.g. `Still in (75.6%)`); the bottom row
-  shows the current loop (teal), accumulated distance summed across
+  shows the current loop (teal, following the race clock while live),
+  accumulated distance summed across
   completed loops (green) and registered participants (neutral).
   With **Show participant info** off, a responsive metrics grid shows
   **Still in**, **Current loop**, **Acc. loops** and **Acc. distance (km)**.

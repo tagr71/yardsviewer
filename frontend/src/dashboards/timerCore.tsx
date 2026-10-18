@@ -58,15 +58,32 @@ export function frontyardState(
   };
 }
 
+export function raceLoopState(
+  elapsedSec: number,
+  mode: Mode,
+  lockAfter: number,
+  maxLoops: number,
+): { loopsCompleted: number; loopNumber: number; remainingSec: number; finished: boolean } {
+  if (elapsedSec < 0) {
+    return { loopsCompleted: 0, loopNumber: 0, remainingSec: -elapsedSec, finished: false };
+  }
+  if (mode === "frontyard") return frontyardState(elapsedSec, lockAfter, maxLoops);
+  const loopsCompleted = Math.floor(elapsedSec / LOOP_SECONDS);
+  return {
+    loopsCompleted,
+    loopNumber: loopsCompleted + 1,
+    remainingSec: LOOP_SECONDS - (elapsedSec % LOOP_SECONDS),
+    finished: false,
+  };
+}
+
 export function nextLoopRemainingSeconds(
   elapsedSec: number,
   mode: Mode,
   lockAfter: number,
   maxLoops: number,
 ): number | null {
-  if (elapsedSec < 0) return -elapsedSec;
-  if (mode === "backyard") return LOOP_SECONDS - (elapsedSec % LOOP_SECONDS);
-  const state = frontyardState(elapsedSec, lockAfter, maxLoops);
+  const state = raceLoopState(elapsedSec, mode, lockAfter, maxLoops);
   return state.finished ? null : state.remainingSec;
 }
 
