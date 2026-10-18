@@ -240,15 +240,13 @@ The dashboard dropdown lists, in order: **Settings**, **Overview**,
   (yellow), *Distance completed* (green, accumulated km across all
   completed loops), *Distance this loop* (yellow, target distance
   when the current loop ends), *Remaining min:sec of loop* (colour
-  turns yellow at 6 min, red at 3 min). Two runner counters:
+  turns yellow at 6 min, red at 3 min). Runner counter:
   *Runners completed past loop (X%)* — historical count of runners
-  who finished loop N−1, percentage of all starting runners;
-  *Runners started, not finished (X%)* — runners who started loop N
-  but have not yet completed it, percentage of those who started.
+  who finished loop N−1, percentage of all starting runners.
 
   **Frontyard mode** — same clock plus jersey holder cards (one per
   colour, top 3 Women + top 3 Men). *Speed min:sec per km* card shows
-  required pace for the current loop length. Same two runner counters
+  required pace for the current loop length. Same runner counter
   as backyard.
 
   In frontyard mode the top of the view also shows three **jersey
