@@ -1,9 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
-  crossedLoopWarning,
+  loopWarningBeepCount,
   nextLoopRemainingSeconds,
   osloWallClockToInstant,
-  playLoopWarning,
   raceLoopState,
 } from "../timerCore";
 import {
@@ -79,32 +78,35 @@ describe("race loop state", () => {
 
 describe("loop warning beeps", () => {
   it.each([
-    [181, 180, true], [121, 120, true], [61, 60, true], [61, 59, true],
-    [null, 180, false], [181, null, false], [180, 180, false],
-    [180, 179, false], [179, 178, false], [1, 3600, false], [1, 0, false],
-  ] as const)("detects a warning from %s to %s", (previous, remaining, expected) => {
-    expect(crossedLoopWarning(previous, remaining)).toBe(expected);
+    [181, 180, 3], [121, 120, 2], [61, 60, 1], [61, 59, 1],
+    [null, 180, 0], [181, null, 0], [180, 180, 0],
+    [180, 179, 0], [179, 178, 0], [1, 3600, 0], [1, 0, 0],
+  ] as const)("selects the beep count from %s to %s", (previous, remaining, expected) => {
+    expect(loopWarningBeepCount(previous, remaining)).toBe(expected);
   });
 
-  it("plays three half-second tones separated by half-second pauses", () => {
+  it.each([3, 2, 1])("plays %s half-second tones separated by half-second pauses", async (beepCount) => {
+    vi.resetModules();
+    const { playLoopWarning } = await import("../timerCore");
     const gain = {
       gain: { setValueAtTime: vi.fn(), exponentialRampToValueAtTime: vi.fn() },
       connect: vi.fn(),
     };
-    const tones = Array.from({ length: 3 }, () => ({
+    const tones = Array.from({ length: beepCount }, () => ({
       frequency: { value: 0 }, type: "", connect: vi.fn(() => gain),
       start: vi.fn(), stop: vi.fn(),
     }));
     const context = {
       state: "running", currentTime: 10, destination: {}, createGain: () => gain,
-      createOscillator: vi.fn()
-        .mockReturnValueOnce(tones[0]).mockReturnValueOnce(tones[1]).mockReturnValueOnce(tones[2]),
+      createOscillator: vi.fn(),
     };
+    for (const tone of tones) context.createOscillator.mockReturnValueOnce(tone);
     vi.stubGlobal("window", { AudioContext: function AudioContextMock() { return context; } });
-    playLoopWarning();
-    expect(tones.map((tone) => tone.start.mock.calls[0][0])).toEqual([10, 11, 12]);
-    expect(tones.map((tone) => tone.stop.mock.calls[0][0])).toEqual([10.5, 11.5, 12.5]);
-    expect(tones.map((tone) => tone.frequency.value)).toEqual([880, 880, 880]);
+    playLoopWarning(beepCount);
+    expect(context.createOscillator).toHaveBeenCalledTimes(beepCount);
+    expect(tones.map((tone) => tone.start.mock.calls[0][0])).toEqual([10, 11, 12].slice(0, beepCount));
+    expect(tones.map((tone) => tone.stop.mock.calls[0][0])).toEqual([10.5, 11.5, 12.5].slice(0, beepCount));
+    expect(tones.map((tone) => tone.frequency.value)).toEqual([880, 880, 880].slice(0, beepCount));
   });
 });
 

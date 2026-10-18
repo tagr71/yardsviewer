@@ -950,7 +950,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
     );
   }
 
-  // Beep three times at 3, 2 and 1 minute remaining of the current loop,
+  // Beep 3, 2 and 1 times at 3, 2 and 1 minute remaining of the current loop,
   // and ring a bell at each loop rollover and on race finish (frontyard).
   // Suppressed during replay (`inReplay`) so scrubbing doesn't trigger beeps.
   const activeRemainingSec: number | null =

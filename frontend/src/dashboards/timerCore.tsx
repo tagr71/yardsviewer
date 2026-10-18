@@ -562,9 +562,10 @@ export function useTimerSettings(eventId: string) {
   };
 }
 
-export function crossedLoopWarning(previous: number | null, remaining: number | null): boolean {
-  return previous !== null && remaining !== null && remaining > 0 && remaining < previous
-    && [180, 120, 60].some((threshold) => previous > threshold && remaining <= threshold);
+export function loopWarningBeepCount(previous: number | null, remaining: number | null): number {
+  if (previous === null || remaining === null || remaining <= 0 || remaining >= previous) return 0;
+  const threshold = [180, 120, 60].find((seconds) => previous > seconds && remaining <= seconds);
+  return threshold === undefined ? 0 : threshold / 60;
 }
 
 export function useLoopWarnings(remaining: number | null, enabled: boolean) {
@@ -572,7 +573,8 @@ export function useLoopWarnings(remaining: number | null, enabled: boolean) {
   useEffect(() => {
     const previous = previousRef.current;
     previousRef.current = remaining;
-    if (enabled && crossedLoopWarning(previous, remaining)) playLoopWarning();
+    const beepCount = loopWarningBeepCount(previous, remaining);
+    if (enabled && beepCount > 0) playLoopWarning(beepCount);
   }, [remaining, enabled]);
 }
 
@@ -608,8 +610,8 @@ export function playBeep(frequency = 880, durationMs = 250, delayMs = 0) {
   }
 }
 
-export function playLoopWarning() {
-  for (let index = 0; index < 3; index += 1) {
+export function playLoopWarning(beepCount: number) {
+  for (let index = 0; index < beepCount; index += 1) {
     playBeep(880, 500, index * 1000);
   }
 }

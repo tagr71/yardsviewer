@@ -384,7 +384,7 @@ export function Settings({ eventId, eventName, eventLocation }: { eventId: strin
           onChange={(e) => onBeepToggle(e.target.checked)}
         />
         <span>
-          Three beeps at 3, 2 and 1 minute remaining, and bell at loop end
+          3 beeps at 3 minutes, 2 at 2 minutes, 1 at 1 minute remaining, and bell at loop end
         </span>
       </label>
 

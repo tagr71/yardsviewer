@@ -301,10 +301,10 @@ Configured in the **Timer set-up** dashboard, persisted per event ID:
   `grønn.png`, `gul.png` + `vinner.png`) are shown in the
   *Competition this loop* card on the Timer dashboard.
 - *Beep / bell* — when enabled, Overview and the Timer dashboard play
-  three beeps at each of 3, 2 and 1 minute remaining. Each beep lasts
-  0.5 seconds, with 0.5 seconds of silence between beeps. Warnings are
-  suppressed before the start and during replay. The Timer dashboard
-  also rings a bell at every loop rollover (and on race finish in Frontyard).
+  three beeps at 3 minutes remaining, two at 2 minutes, and one at 1 minute.
+  Each beep lasts 0.5 seconds, with 0.5 seconds of silence between beeps.
+  Warnings are suppressed before the start and during replay. The Timer
+  dashboard also rings a bell at every loop rollover (and on race finish in Frontyard).
 
 ### Jerseys
 
