@@ -21,11 +21,11 @@ import {
   osloWallClockToInstant,
   pad,
   panel,
-  playBeep,
   playBell,
   playbackBtn,
   playbackBarSticky,
   useNowTick,
+  useLoopWarnings,
   useTimerSettings,
   useViewLoop,
 } from "./timerCore";
@@ -980,7 +980,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
     );
   }
 
-  // Beep at 3 (×3), 2 (×2) and 1 (×1) minute remaining of the current loop,
+  // Beep three times at 3, 2 and 1 minute remaining of the current loop,
   // and ring a bell at each loop rollover and on race finish (frontyard).
   // Suppressed during replay (`inReplay`) so scrubbing doesn't trigger beeps.
   const activeRemainingSec: number | null =
@@ -991,6 +991,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
         : fy.finished
           ? null
           : fy.remainingSec;
+  useLoopWarnings(activeRemainingSec, beepEnabled);
   const prevRemainingRef = useRef<number | null>(null);
   const prevFinishedRef = useRef<boolean>(false);
   useEffect(() => {
@@ -1014,20 +1015,6 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
     if (justFinished) {
       playBell(2000);
       return;
-    }
-    if (activeRemainingSec === null || prev === null) return;
-    const thresholds: { sec: number; beeps: number }[] = [
-      { sec: 180, beeps: 3 },
-      { sec: 120, beeps: 2 },
-      { sec: 60, beeps: 1 },
-    ];
-    for (const { sec, beeps } of thresholds) {
-      if (prev > sec && activeRemainingSec <= sec) {
-        for (let i = 0; i < beeps; i += 1) {
-          playBeep(880, 250, i * 400);
-        }
-        break;
-      }
     }
   }, [activeRemainingSec, beepEnabled, mode, fy.finished]);
 

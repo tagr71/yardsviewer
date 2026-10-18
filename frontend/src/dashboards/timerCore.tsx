@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type React from "react";
 
 export const OSLO_TZ = "Europe/Oslo";
@@ -562,6 +562,20 @@ export function useTimerSettings(eventId: string) {
   };
 }
 
+export function crossedLoopWarning(previous: number | null, remaining: number | null): boolean {
+  return previous !== null && remaining !== null && remaining > 0 && remaining < previous
+    && [180, 120, 60].some((threshold) => previous > threshold && remaining <= threshold);
+}
+
+export function useLoopWarnings(remaining: number | null, enabled: boolean) {
+  const previousRef = useRef<number | null>(null);
+  useEffect(() => {
+    const previous = previousRef.current;
+    previousRef.current = remaining;
+    if (enabled && crossedLoopWarning(previous, remaining)) playLoopWarning();
+  }, [remaining, enabled]);
+}
+
 /** Play a short beep tone via Web Audio. Returns true on success. */
 let _audioCtx: AudioContext | null = null;
 export function playBeep(frequency = 880, durationMs = 250, delayMs = 0) {
@@ -591,6 +605,12 @@ export function playBeep(frequency = 880, durationMs = 250, delayMs = 0) {
     return true;
   } catch {
     return false;
+  }
+}
+
+export function playLoopWarning() {
+  for (let index = 0; index < 3; index += 1) {
+    playBeep(880, 500, index * 1000);
   }
 }
 

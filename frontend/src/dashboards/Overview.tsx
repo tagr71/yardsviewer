@@ -8,6 +8,7 @@ import {
   playbackBtn,
   playbackBarSticky,
   raceLoopState,
+  useLoopWarnings,
   useNowTick,
   useTimerSettings,
   useViewLoop,
@@ -25,7 +26,7 @@ const REFRESH_MS = 10_000;
 
 export function Overview({ eventId }: { eventId: string }) {
   const [showInfo, setShowInfo] = useDisplayPreference("overview.showParticipantInfo");
-  const { mode, startTime, fyLock, fyMax } = useTimerSettings(eventId);
+  const { mode, startTime, fyLock, fyMax, beepEnabled } = useTimerSettings(eventId);
   const now = useNowTick();
   const { viewLoop, setViewLoop } = useViewLoop(eventId);
   const [count, setCount] = useState<number | null>(null);
@@ -102,6 +103,11 @@ export function Overview({ eventId }: { eventId: string }) {
   const remainingSeconds = raceFinished || raceClock?.finished ? null : raceClock?.remainingSec ?? null;
   const countdown = remainingSeconds === null ? "—"
     : `${pad(Math.floor(remainingSeconds / 60))}:${pad(remainingSeconds % 60)}`;
+  const countdownWarning = remainingSeconds !== null && remainingSeconds > 0 && remainingSeconds <= 180;
+  useLoopWarnings(
+    elapsedSeconds !== null && elapsedSeconds >= 0 && effectiveViewLoop === null ? remainingSeconds : null,
+    beepEnabled,
+  );
 
   // "Still in" means runners who actually completed the lap we are looking
   // at — runners who started the lap but DNF'd are excluded.
@@ -157,8 +163,14 @@ export function Overview({ eventId }: { eventId: string }) {
         <DisplayToggle label="Show participant info" checked={showInfo} onChange={setShowInfo} />
       </div>
       <div className="overview-clocks" style={{ ...statGridBottom, gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}>
-        <StatCard label="Current time (Oslo)" value={formatOsloParts(now).time.replaceAll(".", ":")} valueStyle={{ fontSize: "3rem" }} />
-        <StatCard label={elapsedSeconds !== null && elapsedSeconds < 0 ? "Race starts in" : "Next loop in"} value={countdown} valueStyle={{ fontSize: "3rem" }} />
+        <StatCard label="Current time (Oslo)" value={formatOsloParts(now).time.replaceAll(".", ":")} valueStyle={clockValueStyle} />
+        <StatCard
+          label={elapsedSeconds !== null && elapsedSeconds < 0 ? "Race starts in" : "Next loop in"}
+          value={countdown}
+          bg={countdownWarning ? "var(--danger-surface)" : undefined}
+          color={countdownWarning ? "var(--danger)" : undefined}
+          valueStyle={{ ...clockValueStyle, fontSize: countdownWarning ? "4.5rem" : "3rem" }}
+        />
       </div>
       {maxLoop >= 1 && (
         <div
@@ -398,6 +410,14 @@ const statCard: React.CSSProperties = {
 const statCardLabel: React.CSSProperties = {
   color: "var(--muted)",
   fontSize: "1rem",
+};
+
+const clockValueStyle: React.CSSProperties = {
+  fontSize: "3rem",
+  minHeight: "4.5rem",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
 };
 
 const statCardValue: React.CSSProperties = {

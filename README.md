@@ -166,6 +166,8 @@ The dashboard dropdown lists, in order: **Settings**, **Overview**,
   counts down to the race start. Both timers stay live while viewing
   replay statistics; the countdown is unavailable after the race finishes
   or when the start time is unknown.
+  During the final three minutes the countdown turns red and grows larger,
+  returning to its normal style when the next loop starts.
   Colour-coded cells for starting runners (yellow), starting females
   (red) and males (blue); a second row mirrors the three cells for
   runners still in competition per gender — each cell's label includes
@@ -300,9 +302,11 @@ Configured in the **Timer set-up** dashboard, persisted per event ID:
   corresponding image(s) from `frontend/public/` (`rosa.png`,
   `grønn.png`, `gul.png` + `vinner.png`) are shown in the
   *Competition this loop* card on the Timer dashboard.
-- *Beep / bell* — when enabled, the Timer dashboard plays three
-  beeps at 3 min remaining, two at 2 min, one at 1 min, and a bell
-  at every loop rollover (and on race finish in Frontyard).
+- *Beep / bell* — when enabled, Overview and the Timer dashboard play
+  three beeps at each of 3, 2 and 1 minute remaining. Each beep lasts
+  0.5 seconds, with 0.5 seconds of silence between beeps. Warnings are
+  suppressed before the start and during replay. The Timer dashboard
+  also rings a bell at every loop rollover (and on race finish in Frontyard).
 
 ### Jerseys
 

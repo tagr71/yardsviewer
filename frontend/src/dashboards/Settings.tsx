@@ -384,12 +384,12 @@ export function Settings({ eventId, eventName, eventLocation }: { eventId: strin
           onChange={(e) => onBeepToggle(e.target.checked)}
         />
         <span>
-          Beep at 3, 2 and 1 minute remaining, and bell at loop end
+          Three beeps at 3, 2 and 1 minute remaining, and bell at loop end
         </span>
       </label>
 
       <p style={{ margin: 0, color: "var(--muted)", fontSize: "0.85rem", textAlign: "center" }}>
-        Settings are saved automatically and used by the Dashboard.
+        Settings are saved automatically.
       </p>
     </section>
   );

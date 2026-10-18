@@ -1,5 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { nextLoopRemainingSeconds, osloWallClockToInstant, raceLoopState } from "../timerCore";
+import {
+  crossedLoopWarning,
+  nextLoopRemainingSeconds,
+  osloWallClockToInstant,
+  playLoopWarning,
+  raceLoopState,
+} from "../timerCore";
 import {
   canShowTop15Plot,
   clockCompletedLoops,
@@ -68,6 +74,37 @@ describe("race loop state", () => {
     expect(raceLoopState(7020, "frontyard", 2, 4)).toMatchObject({
       loopsCompleted: 4, loopNumber: 4, remainingSec: 0, finished: true,
     });
+  });
+});
+
+describe("loop warning beeps", () => {
+  it.each([
+    [181, 180, true], [121, 120, true], [61, 60, true], [61, 59, true],
+    [null, 180, false], [181, null, false], [180, 180, false],
+    [180, 179, false], [179, 178, false], [1, 3600, false], [1, 0, false],
+  ] as const)("detects a warning from %s to %s", (previous, remaining, expected) => {
+    expect(crossedLoopWarning(previous, remaining)).toBe(expected);
+  });
+
+  it("plays three half-second tones separated by half-second pauses", () => {
+    const gain = {
+      gain: { setValueAtTime: vi.fn(), exponentialRampToValueAtTime: vi.fn() },
+      connect: vi.fn(),
+    };
+    const tones = Array.from({ length: 3 }, () => ({
+      frequency: { value: 0 }, type: "", connect: vi.fn(() => gain),
+      start: vi.fn(), stop: vi.fn(),
+    }));
+    const context = {
+      state: "running", currentTime: 10, destination: {}, createGain: () => gain,
+      createOscillator: vi.fn()
+        .mockReturnValueOnce(tones[0]).mockReturnValueOnce(tones[1]).mockReturnValueOnce(tones[2]),
+    };
+    vi.stubGlobal("window", { AudioContext: function AudioContextMock() { return context; } });
+    playLoopWarning();
+    expect(tones.map((tone) => tone.start.mock.calls[0][0])).toEqual([10, 11, 12]);
+    expect(tones.map((tone) => tone.stop.mock.calls[0][0])).toEqual([10.5, 11.5, 12.5]);
+    expect(tones.map((tone) => tone.frequency.value)).toEqual([880, 880, 880]);
   });
 });
 
