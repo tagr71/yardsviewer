@@ -22,6 +22,7 @@ import {
   resultSnapshot,
   resultsPollDelay,
   runnerColors,
+  runnerHighlights,
   saveLiveSplits,
   selectTop15,
   type ResultRow,
@@ -37,6 +38,94 @@ function runner(bib: number, changes: Partial<ResultRow> = {}): ResultRow {
 const live = { loop: 2, replay: false, finished: false };
 
 afterEach(() => vi.unstubAllGlobals());
+
+describe("Dashboard runner highlights", () => {
+  it("selects the fastest lap and the smallest margin before the bell across all runners", () => {
+    const rows = [runner(1), runner(2, {
+      status: "DNF", fastestLap: "18:00", slowestLap: "59:59", lastLap: "59:59",
+      perLoop: [{ loop: 1, time: "18:00" }, { loop: 2, time: "59:59" }],
+    })];
+    expect(runnerHighlights(rows, live, "backyard", 17)).toEqual({
+      fastest: { bib: "2", name: "Runner 2", loop: 1, lapSec: 1080, remainingSec: 2520 },
+      closestToBell: { bib: "2", name: "Runner 2", loop: 2, lapSec: 3599, remainingSec: 1 },
+    });
+  });
+  it("caps replay at the viewed loop without leaking published fastest or slowest values", () => {
+    const rows = [runner(1, {
+      fastestLap: "01:00", slowestLap: "59:59", lastLap: "01:00", lapsCompleted: 3,
+      perLoop: [{ loop: 1, time: "20:00" }, { loop: 2, time: "59:59" }, { loop: 3, time: "01:00" }],
+    })];
+    const highlights = runnerHighlights(rows, { ...live, loop: 1, replay: true }, "backyard", 17);
+    expect(highlights.fastest).toMatchObject({ loop: 1, lapSec: 1200 });
+    expect(highlights.closestToBell).toMatchObject({ loop: 1, remainingSec: 2400 });
+  });
+  it("ignores current-loop finishes until that loop is included in the snapshot", () => {
+    const rows = [runner(1, {
+      fastestLap: "01:00", lastLap: "01:00", lapsCompleted: 3,
+      perLoop: [{ loop: 1, time: "20:00" }, { loop: 3, time: "01:00" }],
+    })];
+    expect(runnerHighlights(rows, live, "backyard", 17).fastest).toMatchObject({ loop: 1, lapSec: 1200 });
+  });
+  it("uses each frontyard loop's shrinking deadline instead of the slowest absolute lap", () => {
+    const rows = [runner(1, {
+      perLoop: [{ loop: 1, time: "29:30" }, { loop: 2, time: "28:59" }],
+    })];
+    expect(runnerHighlights(rows, live, "frontyard", 17)).toEqual({
+      fastest: { bib: "1", name: "Runner 1", loop: 2, lapSec: 1739, remainingSec: 1 },
+      closestToBell: { bib: "1", name: "Runner 1", loop: 2, lapSec: 1739, remainingSec: 1 },
+    });
+  });
+  it("honors the locked frontyard deadline", () => {
+    const rows = [runner(1, {
+      lapsCompleted: 4, perLoop: [{ loop: 4, time: "28:59" }],
+    })];
+    expect(runnerHighlights(rows, { ...live, loop: 4 }, "frontyard", 2).closestToBell)
+      .toMatchObject({ loop: 4, remainingSec: 1 });
+  });
+  it("rejects invalid and late laps and DNS or disqualified runners", () => {
+    const rows = [runner(1, {
+      lastLap: "invalid", fastestLap: "00:00", slowestLap: "60:01",
+      perLoop: [{ loop: 0, time: "00:01" }, { loop: 1, time: "invalid" }, { loop: 2, time: "60:01" }],
+    }), runner(2, { status: "DNS" }), runner(3, { status: "DQ" })];
+    expect(runnerHighlights(rows, live, "backyard", 17)).toEqual({ fastest: null, closestToBell: null });
+    expect(runnerHighlights([runner(4, {
+      lastLap: "29:01", perLoop: [{ loop: 2, time: "29:01" }],
+    })], live, "frontyard", 17)).toEqual({ fastest: null, closestToBell: null });
+  });
+  it("accepts a finish exactly at the bell", () => {
+    expect(runnerHighlights([runner(1, {
+      perLoop: [{ loop: 2, time: "60:00" }], slowestLap: "60:00",
+    })], live, "backyard", 17).closestToBell).toMatchObject({ loop: 2, remainingSec: 0 });
+  });
+  it("uses published backyard summary times when lap history is unavailable", () => {
+    expect(runnerHighlights([runner(1, {
+      perLoop: undefined, fastestLap: "18:00", slowestLap: "59:58",
+    })], live, "backyard", 17)).toEqual({
+      fastest: { bib: "1", name: "Runner 1", loop: null, lapSec: 1080, remainingSec: 2520 },
+      closestToBell: { bib: "1", name: "Runner 1", loop: null, lapSec: 3598, remainingSec: 2 },
+    });
+  });
+  it("uses the known last lap in replay without using final aggregate times", () => {
+    expect(runnerHighlights([runner(1, { perLoop: undefined })], { ...live, replay: true }, "backyard", 17).fastest)
+      .toMatchObject({ loop: 2, lapSec: 1200 });
+  });
+  it("does not replace a published split with a conflicting last-lap fallback", () => {
+    expect(runnerHighlights([runner(1, { lastLap: "29:00" })], live, "frontyard", 17).closestToBell)
+      .toMatchObject({ loop: 2, lapSec: 1200, remainingSec: 540 });
+  });
+  it("breaks equal times by numeric bib independently of row order", () => {
+    const rows = [runner(10), runner(2)];
+    expect(runnerHighlights(rows, live, "backyard", 17).fastest?.bib).toBe("2");
+    expect(runnerHighlights([...rows].reverse(), live, "backyard", 17).closestToBell?.bib).toBe("2");
+  });
+  it("shows no highlights before the start or without valid completed laps", () => {
+    expect(runnerHighlights([runner(1)], { ...live, loop: 0 }, "backyard", 17))
+      .toEqual({ fastest: null, closestToBell: null });
+    expect(runnerHighlights([], live, "backyard", 17)).toEqual({ fastest: null, closestToBell: null });
+    expect(runnerHighlights([runner(1, { lapsCompleted: 0 })], live, "backyard", 17))
+      .toEqual({ fastest: null, closestToBell: null });
+  });
+});
 
 describe("next-loop countdown", () => {
   it.each([

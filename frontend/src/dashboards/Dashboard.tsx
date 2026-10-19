@@ -30,7 +30,31 @@ import {
   useViewLoop,
 } from "./timerCore";
 import { DisplayToggle, useDisplayPreference } from "../theme";
-import { cumulativeLoopStandings, resultLaps, resultSnapshot, resultsPollDelay, selectTop15, type ResultRow, type ResultsResponse } from "./raceResults";
+import { cumulativeLoopStandings, resultLaps, resultSnapshot, resultsPollDelay, runnerHighlights, selectTop15, type ResultRow, type ResultsResponse, type RunnerHighlight } from "./raceResults";
+
+function RunnerHighlightCard({ label, highlight, bell = false }: {
+  label: string; highlight: RunnerHighlight | null; bell?: boolean;
+}) {
+  return (
+    <div className="stat-card runner-highlight" style={{ ...panel, flex: "1 1 16rem", minWidth: 0, borderRadius: "0.5rem" }} aria-label={label}>
+      <p className="runner-highlight-label">{label}</p>
+      <div className="stat-value">
+        {highlight ? formatHms(bell ? highlight.remainingSec : highlight.lapSec) : "-"}
+      </div>
+      <p className="runner-highlight-details">
+        {highlight ? (
+          <>
+            <strong>#{highlight.bib} {highlight.name}</strong>
+            <span>
+              {highlight.loop !== null ? `Loop ${highlight.loop}` : "Lap time"}
+              {bell ? ` · ${formatHms(highlight.lapSec)}` : ""}
+            </span>
+          </>
+        ) : "No completed laps"}
+      </p>
+    </div>
+  );
+}
 
 export function Dashboard({ eventId, eventName, eventLocation }: { eventId: string; eventName?: string; eventLocation?: string }) {
   const [showTop15, setShowTop15] = useDisplayPreference("dashboard.showTop15", false);
@@ -219,6 +243,7 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
       : frontyardState(liveElapsedSec, fyLock, fyMax).loopsCompleted : null,
     effectiveViewLoop, raceClockFinished);
   const top15 = selectTop15(resultRows, top15Snapshot);
+  const highlights = runnerHighlights(resultRows, top15Snapshot, mode, fyLock);
 
   /** Snapshot loop for the Dashboard's jersey holder cards. In live mode
    * this follows the race clock (so the cards advance as soon as the
@@ -1199,6 +1224,8 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
               />
               <div className="metric-break" style={{ flexBasis: "100%", height: 0 }} />
               <StatCard label={completedPastLoopLabel} value={completedPastLoopValue} valueColor="var(--text)" labelColor="var(--text)" />
+              <RunnerHighlightCard label="Fastest runner" highlight={highlights.fastest} />
+              <RunnerHighlightCard label="Closest to the bell" highlight={highlights.closestToBell} bell />
             </div>
           )}
 
@@ -1345,6 +1372,8 @@ export function Dashboard({ eventId, eventName, eventLocation }: { eventId: stri
                   <StatCard label={completedPastLoopLabel} value={completedPastLoopValue} valueColor="var(--text)" labelColor="var(--text)" />
                 </>
               )}
+              <RunnerHighlightCard label="Fastest runner" highlight={highlights.fastest} />
+              <RunnerHighlightCard label="Closest to the bell" highlight={highlights.closestToBell} bell />
             </div>
           )}
         </>

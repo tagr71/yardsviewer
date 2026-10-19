@@ -57,6 +57,11 @@ a { color: var(--link); }
 .display-toggle input:disabled { cursor: not-allowed; }
 .theme-controls { display: flex; flex-direction: column; align-items: flex-start; gap: 0.35rem; }
 .stat-total { display: block; font-size: 1.75rem; font-weight: 600; line-height: 1.2; font-variant-numeric: tabular-nums; white-space: normal; overflow-wrap: anywhere; }
+.runner-highlight-label { margin: 0; color: var(--muted); font-size: 1.15rem; text-align: center; }
+.runner-highlight .stat-value { color: var(--text); font-size: 2rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.runner-highlight-details { margin: 0; max-width: 100%; text-align: center; overflow-wrap: anywhere; }
+.runner-highlight-details strong, .runner-highlight-details > span { display: block; }
+.runner-highlight-details > span { color: var(--muted); font-size: 0.85rem; margin-top: 0.2rem; }
 .page-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; width: 100%; }
 .page-heading h1 { margin: 0; }
 .leaderboard-display-options { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem 1rem; }
@@ -103,6 +108,8 @@ a { color: var(--link); }
   .dashboard-compact .stat-card > p:last-child:not(:first-child) { grid-column: 1/-1; }
   .dashboard-compact .stat-value { font-size: 1.125rem !important; line-height: 20px; }
   .dashboard-compact .stat-total { font-size: 1.25rem; }
+  .dashboard-compact .runner-highlight { grid-column: span 2; }
+  .dashboard-compact .runner-highlight > .runner-highlight-details { white-space: normal; overflow: visible; text-overflow: clip; }
   .dashboard-compact[data-race-mode="backyard"] {
     grid-template-columns: minmax(0,1fr) auto;
     grid-template-areas: "heading heading" "now replay" "label label" "clock clock" "meta meta" "metrics metrics" "results results";

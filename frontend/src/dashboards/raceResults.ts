@@ -27,6 +27,11 @@ export type ResultRow = {
 export type ResultsResponse = { eventName?: string; raceFinished?: boolean; rows: ResultRow[] };
 export type LiveSplitHistory = Map<string, LapSplit[]>;
 export type Snapshot = { loop: number; replay: boolean; finished: boolean; completedLoops?: number };
+export type RunnerHighlight = Pick<ResultRow, "bib" | "name"> & {
+  loop: number | null;
+  lapSec: number;
+  remainingSec: number;
+};
 export type RankedRunner = ResultRow & {
   snapshotRank: number;
   snapshotLaps: number;
@@ -170,6 +175,44 @@ export function resultSnapshot(
     replay: viewLoop !== null,
     finished,
   };
+}
+
+export function runnerHighlights(rows: ResultRow[], snapshot: Snapshot, mode: Mode, fyLock: number): {
+  fastest: RunnerHighlight | null; closestToBell: RunnerHighlight | null;
+} {
+  const candidates: RunnerHighlight[] = [];
+  for (const row of rows) {
+    const completed = resultLaps(row);
+    if (/dns|dq/i.test(row.status) || completed < 1 || snapshot.loop < 1) continue;
+    const addLap = (lap: { time?: string; lapSec?: number }, loop: number | null) => {
+      const seconds = lapSeconds(lap);
+      const limit = mode === "backyard" ? LOOP_SECONDS
+        : loop === null ? 0
+        : frontyardElapsedAtLoopStart(loop + 1, fyLock) - frontyardElapsedAtLoopStart(loop, fyLock);
+      if (seconds === null || seconds > limit) return;
+      candidates.push({ bib: row.bib, name: row.name, loop, lapSec: seconds, remainingSec: limit - seconds });
+    };
+    for (const lap of row.perLoop ?? []) {
+      if (Number.isInteger(lap.loop) && lap.loop >= 1 && lap.loop <= Math.min(completed, snapshot.loop)) {
+        addLap(lap, lap.loop);
+      }
+    }
+    if (completed <= snapshot.loop) {
+      if (!row.perLoop?.some((lap) => lap.loop === completed && lapSeconds(lap) !== null)) {
+        addLap({ time: row.lastLap }, completed);
+      }
+      if (!snapshot.replay && mode === "backyard") {
+        for (const time of [row.fastestLap, row.slowestLap]) addLap({ time }, null);
+      }
+    }
+  }
+  const tieBreak = (first: RunnerHighlight, second: RunnerHighlight) =>
+    first.bib.localeCompare(second.bib, undefined, { numeric: true })
+    || (first.loop ?? Infinity) - (second.loop ?? Infinity)
+    || first.name.localeCompare(second.name);
+  const fastest = [...candidates].sort((first, second) => first.lapSec - second.lapSec || tieBreak(first, second))[0] ?? null;
+  const closestToBell = candidates.sort((first, second) => first.remainingSec - second.remainingSec || tieBreak(first, second))[0] ?? null;
+  return { fastest, closestToBell };
 }
 
 export function canShowTop15Plot(rows: ResultRow[], snapshot: Snapshot): boolean {

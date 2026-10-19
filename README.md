@@ -240,6 +240,14 @@ The dashboard dropdown lists, in order: **Settings**, **Overview**,
   capped at the Dashboard's completed-loop count. Both totals are zero
   before the start, and distance uses the selected mode's loop length.
 
+  Both modes also show **Fastest runner** (the fastest valid completed lap)
+  and **Closest to the bell** (the valid lap finish with the smallest margin
+  before its deadline), with runner name, bib and lap time. Known loop numbers
+  are shown; Frontyard uses each loop's shrinking or locked time limit.
+  Highlights include retired runners, exclude DNS and disqualified runners,
+  and follow the completed-loop snapshot in live mode or the viewed loop
+  in replay. Missing results show a placeholder, not an estimated time.
+
   **Backyard mode** — *Loops completed* (green), *Current loop*
   (yellow), *Distance completed* (green, accumulated km across all
   completed loops), *Distance this loop* (yellow, target distance
