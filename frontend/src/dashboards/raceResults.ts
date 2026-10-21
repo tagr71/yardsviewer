@@ -24,7 +24,25 @@ export type ResultRow = {
   perLoop?: LapSplit[];
 };
 
-export type ResultsResponse = { eventName?: string; raceFinished?: boolean; rows: ResultRow[] };
+export type ResultsResponse = {
+  eventName?: string;
+  eventStartTime?: string;
+  eventMode?: string;
+  raceFinished?: boolean;
+  rows: ResultRow[];
+};
+export type NorwegianRecordKind = "women" | "overall";
+export const NORWEGIAN_RECORDS = {
+  women: { loops: 47, name: "Nora Kojen Stubbe", year: 2025, label: "Norsk kvinnerekord", newLabel: "Ny norsk kvinnerekord" },
+  overall: { loops: 66, name: "Eivind Svellingen", year: 2026, label: "Norsk rekord", newLabel: "Ny norsk rekord" },
+} as const;
+export type NorwegianRecordState = {
+  label: string;
+  loops: number;
+  names: string[];
+  year: number | null;
+  isNew: boolean;
+};
 export type LiveSplitHistory = Map<string, LapSplit[]>;
 export type Snapshot = { loop: number; replay: boolean; finished: boolean; completedLoops?: number };
 export type RunnerHighlight = Pick<ResultRow, "bib" | "name"> & {
@@ -74,6 +92,26 @@ export function remainingRunner(
     && Number.isFinite(row.lapsCompleted) && row.lapsCompleted >= 0;
   return snapshot.completedLoops === undefined || laps >= Math.min(snapshot.completedLoops, snapshot.loop)
     || (!hasLapCount && laps === 0);
+}
+
+export function norwegianRecord(rows: ResultRow[], kind: NorwegianRecordKind, completedLoops?: number): NorwegianRecordState {
+  const baseline = NORWEGIAN_RECORDS[kind];
+  const eligible = rows.filter((row) => /^(NO|NOR)$/.test((row.country ?? "").trim().toUpperCase())
+    && !/dns|dq|disqual/i.test(row.status ?? "")
+    && (kind === "overall" || (row.sex ?? "").trim().toUpperCase() === "K"));
+  const loops = eligible.reduce((highest, row) => Math.max(highest, resultLaps(row)), 0);
+  if (loops <= baseline.loops) {
+    return { label: baseline.label, loops: baseline.loops, names: [baseline.name], year: baseline.year, isNew: false };
+  }
+  const contenders = eligible.filter((row) => remainingRunner(row, {
+    loop: publishedLoop(rows), replay: false, finished: false, completedLoops,
+  }));
+  const showNames = kind === "overall" || contenders.length <= 1;
+  const holders = eligible.filter((row) => resultLaps(row) === loops).sort((first, second) =>
+    first.bib.localeCompare(second.bib, undefined, { numeric: true }) || first.name.localeCompare(second.name));
+  return {
+    label: baseline.newLabel, loops, names: showNames ? holders.map((row) => row.name) : [], year: null, isNew: true,
+  };
 }
 
 export function lapSeconds(lap: { time?: string; lapSec?: number }): number | null {

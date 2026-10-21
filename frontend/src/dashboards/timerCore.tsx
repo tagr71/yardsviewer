@@ -225,6 +225,12 @@ export function formatKm(km: number): string {
   return `${km.toFixed(1)} km`;
 }
 
+export function formatElapsedClock(elapsedSeconds: number | null): string {
+  if (elapsedSeconds === null || !Number.isFinite(elapsedSeconds)) return "--:--:--";
+  const seconds = Math.max(0, Math.floor(elapsedSeconds));
+  return `${pad(Math.floor(seconds / 3600))}:${pad(Math.floor((seconds % 3600) / 60))}:${pad(seconds % 60)}`;
+}
+
 /** Format a non-negative seconds count as ``H:MM:SS`` (drops the hour
  * when zero, so short laps render as ``MM:SS``). */
 export function formatHms(sec: number): string {

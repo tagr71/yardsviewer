@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { embedColour, parseEmbedRoute } from "../RecordEmbed";
 import {
+  formatElapsedClock,
   loopWarningBeepCount,
   nextLoopRemainingSeconds,
   osloWallClockToInstant,
@@ -14,6 +16,7 @@ import {
   fetchLapHistory,
   lapSeconds,
   lineDash,
+  norwegianRecord,
   plotData,
   plotLineLabels,
   plotSignature,
@@ -38,6 +41,139 @@ function runner(bib: number, changes: Partial<ResultRow> = {}): ResultRow {
 const live = { loop: 2, replay: false, finished: false };
 
 afterEach(() => vi.unstubAllGlobals());
+
+describe("embed colour", () => {
+  it("keeps the theme colour when no custom colour is supplied", () => {
+    expect(embedColour("")).toBeNull();
+    expect(embedColour("?theme=dark")).toBeNull();
+  });
+  it.each(["117a3a", "fff", "%23F00", "%23225599"])("accepts hex text colour %s", (color) => {
+    expect(embedColour(`?color=${color}`)).toBe(`#${decodeURIComponent(color).replace(/^#/, "")}`);
+  });
+  it.each(["red", "", "12345", "12345678", "red;background:black", "url(test)"])("rejects invalid colour %s", (color) => {
+    expect(embedColour(`?color=${encodeURIComponent(color)}`)).toBeNull();
+  });
+  it("combines a custom colour with the dark text theme", () => {
+    expect(embedColour("?theme=dark&color=ff0000")).toBe("#ff0000");
+  });
+});
+
+describe("standalone embed routes", () => {
+  it.each(["women-record", "overall-record", "elapsed"])("recognizes the %s view", (kind) => {
+    expect(parseEmbedRoute(`/embed/${kind}/423509`)).toEqual({ kind, eventId: "423509" });
+    expect(parseEmbedRoute(`/embed/${kind}/aB12345678/`)).toEqual({ kind, eventId: "aB12345678" });
+  });
+  it.each(["/embed", "/embed/women-record", "/embed/unknown/423509", "/embed/elapsed/12345678901",
+    "/embed/elapsed/423509/extra", "/embed/elapsed/a.b", "/embed//elapsed/423509", "/dashboard/423509"])(
+    "rejects invalid embed route %s", (pathname) => {
+      expect(parseEmbedRoute(pathname)).toBeNull();
+    },
+  );
+});
+
+describe("embed elapsed clock", () => {
+  it.each([
+    [null, "--:--:--"], [NaN, "--:--:--"], [Infinity, "--:--:--"],
+    [-61, "00:00:00"], [0, "00:00:00"], [0.999, "00:00:00"],
+    [1.999, "00:00:01"], [3661, "01:01:01"], [86399, "23:59:59"],
+    [86400, "24:00:00"], [237725, "66:02:05"], [360001, "100:00:01"],
+  ])("formats elapsed seconds %s as %s", (seconds, expected) => {
+    expect(formatElapsedClock(seconds)).toBe(expected);
+  });
+  it.each([
+    ["2026-03-29T01:30:00", "2026-03-29T01:30:00Z", "01:00:00"],
+    ["2026-10-25T01:30:00", "2026-10-25T01:30:00Z", "02:00:00"],
+    ["2026-10-17T14:00:00", "2026-10-20T12:00:00Z", "72:00:00"],
+  ])("uses real elapsed time from Oslo start %s", (startTime, now, expected) => {
+    const start = osloWallClockToInstant(startTime)!;
+    expect(formatElapsedClock((new Date(now).getTime() - start.getTime()) / 1000)).toBe(expected);
+  });
+});
+
+describe("Norwegian record embeds", () => {
+  it.each([0, 46, 47])("retains the existing women's record at %s loops", (lapsCompleted) => {
+    expect(norwegianRecord([runner(1, { sex: "K", lapsCompleted })], "women")).toEqual({
+      label: "Norsk kvinnerekord", loops: 47, names: ["Nora Kojen Stubbe"], year: 2025, isNew: false,
+    });
+  });
+  it.each([0, 65, 66])("retains the existing overall record at %s loops", (lapsCompleted) => {
+    expect(norwegianRecord([runner(1, { lapsCompleted })], "overall")).toEqual({
+      label: "Norsk rekord", loops: 66, names: ["Eivind Svellingen"], year: 2026, isNew: false,
+    });
+  });
+  it.each(["NO", "NOR", " no ", "nor"])("accepts Norwegian nationality %s", (country) => {
+    expect(norwegianRecord([runner(1, { country, sex: " k ", lapsCompleted: 48 })], "women")).toEqual({
+      label: "Ny norsk kvinnerekord", loops: 48, names: ["Runner 1"], year: null, isNew: true,
+    });
+  });
+  it.each(["", "SWE", "US", "UNKNOWN"])("excludes foreign or unknown nationality %s", (country) => {
+    expect(norwegianRecord([runner(1, { country, sex: "K", lapsCompleted: 100 })], "women").isNew).toBe(false);
+    expect(norwegianRecord([runner(1, { country, lapsCompleted: 100 })], "overall").isNew).toBe(false);
+  });
+  it.each(["M", ""])("excludes sex %s from the women's record", (sex) => {
+    expect(norwegianRecord([runner(1, { sex, lapsCompleted: 100 })], "women").isNew).toBe(false);
+  });
+  it.each(["DNF", "withdrawn"])("retains valid completed records from a %s runner", (status) => {
+    expect(norwegianRecord([runner(1, { status, lapsCompleted: 67 })], "overall").names).toEqual(["Runner 1"]);
+  });
+  it.each(["DNS", "DQ", "Disqualified"])("excludes status %s from record candidates", (status) => {
+    expect(norwegianRecord([runner(1, { status, lapsCompleted: 100 })], "overall").isNew).toBe(false);
+  });
+  it("always names the overall leader, including a woman, while the race continues", () => {
+    expect(norwegianRecord([runner(1, { lapsCompleted: 67, sex: "K" }), runner(2, { lapsCompleted: 66 })], "overall"))
+      .toEqual({ label: "Ny norsk rekord", loops: 67, names: ["Runner 1"], year: null, isNew: true });
+  });
+  it("hides the new women's holder while multiple Norwegian women remain", () => {
+    const rows = [runner(1, { sex: "K", lapsCompleted: 48 }), runner(2, { sex: "K", lapsCompleted: 47 })];
+    expect(norwegianRecord(rows, "women", 47)).toMatchObject({ loops: 48, names: [], isNew: true });
+  });
+  it("reveals the women's holder when one Norwegian woman remains despite foreign contenders", () => {
+    const rows = [runner(1, { sex: "K", lapsCompleted: 48 }), runner(2, { sex: "K", lapsCompleted: 47, status: "DNF" }),
+      runner(3, { sex: "K", country: "SE", lapsCompleted: 60 })];
+    expect(norwegianRecord(rows, "women", 47).names).toEqual(["Runner 1"]);
+  });
+  it("reveals every tied women's holder when all women are out, in stable numeric bib order", () => {
+    const rows = [runner(10, { sex: "K", lapsCompleted: 48, status: "DNF" }),
+      runner(2, { sex: "K", lapsCompleted: 48, status: "DNF" })];
+    expect(norwegianRecord(rows, "women", 48).names).toEqual(["Runner 2", "Runner 10"]);
+  });
+  it("does not replace a retired record holder with a sole woman who is behind", () => {
+    const rows = [runner(1, { sex: "K", lapsCompleted: 50, status: "DNF" }), runner(2, { sex: "K", lapsCompleted: 48 })];
+    expect(norwegianRecord(rows, "women", 48)).toMatchObject({ loops: 50, names: ["Runner 1"] });
+  });
+  it("does not settle the women when an early finisher is one loop ahead", () => {
+    const rows = [runner(1, { sex: "K", lapsCompleted: 49 }), runner(2, { sex: "K", lapsCompleted: 48 })];
+    expect(norwegianRecord(rows, "women", 48).names).toEqual([]);
+  });
+  it("caps the retirement inference at the published loop when publication is delayed", () => {
+    const rows = [runner(1, { sex: "K", lapsCompleted: 48 }), runner(2, { sex: "K", lapsCompleted: 48 })];
+    expect(norwegianRecord(rows, "women", 49).names).toEqual([]);
+  });
+  it("uses known missing-status lap counts without treating unknown counts as DNF", () => {
+    const first = runner(1, { sex: "K", lapsCompleted: 49 });
+    expect(norwegianRecord([first, runner(2, { sex: "K", lapsCompleted: 47 })], "women", 48).names).toEqual(["Runner 1"]);
+    expect(norwegianRecord([first, runner(2, { sex: "K", lapsCompleted: null, perLoop: [] })], "women", 48).names).toEqual([]);
+  });
+  it("uses split-based completed loops when the published count is absent", () => {
+    expect(norwegianRecord([runner(1, {
+      lapsCompleted: null, perLoop: [{ loop: 67, time: "59:00" }],
+    })], "overall")).toMatchObject({ loops: 67, names: ["Runner 1"] });
+  });
+  it("includes record holders outside the top fifteen and shares overall ties", () => {
+    const rows = Array.from({ length: 16 }, (_, index) => runner(index + 1, { lapsCompleted: index >= 14 ? 67 : 40 }));
+    expect(norwegianRecord(rows, "overall").names).toEqual(["Runner 15", "Runner 16"]);
+  });
+  it("responds to higher loops and official downward corrections without modifying rows", () => {
+    const rows = [runner(1, { lapsCompleted: 68 })];
+    expect(norwegianRecord(rows, "overall").loops).toBe(68);
+    expect(rows[0].lapsCompleted).toBe(68);
+    expect(norwegianRecord([runner(1, { lapsCompleted: 67 })], "overall").loops).toBe(67);
+  });
+  it("keeps both existing records when no eligible results have been published", () => {
+    expect(norwegianRecord([], "women")).toMatchObject({ loops: 47, names: ["Nora Kojen Stubbe"], year: 2025 });
+    expect(norwegianRecord([], "overall")).toMatchObject({ loops: 66, names: ["Eivind Svellingen"], year: 2026 });
+  });
+});
 
 describe("Dashboard runner highlights", () => {
   it("selects the fastest lap and the smallest margin before the bell across all runners", () => {

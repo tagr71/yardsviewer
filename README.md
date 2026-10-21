@@ -456,6 +456,113 @@ choices, determines the initial view. The FastAPI backend
 serves `index.html` for any unknown path so client-side routing works
 in the Docker / production build too.
 
+## WordPress embeds
+
+Three standalone, read-only widgets can be placed independently in WordPress
+**Custom HTML** blocks. They have transparent backgrounds, no navigation,
+logos, controls, replay or sound, and do not require browser storage.
+All three widgets use the same compact **200 x 116 px** dimensions, with no
+outer padding. This fits the record heading, value, one holder and year at
+the standard font sizes. They shrink to the available width on narrower screens.
+The URLs below use Norway event `423509`; replace that final segment for
+another backyard event. These views become publicly available when the
+application version containing them is deployed.
+
+### Women's Norwegian record
+
+```html
+<iframe
+  src="https://yardsviewer-586514424971.europe-north1.run.app/embed/women-record/423509"
+  title="Norsk kvinnerekord"
+  style="display:block;width:200px;max-width:100%;height:116px;border:0;color-scheme:light"
+  loading="lazy"
+></iframe>
+```
+
+Until a Norwegian woman completes **48 loops**, this shows **47 runder**,
+**Nora Kojen Stubbe**, **2025**. From loop 48, the label becomes
+**Ny norsk kvinnerekord** and the highest completed-loop count updates live.
+The new holder's name appears when at most one Norwegian woman remains,
+including when all Norwegian women are out. All holders tied on the highest
+completed-loop count are shown; a sole remaining woman who is still behind
+a retired runner does not replace that runner's record.
+
+### Overall Norwegian record
+
+```html
+<iframe
+  src="https://yardsviewer-586514424971.europe-north1.run.app/embed/overall-record/423509"
+  title="Norsk rekord"
+  style="display:block;width:200px;max-width:100%;height:116px;border:0;color-scheme:light"
+  loading="lazy"
+></iframe>
+```
+
+Until a Norwegian runner completes **67 loops**, this shows **66 runder**,
+**Eivind Svellingen**, **2026**. From loop 67, the label becomes
+**Ny norsk rekord**, with the live leading Norwegian name(s) shown throughout.
+Either sex qualifies, and equal completed-loop counts share the record lead.
+
+Both record widgets include only published Norwegian nationalities (`NO`
+or `NOR`). Unknown nationality, DNS and disqualified entries are excluded;
+valid completed loops from DNF or withdrawn runners remain eligible.
+Matching the existing record does not replace it. The counts represent
+published results, not official record ratification.
+
+### Elapsed race clock
+
+```html
+<iframe
+  src="https://yardsviewer-586514424971.europe-north1.run.app/embed/elapsed/423509"
+  title="Tid siden start"
+  style="display:block;width:200px;max-width:100%;height:116px;border:0;color-scheme:light"
+  loading="lazy"
+></iframe>
+```
+
+The clock reads the published race start, interpreted in **Europe/Oslo**,
+and ticks every second. Event `423509` starts **17 October 2026 at 14:00 Oslo**
+unless the upstream metadata changes. Hours do not reset after 24 hours:
+`72:15:09` means 72 hours, 15 minutes and 9 seconds. Before the start it shows
+`00:00:00`; without a valid start it shows `--:--:--`. It continues after the
+race ends and does not use the normal dashboards' saved settings.
+
+Record results refresh approximately every 10 seconds, including after the
+backend's race-finished flag. The clock rechecks start metadata every 60
+seconds. Temporary request failures retain the last successful data and
+display a short status message.
+
+Default text is dark for a light WordPress page. Append `?theme=dark` to any
+embed URL for light text on a dark page; this is independent of the normal
+app's saved or automatic theme. Keep `color-scheme:light` on the iframe so
+its browser canvas matches the widget and the background stays transparent
+on either page theme; text contrast is still selected by the URL.
+Append `?color=117a3a` to change all widget text to a three- or six-digit hex
+colour without `#`. Combine parameters as `?theme=dark&color=ff0000`; use
+`&amp;` for `&` inside an HTML `src` attribute. Invalid colours fall back to
+the theme. Main values use the same 40px font size, and headings and values
+line up across all three views. Long or tied names scroll in the details
+area without changing the widget dimensions. Keep the same iframe width
+and height for all three; WordPress block margins are controlled in WordPress.
+The WordPress account must be permitted to publish iframe HTML. If the site
+uses Content Security Policy, its `frame-src` must allow the Yardsviewer
+origin. No WordPress plugin, parent-page script or CORS change is required.
+
+For white text on a red background, add `?color=ffffff` to the URL and set
+the iframe's background colour. The transparent widget reveals this colour:
+
+```html
+<iframe
+  src="https://yardsviewer-586514424971.europe-north1.run.app/embed/women-record/423509?color=ffffff"
+  title="Norsk kvinnerekord"
+  style="display:block;width:200px;max-width:100%;height:116px;border:0;background:#c00000;color-scheme:light"
+  loading="lazy"
+></iframe>
+```
+
+Use `overall-record` or `elapsed` instead of `women-record` in the URL for
+the other two widgets, keeping the same width, height and background style.
+
 ## Run
 
 Requirements: **Python 3.12+**, [uv](https://docs.astral.sh/uv/), and
