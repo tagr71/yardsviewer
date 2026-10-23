@@ -588,7 +588,7 @@ parameter is supplied).
 
 ```powershell
 cd frontend
-npm install
+npm ci
 npm run dev
 ```
 
@@ -1016,4 +1016,3 @@ normal zoom, plus a narrow mobile viewport. Check all 15 Dashboard rows,
 the bottom plot, tag/legend agreement, page overflow, both themes and
 replay. Confirm automatic-On behavior with no saved preference and that
 a saved Off choice still restores manual mode.
-
